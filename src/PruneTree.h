@@ -1,5 +1,5 @@
 /** @file PruneTree.h
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PruneTree.h,v 1.4 2003/12/18 02:37:57 hansl Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PruneTree.h,v 1.5 2004/01/07 03:42:32 hansl Exp $
  */
 #ifndef  MERIT_PRUNETREE_H
 #define  MERIT_PRUNETREE_H
@@ -13,7 +13,7 @@ class Tuple;
 
 /** @class PruneTree
  *  @brief Reduce number of rows of merit NTuple 
- *              applying IM selections defined in xml file.  
+ *         applying Insightful Miner (IM) selections defined in xml file.  
  *
  *  @authors Traudl Hansl-Kozanecka <hansl@slac.stanford.edu>
  *  @authors Toby Burnett <tburnett@u.washington.edu>
@@ -40,16 +40,17 @@ class PruneTree {
 
     ~PruneTree();
 
-    /** Apply the selection to the current tuple instance 
-     *  @return  Probability assigned to this event
+    /** Apply the selection to the current TupleItem ( = event)
+     *  @return   Probability assigned to this event
      */
     double operator()(); 
 
 private:
     class Lookup;                // nested class
-    class PreClassify;           // nested class 
-    PreClassify * m_preclassify; // 
-    classification::Tree * m_classifier;
+    class PreClassify;           // nested class
+
+    PreClassify *          m_preclassify; /// association of ROOT branches to TupleItems
+    classification::Tree * m_classifier;  /// interface to IM classification tree 
 };
 #endif   //  MERIT_PRUNETREE_H
 
