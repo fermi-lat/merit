@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.48 2003/12/03 00:30:56 burnett Exp $
+ * $Id: release.notes,v 1.49 2003/12/07 18:12:00 burnett Exp $
  *
+ *  v6r14p6 JCT  12-dec-03 fix the FT1Energy entry which now uses EvtEnergySumOpt
  *  v6r14p5 THB  07-dec-03 implement post-Rome background cut calculation for gammas only
  *  v6r14p4 THB  02-dec-03 required by obsolete gcc
  *  v6r14p3 THB  26-nov-03 fix a problem in the reclassification app.
