@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.52 2003/09/29 00:12:18 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.53 2003/09/29 03:05:19 burnett Exp $
 */
 // Include files
 
@@ -39,6 +39,7 @@
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
 
 #include "OnboardFilter/FilterStatus.h"
+#include "astro/PointingTransform.h"
 
 #include <sstream>
 #include <algorithm>
@@ -67,9 +68,29 @@ private:
     StatusCode setupTools();
 
     void calculate(); 
+
+    /** nested class to manage extra TTrees 
+    */
+    class TTree { 
+    public:
+        /**
+        */
+        TTree(     INTupleWriterSvc* rootTupleSvc, 
+                       std::string treename,  
+                       std::vector<const char* >leaf_names);
+        void fill(int n, double value){ m_values[n]=value;};
+        std::vector< double> m_values;
+    private:
+    };
+
+    /// TTree objects to manage the pointing and FT1 tuples
+    TTree* m_pointingTuple;
+    TTree* m_FT1tuple;
     void setupPointingInfo();
     void copyPointingInfo();
-
+    
+    void setupFT1info();
+    void copyFT1info();
     FigureOfMerit* m_fm;
     Tuple*   m_tuple;
     std::string m_cuts; 
@@ -92,11 +113,11 @@ private:
     /// classification
     ClassificationTree* m_ctree;
 
-    /// the event tuple name
+    /// the various tree names
     StringProperty m_eventTreeName;
     StringProperty m_pointingTreeName;
+    StringProperty m_FT1TreeName;
 
-    double m_point_info[11];
 
 };
 
@@ -115,6 +136,7 @@ Algorithm(name, pSvcLocator), m_tuple(0)
     declareProperty("RootFilename", m_root_filename="");
     declareProperty("EventTreeName",     m_eventTreeName="MeritTuple");
     declareProperty("PointingTreeName", m_pointingTreeName="Exposure");
+    declareProperty("FT1TreeName", m_FT1TreeName="FT1");
     declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -217,7 +239,6 @@ StatusCode meritAlg::initialize() {
             log << MSG::ERROR << " failed to get the RootTupleSvc" << endreq;
             return sc;
         }
-
     }
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
@@ -228,19 +249,16 @@ StatusCode meritAlg::initialize() {
             TupleItem& item = **tit;
             m_rootTupleSvc->addItem(m_eventTreeName.value(), item.name(), &item.value());
         }
-
         // and also the pointing branch
         setupPointingInfo();
+        setupFT1info();
     }
-
-
 
     // setup tuple output via the print service
         // get the Gui service
     IGuiSvc* guiSvc=0;
     sc = service("GuiSvc", guiSvc);
 
-    
     if (!sc.isSuccess ()){
         log << MSG::DEBUG << "No GuiSvc, so no interactive printout" << endreq;
         return StatusCode::SUCCESS;
@@ -250,7 +268,6 @@ StatusCode meritAlg::initialize() {
     gui::PrintControl* printer = &guimgr->printer();
     printer->addPrinter("merit tuple",new gui::Printer_T<meritAlg>(this));
 
-
     return sc;
 }
 //------------------------------------------------------------------------------
@@ -258,10 +275,12 @@ void meritAlg::setupPointingInfo(){
 
     std::string treeName= m_pointingTreeName.value();
     if( treeName.empty()) return;
+
+    std::vector<const char* > names;
     const char * point_info_name[] = {"time","lat","lon","alt","posx","posy","posz","rax","decx","raz","decz"};
-    for( int i = 0; i< sizeof(m_point_info)/sizeof(double); ++i){
-        m_rootTupleSvc->addItem(std::string(m_pointingTreeName), point_info_name[i], m_point_info+i);
-    }
+    for( int i = 0; i< sizeof(point_info_name)/sizeof(void*); ++i){ names.push_back(point_info_name[i]); }
+    
+    m_pointingTuple = new TTree( m_rootTupleSvc,  std::string(m_pointingTreeName),  names);
 }
 //------------------------------------------------------------------------------
 void meritAlg::copyPointingInfo(){
@@ -272,18 +291,78 @@ void meritAlg::copyPointingInfo(){
         //Event::ExposureCol::iterator curEntry = (*elist).begin();
         const Event::Exposure& exp = **(*elist).begin();
         int n= 0;
-        m_point_info[n++]=exp.intrvalstart();
-        m_point_info[n++]=exp.lat();
-        m_point_info[n++]=exp.lon();
-        m_point_info[n++]=exp.alt();
-        m_point_info[n++]=exp.posX();
-        m_point_info[n++]=exp.posY();
-        m_point_info[n++]=exp.posZ();
-        m_point_info[n++]=exp.RAX();
-        m_point_info[n++]=exp.DECX();
-        m_point_info[n++]=exp.RAZ();
-        m_point_info[n++]=exp.DECZ();
-        assert( n==sizeof(m_point_info)/sizeof(double));
+        m_pointingTuple->fill(n++,exp.intrvalstart());
+        m_pointingTuple->fill(n++,exp.lat());
+        m_pointingTuple->fill(n++,exp.lon());
+        m_pointingTuple->fill(n++,exp.alt());
+        m_pointingTuple->fill(n++,exp.posX());
+        m_pointingTuple->fill(n++,exp.posY());
+        m_pointingTuple->fill(n++,exp.posZ());
+        m_pointingTuple->fill(n++,exp.RAX());
+        m_pointingTuple->fill(n++,exp.DECX());
+        m_pointingTuple->fill(n++,exp.RAZ());
+        m_pointingTuple->fill(n++,exp.DECZ());
+}//------------------------------------------------------------------------------
+void meritAlg::setupFT1info(){
+
+    std::string treeName= m_FT1TreeName.value();
+    if( treeName.empty()) return;
+    std::vector<const char* > names;
+    const char * FT1_names[] = {"energy", "ra", "dec", "theta", "phi", "zenith", "earth_azimuth", "time", "id"};
+    for( int i = 0; i< sizeof(FT1_names)/sizeof(void*); ++i){ names.push_back(FT1_names[i]); }
+    
+    m_FT1tuple = new TTree( m_rootTupleSvc,  std::string(m_FT1TreeName),  names);
+}
+//------------------------------------------------------------------------------
+void meritAlg::copyFT1info(){
+
+    using namespace astro;
+
+    Event::ExposureCol* elist = 0;
+    eventSvc()->retrieveObject("/Event/MC/ExposureCol",(DataObject *&)elist);
+    if( elist==0) return; // should not happen, but make sure ok.
+    const Event::Exposure& exp = **(*elist).begin();
+
+    // create a transformation object -- first get local directions
+   SkyDir zsky(exp.RAZ(), exp.DECZ(), SkyDir::CELESTIAL);
+   SkyDir xsky(exp.RAX(), exp.DECX(), SkyDir::CELESTIAL );
+
+    // orthogonalize, since interpolation and transformations destory orthogonality (limit is 10E-8)
+    Hep3Vector xhat = xsky() -  xsky().dot(zsky()) * zsky() ;
+    PointingTransform toSky( zsky, xhat );
+
+    // make zenith (except for oblateness correction) unit vector
+    Hep3Vector zenith( exp.posX(),  exp.posY(), exp.posZ());
+    zenith = zenith.unit();
+    
+
+    // Temporary: get the MC direction here for verification
+    // Recover MC Pointer
+    SmartDataPtr<Event::McParticleCol> pMcParticle(eventSvc(), EventModel::MC::McParticleCol);
+    Event::McParticleCol::const_iterator pMCPrimary = pMcParticle->begin();
+    // Skip the first particle... it's for bookkeeping.
+    // The second particle is the first real propagating particle.
+    pMCPrimary++;
+    HepLorentzVector Mc_p0 = (*pMCPrimary)->initialFourMomentum();
+    Hep3Vector glastdir=-Mc_p0.vect().unit();   
+
+    // "glastdir" is the predicted direction to the source, in instrument coords
+    SkyDir sdir = toSky.gDir(glastdir);
+
+    // celestial coords
+    m_FT1tuple->fill(1,  sdir.ra() ) ;
+    m_FT1tuple->fill(2,  sdir.dec() );
+
+    // instrument coords
+    m_FT1tuple->fill(3,  glastdir.theta()* 180./M_PI );
+    double phi_deg = glastdir.phi() * 180./M_PI; if( phi_deg<0) phi_deg+=360;
+    m_FT1tuple->fill(4,  phi_deg);
+
+    // zenith-based coords
+    m_FT1tuple->fill(5, acos(zenith.dot(sdir())) * 180/M_PI);
+
+    // time
+    m_FT1tuple->fill(7,  exp.intrvalstart() );
 }
 //------------------------------------------------------------------------------
 void meritAlg::calculate(){
@@ -291,11 +370,10 @@ void meritAlg::calculate(){
     for( std::vector<IValsTool*>::iterator i =m_toolvec.begin(); i != m_toolvec.end(); ++i){
         (*i)->doCalcIfNotDone();
     }
-
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.52 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.53 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -332,9 +410,9 @@ StatusCode meritAlg::execute() {
     m_fm->execute();
     if( m_rootTupleSvc) {
             copyPointingInfo();
+            copyFT1info();
             m_rootTupleSvc->storeRowFlag(true);
     }
-    
     return sc;
 }
 //------------------------------------------------------------------------------
@@ -354,5 +432,22 @@ StatusCode meritAlg::finalize() {
     delete m_fm;
     delete m_ctree;
     return StatusCode::SUCCESS;
+}
+
+//------------------------------------------------------------------------------
+//                               meritAlg::TTree implementation
+//------------------------------------------------------------------------------
+meritAlg::TTree::TTree(
+                       INTupleWriterSvc* rootTupleSvc, 
+                       std::string treeName,  
+                       std::vector<const char* >leaf_names)
+{
+    m_values.resize(leaf_names.size());
+    int i=0;
+    for( std::vector<const char*>::const_iterator  it = leaf_names.begin();
+        it!=leaf_names.end(); 
+        ++it){
+        rootTupleSvc->addItem(treeName,  *it,  &m_values[i++]);
+    }
 }
 

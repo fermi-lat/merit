@@ -2,10 +2,11 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.36 2003/09/29 00:15:00 burnett Exp $
+ * $Id: release.notes,v 1.37 2003/09/29 03:05:19 burnett Exp $
  *
- *  v6r10p1 THB  28-oct-03 allow for no pointing info
- *  v6r10   THB  28-oct-03 implement output of exposure data; add new background rejection tuple item
+ *  v6r11   THB  02-oct-03 FT1 start
+ *  v6r10p1 THB  28-sep-03 allow for no pointing info
+ *  v6r10   THB  28-sep-03 implement output of exposure data; add new background rejection tuple item
  *  v6r9p2  THB  09-sep-03 fix code	 in emulation of IM cuts
  *  v6r9p1  THB  08-sep-03 fix test program to run PSF cuts
  *  v6r9    THB  07-sep-03 new CT's for PSF analysis
