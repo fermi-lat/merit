@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Mon Mar  3 21:49:00 PST 2003
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+start adapting to WBAtuple, AKA AnalysisNtuple
+    *
+------------------------------------------------------------
 User: burnett  Tue Jan 14 19:02:19 PST 2003
 merit/src
 
