@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Nov 26 04:51:09 PST 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx 
+Log Message:
+had the order for the categories in one of the many trees wrong.
+    *
+------------------------------------------------------------
 User: burnett  Tue Nov 25 18:16:44 PST 2003
 merit/src/test
 
