@@ -1,6 +1,6 @@
 package merit
-version v6r14p9
-# $Id: requirements,v 1.71 2004/02/06 12:49:00 burnett Exp $
+version v6r14p9em0
+# $Id: requirements,v 1.72 2004/08/03 01:18:35 golpa Exp $
 
 branches doc
 
@@ -20,6 +20,7 @@ use GuiSvc v3*
 use OnboardFilter v1*
 
 use facilities *
+use LdfEvent *
 
 # read/ write ROOT trees (any old ROOT will do)
 use RootPolicy *

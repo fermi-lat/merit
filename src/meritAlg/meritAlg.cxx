@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.71 2004/02/06 12:49:01 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.72 2004/08/03 01:17:48 golpa Exp $
 */
 // Include files
 
@@ -23,7 +23,8 @@
 #include "Event/MonteCarlo/Exposure.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
-
+#include "LdfEvent/Gem.h"
+#include "LdfEvent/EventSummaryData.h"
 
 #include "AnalysisNtuple/IValsTool.h"
 
@@ -162,6 +163,11 @@ private:
   double m_ft1energy;
   double m_ft1theta,m_ft1phi,m_ft1ra,m_ft1dec,m_ft1zen,m_ft1azim;
   double m_ft1convpointx,m_ft1convpointy,m_ft1convpointz,m_ft1convlayer;
+
+  // Gem summary (only 8 bits set)
+  double m_gemCondition;
+  // So far only 1 bit set
+  double m_eventFlags;
 
   /// Common interface to analysis tools
   std::vector<IValsTool*> m_toolvec;
@@ -308,6 +314,9 @@ StatusCode meritAlg::initialize() {
   new TupleItem("FT1ConvPointY",        &m_ft1convpointy);
   new TupleItem("FT1ConvPointZ",        &m_ft1convpointz);
   new TupleItem("FT1ConvLayer",         &m_ft1convlayer);
+
+  new TupleItem("GemConditionSummary",  &m_gemCondition);
+  new TupleItem("EventFlags",  &m_eventFlags);
 
 
   // add some of the AnalysisNTuple items
@@ -497,7 +506,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-  out << "Merit tuple, " << "$Revision: 1.71 $" << std::endl;
+  out << "Merit tuple, " << "$Revision: 1.72 $" << std::endl;
 
   for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
     const TupleItem& item = **tit;
@@ -530,6 +539,9 @@ StatusCode meritAlg::execute() {
   SmartDataPtr<Event::EventHeader>   header(eventSvc(),    EventModel::EventHeader);
   SmartDataPtr<Event::MCEvent>     mcheader(eventSvc(),    EventModel::MC::Event);
 
+  SmartDataPtr<LdfEvent::Gem> gem(eventSvc(), "/Event/Gem");
+  SmartDataPtr<LdfEvent::EventSummaryData> eventSummary(eventSvc(), "/Event/EventSummary");
+
   m_run = header->run();
   m_mc_src_id = mcheader->getSourceId();
   m_event = mcheader->getSequence();
@@ -556,6 +568,10 @@ StatusCode meritAlg::execute() {
   if(filterAlgStatus){
     m_filterAlgStatus=(double)filterAlgStatus->getVetoWord();
   }
+  
+  m_gemCondition = gem==0 ? -1 : gem->conditionSummary();
+  m_eventFlags = eventSummary==0 ? 0 : eventSummary->eventFlags();
+
   m_ctree->execute();
   m_fm->execute();
 
