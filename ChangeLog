@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: lsrea  Sat Oct 12 15:38:20 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+fix bug: skirt variables now retrieved from TkrMeritTool
+    *
+------------------------------------------------------------
 User: burnett  Thu Oct  3 01:32:52 PDT 2002
 merit/src/meritAlg
 
