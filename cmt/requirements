@@ -1,5 +1,5 @@
 package merit
-version v5
+version v5r1
 
 use GlastSvc v8*
 use Event v8*
@@ -20,5 +20,5 @@ macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 macro_append merit_headers "" WIN32 " analysis/*.h"
 library merit  *.cxx analysis/*.cxx meritAlg/*.cxx Dll/*.cxx ${merit_headers}
 
-private
+
 

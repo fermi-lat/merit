@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.1 2001/03/23 19:52:02 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.2 2002/05/26 03:35:11 burnett Exp $
 
 // Include files
 
@@ -17,6 +17,8 @@
 
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
 #include "Event/Recon/TkrRecon/TkrFitTrackCol.h"
+#include "Event/Recon/TkrRecon/TkrVertex.h"
+#include "Event/Recon/TkrRecon/TkrVertexCol.h"
 #include "Event/Recon/CalRecon/CalCluster.h"
 
 #include "FigureOfMerit.h"
@@ -39,6 +41,7 @@ private:
     void processTDS(
         const Event::McParticleCol& particles, 
         const Event::TkrFitTrackCol& tracks,
+        const Event::TkrVertexCol& vertices,
         const Event::CalClusterCol& clusters);
 
     FigureOfMerit* m_fm;
@@ -46,8 +49,12 @@ private:
     std::string m_cuts; 
     
     // places to put stuff found in the TDS
-    float m_mce, m_trig, m_first_hit, m_angle_diff, m_recon_energy;
+    float m_mce, m_trig, 
+        m_first_hit, 
+        m_angle_diff, 
+        m_recon_energy;
     float m_tracks;
+    float m_vertices;
     int m_generated;
 };
 
@@ -105,9 +112,11 @@ StatusCode meritAlg::execute() {
 
     SmartDataPtr<Event::TkrFitTrackCol> tracks(eventSvc(), EventModel::TkrRecon::TkrFitTrackCol);
 
+    SmartDataPtr<Event::TkrVertexCol> vertices(eventSvc(), EventModel::TkrRecon::TkrVertexCol);
+
     SmartDataPtr<Event::CalClusterCol> clusters(eventSvc(), EventModel::CalRecon::CalClusterCol);
 
-    processTDS( particles, tracks, clusters);
+    processTDS( particles, tracks, vertices, clusters);
 
     m_fm->execute();
 
@@ -115,6 +124,7 @@ StatusCode meritAlg::execute() {
 }
 void meritAlg::processTDS(const Event::McParticleCol& particles, 
                           const Event::TkrFitTrackCol& tracks,
+                          const Event::TkrVertexCol& vertices,
                           const Event::CalClusterCol& clusters)
 {
     
@@ -130,7 +140,12 @@ void meritAlg::processTDS(const Event::McParticleCol& particles,
     // assume first track is what we want. (must const cast)
     Event::TkrFitTrackCol& mytracks = const_cast<Event::TkrFitTrackCol&>(tracks);
     m_tracks = tracks.getNumTracks();
+
     
+    // assume first vertex it what we want. (must const cast)
+    Event::TkrVertexCol& myvertices = const_cast<Event::TkrVertexCol&>(vertices);
+    m_vertices =  vertices.getNumVertices();
+
     // process the cluster(s)
     if( clusters.num() >0 ){
         m_recon_energy = clusters.getCluster(0)->getEnergySum()*1e-3; // convert to GeV
@@ -139,16 +154,26 @@ void meritAlg::processTDS(const Event::McParticleCol& particles,
     }
     
     if( m_tracks==0) return;
-    
+
+    //
+    //-------tracks --------------
+    //
     Event::TkrFitCol::const_iterator it = mytracks.getTrackIterBegin();
     
     const Event::TkrFitTrack& track = **it;
     
     const Event::TkrFitPar fitpar=track.getTrackPar();
-    Point p = track.getPosition();
-    Vector dir = track.getDirection();
+    //
+    //-----vertices ----------
+    //
+    if( m_vertices==0) return;
+//    Event::TkrVertexCol::const_iterator vit = myvertices.getVertexIterBegin();
+
+    const Event::TkrVertex& vertex = *myvertices.getVertex(0);
+    Point p = vertex.getPosition();
+    Vector dir = vertex.getDirection();
     
-    
+    m_first_hit = static_cast<float>(vertex.getLayer());
     // get difference
     m_angle_diff = acos( Hep3Vector(primary.initialFourMomentum()).unit() * dir );
     
