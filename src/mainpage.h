@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.4 2002/05/30 02:30:33 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.5 2002/05/31 17:48:02 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -75,6 +75,12 @@ Analysis cuts: nA
             Combined FOM :   2416 cm
 
 </pre>
+
+  @section Properties Properties
+  @param  meritAlg.cuts ["LnA"]
+  @param  meritAlg.generated [10000]
+   @param meritAlg.RootFilename  [""]
+
 
   <hr>
   \section notes release notes

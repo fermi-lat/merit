@@ -1,5 +1,8 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.30 2002/12/19 14:43:46 heather Exp $
+/** @file meritAlg.cxx
+    @brief Declaration and implementation of mertAlg
 
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.31 2003/03/04 05:49:00 burnett Exp $
+*/
 // Include files
 
 #include "GaudiKernel/Algorithm.h"
@@ -19,14 +22,6 @@
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/MCEvent.h"
 
-
-#include "Event/Recon/TkrRecon/TkrVertex.h"
-#include "Event/Recon/CalRecon/CalCluster.h"
-#include "Event/Recon/CalRecon/CalXtalRecData.h"
-#include "Event/Recon/AcdRecon/AcdRecon.h"
-
-#include "GlastSvc/Reco/IReconTool.h"
-
 #include "AnalysisNtuple/IValsTool.h"
 
 #include "FigureOfMerit.h"
@@ -36,8 +31,6 @@
 #include "gui/DisplayControl.h"
 #include "gui/PrintControl.h"
 #include "gui/GuiMgr.h"
-
-#include "TkrVtxCutVals.h"
 
 #include "MeritRootTuple.h"
 
@@ -49,6 +42,10 @@
 static std::string  default_cuts("LnA");
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/** @class meritAlg
+
+
+  */
 class meritAlg : public Algorithm {
     
 public:
@@ -60,17 +57,6 @@ public:
 
     void printOn(std::ostream& out)const;
 private:
-    void processTDS(
-        const Event::EventHeader & header,
-        
-        const Event::TkrVertexCol& tracks);
-    
-    void particleReco( const Event::McParticleCol& particles);
-
-    void clusterReco(const Event::CalClusterCol& clusters, const Event::CalXtalRecCol&);
-
-    void tileReco(const Event::AcdRecon& );
-    void processMCheader(const Event::MCEvent&);
     
     void calculate(); 
 
@@ -85,44 +71,9 @@ private:
 
     // places to put stuff found in the TDS
     double m_event, m_mc_src_id;
-    double m_mce, m_trig, m_angle_diff, m_recon_energy;
     double m_time;
 
-    double m_mc_xdir, m_mc_ydir, m_mc_zdir;
-
-    // from track analysis
-    double m_tracks;
-    double m_first_hit;
-    double m_tkr_gamma_xdir, m_tkr_gamma_ydir, m_tkr_gamma_zdir;
-
-    double m_tkr_qual, m_tkr_t_angle, m_tkr_fit_kink;
-    double m_surplus_hit_ratio, m_tkr_skirtX, m_tkr_skirtY;
-    double m_tkr_eneslope[2]; 
-
-    // set by cal analysis
-    double m_cal_energy_deposit;
-    double m_no_xtals;
-    double m_no_xtals_trunc;
-    double m_cal_xtal_ratio;
-    double m_cal_transv_rms;
-    double m_cal_long_rms;
-    double m_calFitErrNrm;
-
-
-    double m_cal_elayer[8];
-    double m_cal_z;
-
-    // set by acd analysis
-    double m_acd_doca;
-    double m_doca[5];
-    double m_acd_actdist_top;
-    double m_acd_actdist[5];
-    // index for these guys is top, side row 0, side row 1, side row 2
-    double m_acd_tileCount[4];
-    double m_acd_deposit_max[4];
-
     int m_generated;
-    Hep3Vector m_incident_dir;
 
     /// Common interface to analysis tools
     std::vector<IValsTool*> m_toolvec;
@@ -158,6 +109,10 @@ StatusCode meritAlg::initialize() {
     title <<  "TDS: gen(" << m_generated <<  ")";
     m_tuple = new Tuple(title.str());
 
+   // define tuple items
+    new TupleItem("Event_ID",       &m_event);
+    new TupleItem("MC_src_Id",      &m_mc_src_id);
+    new TupleItem("elapsed_time",   &m_time);
 
     
     // set up tools
@@ -207,78 +162,23 @@ StatusCode meritAlg::initialize() {
         }
     }
 
-    
-    
+    // define some aliases to start, for the transition
+    //                 Atwood             old
+    m_tuple->add_alias("McEnergy",        "MC_Energy");
+    m_tuple->add_alias("McDirErr",        "MC_Gamma_Err");
+    m_tuple->add_alias("TkrEnergyCorr",   "REC_CsI_Corr_Energy");
+    m_tuple->add_alias("TkrNumTracks",    "TKR_No_Tracks");
+    m_tuple->add_alias("GltWord",         "trig_bits");
+
+    m_tuple->add_alias("Tkr1_1stLayer",    "TKR_First_XHit");
+
+    m_tuple->add_alias("VtxXDir",         "TKR_Gamma_xdir");
+    m_tuple->add_alias("VtxYDir",         "TKR_Gamma_ydir");
+    m_tuple->add_alias("VtxZDir",         "TKR_Gamma_zdir");
+
     static double dummy = -99; // flag for defined, not implemented
 
-    // define tuple items
-    new TupleItem("Event_ID",       &m_event);
-    new TupleItem("MC_src_Id",      &m_mc_src_id);
-    new TupleItem("MC_Energy",      &m_mce);
-    new TupleItem("MC_Gamma_Err",   &m_angle_diff);
-    new TupleItem("MC_xdir",        &m_mc_xdir);
-    new TupleItem("MC_ydir",        &m_mc_ydir);
-    new TupleItem("MC_zdir",        &m_mc_zdir);
-    new TupleItem("elapsed_time",   &m_time);
-
-    new TupleItem("trig_bits",      &m_trig);
-    new TupleItem("TKR_No_Tracks",  &m_tracks);
-    new TupleItem("TKR_First_XHit", &m_first_hit);
-    new TupleItem("TKR_Gamma_xdir", &m_tkr_gamma_xdir);
-    new TupleItem("TKR_Gamma_ydir", &m_tkr_gamma_ydir);
-    new TupleItem("TKR_Gamma_zdir", &m_tkr_gamma_zdir);
-    new TupleItem("TKR_qual",       &m_tkr_qual);
-    new TupleItem("TKR_t_angle",    &m_tkr_t_angle);
-    new TupleItem("TKR_Fit_Kink",   &m_tkr_fit_kink);
-    new TupleItem("TKR_xeneXSlope", &m_tkr_eneslope[0]);
-    new TupleItem("TKR_xeneYSlope", &m_tkr_eneslope[1]);
-    new TupleItem("TKR_Zbottom",    &dummy);
-
-    new TupleItem("REC_Surplus_Hit_ratio", &m_surplus_hit_ratio);
-    new TupleItem("REC_Tkr_SkirtX",        &m_tkr_skirtX);
-    new TupleItem("REC_Tkr_SkirtY",        &m_tkr_skirtY);
-
-
-    new TupleItem("REC_CsI_Corr_Energy", &m_recon_energy);
-
-    new TupleItem("Cal_Energy_Deposit", &m_cal_energy_deposit);
-    new TupleItem("Cal_No_Xtals",     &m_no_xtals);
-    new TupleItem("Cal_No_Xtals_Trunc",&m_no_xtals_trunc);
-    new TupleItem("Cal_Xtal_Ratio",   &m_cal_xtal_ratio);
-    new TupleItem("CAL_long_rms",     &m_cal_long_rms);
-    new TupleItem("CAL_transv_rms",   &m_cal_transv_rms);
-    new TupleItem("CAL_Fit_errNrm",   &m_calFitErrNrm);
-
-    const std::string name_eLayer = "Cal_eLayer";
-    const char* digit[8]={"0","1","2","3","4","5","6","7"};
-    for (int layer=0; layer<8; layer++){
-        
-        new TupleItem(std::string("Cal_eLayer")+digit[layer],&m_cal_elayer[layer]);
-    }
-    new TupleItem("CAL_Z",           &m_cal_z);
-    new TupleItem("ACD_DOCA",        &m_acd_doca);
-    new TupleItem("ACD_TopDOCA",     &m_doca[0]);
-    new TupleItem("ACD_S0DOCA",      &m_doca[1]);
-    new TupleItem("ACD_S1DOCA",      &m_doca[2]);
-    new TupleItem("ACD_S2DOCA",      &m_doca[3]);
-    new TupleItem("ACD_Act_Dist",    &m_acd_actdist[0]);
-    new TupleItem("REC_Act_Dist_SideRow0",&m_acd_actdist[1]);
-    new TupleItem("REC_Act_Dist_SideRow1",&m_acd_actdist[2]);
-    new TupleItem("REC_Act_Dist_SideRow2",&m_acd_actdist[3]);
-    new TupleItem("ACD_TileCount",   &m_acd_tileCount[0]);
-    new TupleItem("ACD_No_SideRow0", &m_acd_tileCount[1]);
-    new TupleItem("ACD_No_SideRow1", &m_acd_tileCount[2]);
-    new TupleItem("ACD_No_SideRow2", &m_acd_tileCount[3]);
-    new TupleItem("ACD_Deposit_Max_Top", &m_acd_deposit_max[0]);
-    new TupleItem("ACD_Deposit_Max0", &m_acd_deposit_max[0]);
-    new TupleItem("ACD_Deposit_Max1", &m_acd_deposit_max[1]);
-    new TupleItem("ACD_Deposit_Max2", &m_acd_deposit_max[2]);
-    new TupleItem("ACD_Deposit_Max3", &m_acd_deposit_max[3]);
-
-    // not implemented at all
-    new TupleItem("ACD_Throttle_Bits",     &dummy);
-
-    //now make the parallel ROOT tuple
+     //now make the parallel ROOT tuple
     if(!m_root_filename.value().empty() ){
         log << MSG::INFO << "OPening " << m_root_filename << " to write ROOT tuple" << endreq;
         m_root_tuple=new MeritRootTuple(m_tuple, m_root_filename);
@@ -286,10 +186,6 @@ StatusCode meritAlg::initialize() {
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
     
-    // setup defaults in case no primary info
-    m_incident_dir=Hep3Vector(0,0,-1);
-    m_mce = 0.1f;
-
     m_pToolSvc = 0;
     sc = service("ToolSvc", m_pToolSvc, true);
     if (!sc.isSuccess ()){
@@ -324,7 +220,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.30 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.31 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -341,265 +237,17 @@ StatusCode meritAlg::execute() {
     calculate(); // setup Bill's tuple items
     SmartDataPtr<Event::EventHeader>   header(eventSvc(),    EventModel::EventHeader);
     SmartDataPtr<Event::MCEvent>     mcheader(eventSvc(),    EventModel::MC::Event);
-    SmartDataPtr<Event::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
-    SmartDataPtr<Event::TkrVertexCol>  tracks(eventSvc(),    EventModel::TkrRecon::TkrVertexCol);
-    SmartDataPtr<Event::CalClusterCol> clusters(eventSvc(),  EventModel::CalRecon::CalClusterCol);
-    SmartDataPtr<Event::CalXtalRecCol> xtalrecs(eventSvc(),  EventModel::CalRecon::CalXtalRecCol);
-    SmartDataPtr<Event::AcdRecon> acdrec(eventSvc(),         EventModel::AcdRecon::Event);
-    
-    if( particles!=0 )particleReco(particles);
 
-    processMCheader( mcheader);
-    processTDS( header,  tracks);
-    clusterReco(clusters, xtalrecs);
+    m_mc_src_id = mcheader->getSourceId();
+    m_event = mcheader->getSequence();
+    m_time = header->time();
+    m_event = header->event();
 
-    tileReco(acdrec);
-    
     if(m_root_tuple)m_root_tuple->fill();
 
     m_fm->execute();
     
     return sc;
-}
-//------------------------------------------------------------------------------
-void meritAlg::processMCheader(const Event::MCEvent& header){
-
-    m_mc_src_id = header.getSourceId();
-    m_event = header.getSequence();
-}
-//------------------------------------------------------------------------------
-void meritAlg::particleReco(const Event::McParticleCol& particles)
-{
-    if( ! particles.empty() ){
-       // assume first mc particle is the primary.   
-       const Event::McParticle& primary= **particles.begin();
-       m_mce = primary.initialFourMomentum().e() - primary.initialFourMomentum().mag();
-       m_incident_dir = Hep3Vector(primary.initialFourMomentum()).unit();
-       m_mc_xdir = m_incident_dir.x();
-       m_mc_ydir = m_incident_dir.y();
-       m_mc_zdir = m_incident_dir.z();
-    }
-    
-}
-//------------------------------------------------------------------------------
-void meritAlg::processTDS(const Event::EventHeader& header,
-                          const Event::TkrVertexCol& tracks)
-{    
-    MsgStream   log( msgSvc(), name() );
-    
-    m_time = header.time();
-    m_event = header.event();
- 
-    m_tracks = tracks.size();
-    m_trig = header.trigger();
-    
-    if(m_tracks==0) {
-        m_angle_diff = 1.0;
-    }else {
-        const Event::TkrVertex& track = *(tracks.front());
-        
-        const Event::TkrFitPar fitpar=track.getTrackPar();
-        Point p = track.getPosition();
-        Vector dir = track.getDirection();
-        
-        m_tkr_gamma_xdir = dir.x();
-        m_tkr_gamma_ydir = dir.y();
-        m_tkr_gamma_zdir = dir.z();
-
-        // get difference from incident mc direction: allow either convention on direction of 
-        // output.
-        m_angle_diff = acos( fabs( m_incident_dir * dir) );
-        
-        // conversion layer
-        m_first_hit = track.getLayer();
-
-        // special code from T. Usher
-        TkrVtxCutVals cuts(&track);
-        
-        m_tkr_qual= cuts.getBestQuality();
-        m_tkr_t_angle = cuts.getTangle();
-        m_tkr_fit_kink = cuts.getFitKink();
-
-        IReconTool* itool;
-        StatusCode sc = m_pToolSvc->retrieveTool("TkrMeritTool", itool);
-        if( sc.isFailure() ) {
-            log << MSG::ERROR << "Unable to find a test tool" << endreq;
-        }
-
-        double surplus_hit_ratio = -1;
-        double tkr_skirtX = -9999.;
-        double tkr_skirtY = -9999.;
-
-        if( (itool->get("REC_Surplus_Hit_Ratio", surplus_hit_ratio)).isFailure()
-            || (itool->get("REC_Tkr_SkirtX", tkr_skirtX)).isFailure()
-            || (itool->get("REC_Tkr_SkirtY", tkr_skirtY)).isFailure() ) 
-        {
-            log << MSG::ERROR << 
-                "Unable to retrieve TkrMeritTool variables" << endreq;
-            log << MSG::ERROR << "Set to default" << endreq;
-        }
-
-        log<< MSG::DEBUG << "From TkrMeritTool: " << surplus_hit_ratio << " "
-            << tkr_skirtX << " " << tkr_skirtY << endreq;
-
-        m_surplus_hit_ratio = (double) surplus_hit_ratio;
-        m_tkr_skirtX        = (double) tkr_skirtX;
-        m_tkr_skirtY        = (double) tkr_skirtY;
-
-        m_tkr_eneslope[0] =  -999.;
-        m_tkr_eneslope[1] =  -999.; //TODO
-
-
-        // this is Bill's estimate based on CAL and multiple scattering
-        double energy= track.getEnergy();
-        m_recon_energy = (double) energy;
-    }
-    
-
-}
-//------------------------------------------------------------------------------
-void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::CalXtalRecCol& crl)
-{
-    // process the cluster(s)
-    if( clusters.num()==0 ){
-        m_recon_energy = 0;
-        return;
-    }
-    // code from the former CalNtupleAlg.cxx, slightly modified for new interface access names.
-    
-    double fit_ener,fitalpha,fitlambda,profchi2,eleak,start;
-    double energy_sum;
-    
-    
-    const Event::CalCluster* cl = clusters.front();
-    
-    energy_sum = cl->getEnergySum();
-    
-    //stop writing NANs to the tuple
-    double zpos = -1000.0;
-    double xpos = -1000.0;
-    double ypos = -1000.0;
-    
-    zpos = (cl->getPosition()).z(); 
-    xpos = (cl->getPosition()).x();
-    ypos = (cl->getPosition()).y();
-    
-    const std::vector<double>& eneLayer = cl->getEneLayer();
-    
-    const std::vector<Vector>& posLayer = cl->getPosLayer();
-    
-    double trans_rms = cl->getRmsTrans();
-    double long_rms = cl->getRmsLong();
-    Vector caldir = cl->getDirection();
-    double caltheta = -1000.0;
-    double calphi = -1000.0;
-    if(fabs(caldir.z())<1.){ caltheta=acos(caldir.z());
-    calphi=double(M_PI/2.);
-    if(caldir.x()!=0.) calphi = atan(caldir.y()/caldir.x());
-    }
-    fit_ener = cl->getFitEnergy();
-    profchi2 = cl->getProfChisq();
-    fitalpha = cl->getCsiAlpha();
-    fitlambda = cl->getCsiLambda();
-    start = cl->getCsiStart();
-    eleak = cl->getEnergyLeak();
-    double transvOffset = cl->getTransvOffset();
-    
-    double eFactor = .26 + .35 / (cl->getEnergyCorrected());
-    double calFitErrNrm = transvOffset/eFactor;
-    
-    
-    
-    // set tuple items for this cluster. (What if more????)
-    m_cal_z=zpos;
-    m_cal_energy_deposit = energy_sum;
-    std::copy(eneLayer.begin(), eneLayer.end(), m_cal_elayer);
-    m_calFitErrNrm = calFitErrNrm;
-    m_cal_transv_rms = trans_rms;
-    m_cal_long_rms = long_rms;
-    
-    
-    
-    int no_xtals=0;
-    int no_xtals_trunc=0;
-    for( Event::CalXtalRecCol::const_iterator jlog=crl.begin(); jlog != crl.end(); ++jlog){
-
-        const Event::CalXtalRecData& recLog = **jlog;
-        
-        double eneLog = recLog.getEnergy();
-        if(eneLog>0)no_xtals++;
-        if(eneLog>0.01*energy_sum)no_xtals_trunc++;
-    }
-    double cal_xtal_ratio= (no_xtals>0) ? double(no_xtals_trunc)/no_xtals : 0;
-    // set tuple items
-    
-    m_no_xtals = no_xtals;
-    m_no_xtals_trunc = no_xtals_trunc;
-    m_cal_xtal_ratio = cal_xtal_ratio;
-    
-    // use 
-    //m_recon_energy = clusters.getCluster(0)->getEnergySum()*1e-3; // convert to GeV
-    
-}
-namespace {
-
-    // predicate to identify top, (row -1) or  side  (row 0-2)
-    class acd_row { 
-    public:
-        acd_row(int row):m_row(row){}
-        bool operator() ( std::pair<idents::AcdId ,double> entry){
-            return m_row==-1? entry.first.face() == 0 : entry.first.row()==m_row;
-        }
-        int m_row;
-    };
-    // used by accumulate to get maximum for a given row
-    class acd_max_energy { 
-    public:
-        acd_max_energy(int row):m_row(row), m_acd_row(row){}
-        double operator()(double energy, std::pair<idents::AcdId ,double> entry) {
-            return m_acd_row(entry)? std::max(energy, entry.second) : energy;
-        }
-        int m_row;
-        acd_row m_acd_row;
-    };
-}
-//------------------------------------------------------------------------------
-void meritAlg::tileReco(const Event::AcdRecon& acd)
-{
-    m_acd_doca = acd.getDoca();
-    m_acd_tileCount[0] = acd.getTileCount(); // save total, not top.
-
-    const std::vector<double> & doca = acd.getRowDocaCol();
-    
-    // get the map of energy vs tile id: have to construct from two parallel vectors
-    const std::vector<double> energies = acd.getEnergyCol();
-    const std::vector<idents::AcdId>& ids = acd.getIdCol();
-    std::vector<double>::const_iterator eit = energies.begin();
-
-    std::map<idents::AcdId, double> emap;
-    for( std::vector<idents::AcdId>::const_iterator idit = ids.begin(); 
-    idit != ids.end() && eit !=energies.end(); ++idit, ++ eit){
-        emap[*idit]=*eit;
-    }
-
-
-    // use acd_row predicate to count number of tiles per side row
-    if(true)for( int row = 0; row<3; ++row){ 
-        m_acd_tileCount[row+1] = std::count_if(emap.begin(), emap.end(), acd_row(row) );
-    }
-
-    // use the acd_max_energy function object here
-    if(true)for( int row = -1; row<3; ++row){ 
-        double emax=0;
-        m_acd_deposit_max[row+1]= std::accumulate(emap.begin(), emap.end(), emax, acd_max_energy(row));
-    }
-
-    const std::vector<double> & adist = acd.getRowActDistCol();
-    int nd = doca.size();
-    std::copy(doca.begin(), doca.end(), m_doca);
-    std::copy(adist.begin(), adist.end(), m_acd_actdist);
-
-
 }
 //------------------------------------------------------------------------------
 StatusCode meritAlg::finalize() {

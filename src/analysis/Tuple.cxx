@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.6 2002/09/02 03:06:39 burnett Exp $
+// $Id: Tuple.cxx,v 1.7 2003/03/04 05:49:00 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -244,6 +244,18 @@ std::ostream& operator<< (std::ostream& out, const TupleItem& t)
    out << t.name() << '=' << *t.m_pdatum;
    return out;
 }
+
+void Tuple::add_alias(std::string name1, std::string name2)
+{
+    if( find( name1) == end() ){
+        std::stringstream  errmsg;
+        errmsg << "Tuple::add_alias: did not find '" << name1 << "' in the tuple\n";
+        std::cerr << errmsg.str() << std::endl;
+        throw (errmsg.str());
+    }
+    m_alias_list[name2]=name1;
+}
+
 const TupleItem*
 Tuple::tupleItem(const std::string& name)const
 {
@@ -251,6 +263,17 @@ Tuple::tupleItem(const std::string& name)const
     Tuple::const_iterator it = find(name);
     // compare lowercase only
     if( it != end() ) return *it;
+
+    // try alias
+    std::map<std::string, std::string>::const_iterator sit=m_alias_list.find(name);
+    if( sit != m_alias_list.end() ) {
+        const std::string& alias= sit->second;
+        it = find( alias );
+        if( it != end() ) return *it;
+    }
+
+
+    // here if not found
     std::stringstream  errmsg;
     errmsg << "Sorry, did not find '" << name << "' in the tuple\n";
     std::cerr << errmsg.str() << std::endl;
