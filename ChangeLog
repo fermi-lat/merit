@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Dec  9 20:41:48 PST 2003
+merit/src
+
+Modified Files:
+	PruneTree.cxx PruneTree.h 
+Log Message:
+all ready except for preclassification logic
+    *
+------------------------------------------------------------
 User: burnett  Tue Dec  9 16:34:28 PST 2003
 merit/src
 
