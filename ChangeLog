@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: srobinsn  Sat Dec 21 13:44:57 PST 2002
+merit/src
+
+Modified Files:
+	MultiPSF.cxx PSFanalysis.cxx PSFanalysis.h 
+Added Files:
+	PSFRootFit.cxx PSFRootFit.h 
+Log Message:
+lowercase issue fixed in multiPSF, PSFRootFit added to fit PSF using root, larger tuple file added with new (MeV) energy scale, PSFAnalysis uses new energy scale.
+
+    *
+------------------------------------------------------------
 User: srobinsn  Sat Dec 21 13:44:56 PST 2002
 merit/cmt
 
