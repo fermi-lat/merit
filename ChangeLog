@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Nov 24 11:18:14 PST 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx ClassificationTree.h 
+Log Message:
+add method to determine if vertex fit is to be used.
+    *
+------------------------------------------------------------
 User: burnett  Sat Nov 22 07:34:55 PST 2003
 merit/src/app
 
