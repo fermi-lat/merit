@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.34 2003/03/15 17:59:34 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.35 2003/05/06 05:08:22 burnett Exp $
 */
 // Include files
 
@@ -58,8 +58,11 @@ public:
 
     void printOn(std::ostream& out)const;
 private:
-    
+   
+    StatusCode setupTools();
+
     void calculate(); 
+   
 
     FigureOfMerit* m_fm;
     Tuple*   m_tuple;
@@ -93,42 +96,22 @@ Algorithm(name, pSvcLocator), m_tuple(0), m_root_tuple(0) {
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
-    declareProperty("IM_filename", m_IM_filename="/common/IM_files/PSF_Analysis_11.imw");
+    declareProperty("IM_filename", m_IM_filename="/common/IM_files/PSF_Analysis_12.imw");
 }
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-StatusCode meritAlg::initialize() {
-    StatusCode  sc = StatusCode::SUCCESS;
-    
+StatusCode meritAlg::setupTools() {
     MsgStream log(msgSvc(), name());
-    log << MSG::INFO << "initialize" << endreq;
-    
-    // Use the Job options service to get the Algorithm's parameters
-    setProperties();
-    
-
-    // setup the pseudo-tuple
-    std::stringstream title;
-    title <<  "TDS: gen(" << m_generated <<  ")";
-    m_tuple = new Tuple(title.str());
-
-   // define tuple items
-    new TupleItem("Event_ID",       &m_event);
-    new TupleItem("MC_src_Id",      &m_mc_src_id);
-    new TupleItem("elapsed_time",   &m_time);
-
-    
-    // set up tools
+   // set up tools
     IToolSvc* pToolSvc = 0;
     
-    sc = service("ToolSvc", pToolSvc, true);
+    StatusCode sc = service("ToolSvc", pToolSvc, true);
     if (!sc.isSuccess ()){
         log << MSG::ERROR << "Can't find ToolSvc, will quit now" << endreq;
         return StatusCode::FAILURE;
     }
     
-    const char * toolnames[6] = {"McValsTool", "GltValsTool", "TkrValsTool", 
-        "VtxValsTool", "CalValsTool", "AcdValsTool"};
+    const char * toolnames[] = {"McValsTool", "GltValsTool", "TkrValsTool", 
+        "VtxValsTool", "CalValsTool", "AcdValsTool", "EvtValsTool"};
     
     for( int i =0; i< sizeof(toolnames)/sizeof(void*); ++i){
         m_toolvec.push_back(0);
@@ -164,6 +147,31 @@ StatusCode meritAlg::initialize() {
             return StatusCode::FAILURE;
         }
     }
+    return StatusCode::SUCCESS;
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+StatusCode meritAlg::initialize() {
+    StatusCode  sc = StatusCode::SUCCESS;
+    
+    MsgStream log(msgSvc(), name());
+    log << MSG::INFO << "initialize" << endreq;
+    
+    // Use the Job options service to get the Algorithm's parameters
+    setProperties();
+    
+
+    // setup the pseudo-tuple
+    std::stringstream title;
+    title <<  "TDS: gen(" << m_generated <<  ")";
+    m_tuple = new Tuple(title.str());
+
+   // define tuple items
+    new TupleItem("Event_ID",       &m_event);
+    new TupleItem("MC_src_Id",      &m_mc_src_id);
+    new TupleItem("elapsed_time",   &m_time);
+
+    if( setupTools().isFailure()) return StatusCode::FAILURE;
+
      //now make the parallel ROOT tuple
     if(!m_root_filename.value().empty() ){
         log << MSG::INFO << "Opening " << m_root_filename << " to write ROOT tuple" << endreq;
@@ -181,13 +189,6 @@ StatusCode meritAlg::initialize() {
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
     
-    m_pToolSvc = 0;
-    sc = service("ToolSvc", m_pToolSvc, true);
-    if (!sc.isSuccess ()){
-        log << MSG::INFO << "Can't find ToolSvc, will quit now" << endreq;
-        return StatusCode::FAILURE;
-    }
-
     // setup tuple output via the print service
         // get the Gui service
     IGuiSvc* guiSvc=0;
@@ -215,7 +216,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.34 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.35 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;

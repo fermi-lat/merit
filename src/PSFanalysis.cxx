@@ -28,7 +28,7 @@ PSFanalysis::PSFanalysis(const Tuple& t, double emin, double emax)
 , RebinHist("PSF", 0, 3.0, 0.1 )
 , m_sigma(-1)
 , m_energy(t, "McEnergy", "energy")
-, m_first_layer(t, "Tkr1_1stLayer", "first hit layer")
+, m_first_layer(t, "Tkr1FirstLayer", "first hit layer")
 , m_emin(emin), m_emax(emax)
 {}
 
