@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Tue Dec 18 20:23:33 PST 2001
+merit/src
+
+Modified Files:
+	FigureOfMerit.cxx FigureOfMerit.h 
+Log Message:
+Updating to allow event by event processing from a root macro
+
+    *
+------------------------------------------------------------
 User: usher  Tue Dec 18 17:26:23 PST 2001
 merit/src/root
 
