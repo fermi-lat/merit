@@ -1,5 +1,19 @@
 ------------------------------------------------------------
 User: burnett  Sat Mar 15 09:59:33 PST 2003
+merit/src
+
+Modified Files:
+	EnergyAnalysis.cxx EnergyAnalysis.h FigureOfMerit.cxx 
+	FigureOfMerit.h LayerGroup.cxx MultiPSF.cxx PSFanalysis.cxx 
+	PSFtailCuts.cxx 
+Log Message:
+
+update names to agree with Leons revision of Bill's tuple.
+Replace the test root file
+Some clean-up.
+    *
+------------------------------------------------------------
+User: burnett  Sat Mar 15 09:59:33 PST 2003
 merit/doc
 
 Modified Files:
