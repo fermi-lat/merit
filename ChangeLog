@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Oct 16 15:33:29 PDT 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx ClassificationTree.h 
+Log Message:
+fix ad hoc background cuts to correspond to the Atwood worksheet
+    *
+------------------------------------------------------------
 User: hansl  Tue Oct 14 17:14:56 PDT 2003
 merit/src/meritAlg
 
