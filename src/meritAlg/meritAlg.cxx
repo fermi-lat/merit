@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.85 2004/12/20 23:17:04 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.86 2005/03/21 23:52:09 burnett Exp $
 */
 // Include files
 
@@ -298,15 +298,16 @@ StatusCode meritAlg::initialize() {
     addItem( "FilterAngSep",     &m_separation );
 
     /** @page ft1_info Event summary for generation of the FT1 record
-    see <a href="http://glast.gsfc.nasa.gov/ssc/dev/fits_def/definitionFT1.html>FT1 definition</a>
+    see <a href="http://glast.gsfc.nasa.gov/ssc/dev/fits_def/definitionFT1.html">FT1 definition</a>
 
-    - FT1EventId  RunNo*(number of events in file) + EventNo  
-    - FT1Energy   (MeV) estimate for energy  
-    - FT1Theta,FT1Phi  (deg) reconstructed direction with respect to instrument coordinate system      
-    - FT1Ra,FT1Dec  (deg) reconstructed direction in equatorial coordinates       
-    - FT1ZenithTheta,FT1EarthAzimuth (deg) reconstucted direction with respect to local zenith system
-    - FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ (m) conversion point of event, whether single track or vertex, 999 if no tracks
-
+    @verbatim
+     FT1EventId      RunNo*(number of events in file) + EventNo  
+     FT1Energy       (MeV) estimate for energy  
+     FT1Theta,FT1Phi (deg) reconstructed direction with respect to instrument coordinate system      
+     FT1Ra,FT1Dec    (deg) reconstructed direction in equatorial coordinates       
+     FT1ZenithTheta,FT1EarthAzimuth (deg) reconstucted direction with respect to local zenith system
+     FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ (m) conversion point of event, whether single track or vertex, 999 if no tracks
+@endverbatim
         */
     //FT1 INFO:
     addItem( "FT1EventId",          &m_ft1eventid);
@@ -395,20 +396,7 @@ void meritAlg::copyFT1Info(){
 
 
     MsgStream log(msgSvc(), name());
-
-    /** @page ft1_info Event summary for generation of the FT1 record
-    see <a href="http://glast.gsfc.nasa.gov/ssc/dev/fits_def/definitionFT1.html>FT1 definition</a>
-
-    - FT1EventId  RunNo*(number of events in file) + EventNo  
-    - FT1Energy   (MeV) estimate for energy  
-    - FT1Theta,FT1Phi  (deg) reconstructed direction with respect to instrument coordinate system      
-    - FT1Ra,FT1Dec  (deg) reconstructed direction in equatorial coordinates       
-    - FT1ZenithTheta,FT1EarthAzimuth (deg) reconstucted direction with respect to local zenith system
-    - FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ (m) conversion point of event, whether single track or vertex, 999 if no tracks
-
-    */
-
-    //eventId and Time are always defined
+   //eventId and Time are always defined
     m_ft1eventid = m_run * m_nbOfEvtsInFile + m_event;
 
     // Give default "guard" values in case there are no tracks in the event
@@ -487,7 +475,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.85 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.86 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
