@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.76 2004/08/27 01:16:59 heather Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.77 2004/08/28 13:54:21 burnett Exp $
 */
 // Include files
 
@@ -499,7 +499,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.76 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.77 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -563,7 +563,7 @@ StatusCode meritAlg::execute() {
     }
  
     m_gemCondition = gem==0? -1 : gem->conditionSummary();
-    // does not yet compile m_eventFlags = eventSummary==0 ? 0 : eventSummary->eventFlags();
+    m_eventFlags = eventSummary==0 ? 0 : eventSummary->eventFlags();
 
     m_ctree->execute();
     m_fm->execute();
