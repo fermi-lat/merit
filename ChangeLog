@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Mon May  5 22:08:22 PDT 2003
+merit/src/app
+
+Modified Files:
+	meritapp.cxx 
+Log Message:
+Using classification to add to tuple.
+    *
+------------------------------------------------------------
+User: burnett  Mon May  5 22:08:22 PDT 2003
 merit/cmt
 
 Modified Files:
