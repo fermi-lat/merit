@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.14 2003/11/25 15:57:47 cohen Exp $
+// $Id: Tuple.cxx,v 1.15 2003/11/25 23:11:12 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -8,6 +8,7 @@
 #include <cfloat>
 #include <sstream>
 #include <iomanip>
+#include <stdexcept>
 
 static inline void WARNING(const char* text){ std::cerr << text;}
 static inline void FATAL(const char* text) {
@@ -262,7 +263,7 @@ void Tuple::add_alias(std::string name1, std::string name2)
         std::stringstream  errmsg;
         errmsg << "Tuple::add_alias: did not find '" << name1 << "' in the tuple\n";
         std::cerr << errmsg.str() << std::endl;
-        throw (errmsg.str());
+        throw std::runtime_error(errmsg.str());
     }
     m_alias_list[name2]=name1;
 }
@@ -287,7 +288,7 @@ Tuple::tupleItem(const std::string& name)const
     // here if not found
     std::stringstream  errmsg;
     errmsg << "Did not find '" << name << "' in the tuple\n";
-    throw (errmsg.str());
+    throw std::runtime_error(errmsg.str());
     return *it;
 }
 
