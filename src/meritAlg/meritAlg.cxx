@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.41 2003/06/12 19:35:22 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.42 2003/06/13 16:03:17 burnett Exp $
 */
 // Include files
 
@@ -102,7 +102,7 @@ Algorithm(name, pSvcLocator), m_tuple(0), m_root_tuple(0) {
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
     declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
-    declareProperty("RootTreeName", m_treename="MeritTuple");
+    declareProperty("RootTreeName", m_treename="1"); // this is GLAST default tuple name
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::setupTools() {
@@ -227,7 +227,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.41 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.42 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
