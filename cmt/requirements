@@ -1,6 +1,6 @@
 package merit
-version v6r15p1
-# $Id: requirements,v 1.74 2004/08/24 18:48:32 burnett Exp $
+version v6r16
+# $Id: requirements,v 1.75 2004/08/26 05:00:19 lsrea Exp $
 
 branches doc
 
