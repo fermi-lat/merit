@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.55 2003/10/13 06:21:33 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.56 2003/10/14 20:45:46 cohen Exp $
 */
 // Include files
 
@@ -107,6 +107,7 @@ private:
     double m_statusHi, m_statusLo;
 
     int m_generated;
+    int m_warnNoFilterStatus;   // count WARNINGs: no FilterStatus found
 
     /// Common interface to analysis tools
     std::vector<IValsTool*> m_toolvec;
@@ -158,7 +159,7 @@ StatusCode meritAlg::setupTools() {
     const char * toolnames[] = {"McValsTool", "GltValsTool", "TkrValsTool", 
         "VtxValsTool", "CalValsTool", "AcdValsTool", "EvtValsTool"};
     
-    for( int i =0; i< sizeof(toolnames)/sizeof(void*); ++i){
+    for( int i =0; i< (int)(sizeof(toolnames)/sizeof(void*)); ++i){
         m_toolvec.push_back(0);
         sc = pToolSvc->retrieveTool(toolnames[i], m_toolvec.back());
         if( sc.isFailure() ) {
@@ -202,7 +203,8 @@ StatusCode meritAlg::initialize() {
    
     // Use the Job options service to get the Algorithm's parameters
     setProperties();
-    
+    m_warnNoFilterStatus = 0;   // Zero counter for warnings
+
     if(m_root_filename.value().empty()){
         log << MSG::WARNING << "file name was set, but is not used now" << endreq;
     }
@@ -224,7 +226,7 @@ StatusCode meritAlg::initialize() {
 
     // the tuple is made: create the classification object 
     try { 
-        const char * pkgpath = ::getenv("CLASSIFICATIONROOT");
+      //        const char * pkgpath = ::getenv("CLASSIFICATIONROOT");
         std::string path =  m_IM_filename.value(); 
         facilities::Util::expandEnvVar(&path);
         m_ctree = new  ClassificationTree(*m_tuple, log.stream(), path);
@@ -258,6 +260,7 @@ StatusCode meritAlg::initialize() {
         setupFT1info();
     }
 
+
     // setup tuple output via the print service
         // get the Gui service
     IGuiSvc* guiSvc=0;
@@ -282,7 +285,8 @@ void meritAlg::setupPointingInfo(){
 
     std::vector<const char* > names;
     const char * point_info_name[] = {"time","lat","lon","alt","posx","posy","posz","rax","decx","raz","decz"};
-    for( int i = 0; i< sizeof(point_info_name)/sizeof(void*); ++i){ names.push_back(point_info_name[i]); }
+    for( int i = 0; i< (int)(sizeof(point_info_name)/sizeof(void*)); ++i){ 
+         names.push_back(point_info_name[i]); }
     
     m_pointingTuple = new TTree( m_rootTupleSvc,  std::string(m_pointingTreeName),  names);
 }
@@ -476,7 +480,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.55 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.56 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -505,9 +509,16 @@ StatusCode meritAlg::execute() {
     if( filterStatus ){
         m_statusHi=filterStatus->getHigh();
         m_statusLo=filterStatus->getLow();
-    }else{
-        m_statusHi=m_statusLo=0;
-        log << MSG::ERROR << "did not find the filterstatus" << endreq;
+    }else {
+        m_statusHi = m_statusLo = 0;
+
+        m_warnNoFilterStatus++;
+        if (   m_warnNoFilterStatus <= 10 ) {
+          log << MSG::WARNING << "FilterStatus not found" << endl;
+          if ( m_warnNoFilterStatus == 10 ) {
+            log << "  Further WARNINGs on missing FilterStatus are suppressed"; }
+          log  << endreq;
+        }
     }
     m_ctree->execute();
     m_fm->execute();
@@ -531,6 +542,8 @@ StatusCode meritAlg::finalize() {
         }
     }
     log << endreq;
+    log << MSG::INFO << "Number of warnings (FilterStatus not found): "<< m_warnNoFilterStatus << endreq;
+
     delete m_tuple;
     delete m_fm;
     delete m_ctree;
@@ -553,4 +566,3 @@ meritAlg::TTree::TTree(
         rootTupleSvc->addItem(treeName,  *it,  &m_values[i++]);
     }
 }
-
