@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Sun Oct 19 07:28:31 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+pass to debug outputs that I want to keep for now, so that it does not bother normal run
+    *
+------------------------------------------------------------
 User: burnett  Thu Oct 16 16:01:47 PDT 2003
 merit/doc
 
