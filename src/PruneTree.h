@@ -33,12 +33,13 @@ private:
     classification::Tree * m_classifier;
 
     class Lookup;
-    Lookup* m_lookup;
 
     class PreClassify;
     PreClassify * m_preclassify;
 
     std::ostream& m_log;
+    // new tuple item needed by tree
+    double * m_acdUpperTileCnt;
 };
 #endif
 
