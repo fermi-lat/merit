@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Mon Oct 14 22:25:29 PDT 2002
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+check for NAN in PSF; 
+tag v5r12
+    *
+------------------------------------------------------------
 User: lsrea  Mon Oct 14 11:52:03 PDT 2002
 merit/src/meritAlg
 
