@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Mon Mar 10 14:12:53 PST 2003
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+fixing to use float or double
+    *
+------------------------------------------------------------
 User: burnett  Mon Mar 10 07:58:52 PST 2003
 merit/src/analysis
 
