@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Oct 19 18:35:45 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+use first event to set start time
+    *
+------------------------------------------------------------
 User: cohen  Sun Oct 19 07:28:31 PDT 2003
 merit/src/meritAlg
 
