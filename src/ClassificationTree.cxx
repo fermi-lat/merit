@@ -104,8 +104,7 @@ namespace {
 ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string xml_file)
 : m_log(log)
     {
-        std::string default_file("/xml/PSF_Analysis_14a.imw");
-       // std::string default_file("/xml/UserLibrary.xml");
+        std::string default_file("/xml/PSF_Analysis.imw");
 
         if( xml_file.empty() ){
             const char *sPath = ::getenv("CLASSIFICATIONROOT");
