@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Tue Oct 14 13:45:46 PDT 2003
+merit
+
+Modified Files:
+	.cvsignore 
+Log Message:
+using run_id to build the FT1 event_id value
+    *
+------------------------------------------------------------
 User: cohen  Sun Oct 12 23:21:33 PDT 2003
 merit/src/meritAlg
 
