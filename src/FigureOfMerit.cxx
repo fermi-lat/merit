@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.2 2001/06/14 19:51:59 usher Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.3 2001/06/14 20:15:04 usher Exp $
 
 #ifdef __GNUG__
 #pragma implementation
@@ -279,7 +279,7 @@ public:
         push_back( new Cut(t, "TKR_No_Tracks",      Cut::GT,  0,  "track found") );
         push_back( new Cut(t, "TKR_Chisq",          Cut::LT, 50) );
         push_back( new Cut(t, "TKR_First_Fit_Gaps", Cut::LT, 0.5) );
-        push_back( new Cut(t, "TKR_Diff_1st_XY_Lyr",Cut::EQ, 0) );
+        push_back( new Cut(t, "TKR_Diff_1st_Hit",   Cut::EQ, 0) );
         push_back( new Cut(t, "REC_Active_Dist",    Cut::GT, 0 ) );
     };
 };
