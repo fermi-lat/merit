@@ -1,0 +1,69 @@
+%define name    @PACKAGE@
+%define version @VERSION@
+%define release 1
+%define prefix  /usr/local/glast
+
+
+Summary: Figure of merit analysizing program
+Name: %{name}
+Version: %{version}
+Release: %{release}
+
+Copyright: 2000, Toby Burnett, All rights reserved.
+Group: Programs
+
+Packager: Paul_Kunz@slac.stanford.edu
+URL: http://glast.stanford.edu
+
+Buildroot: /tmp/%{name}
+
+Source0: cvs://glast.stanford.edu:/cvs/cmt/%{name}-%{version}.tar.gz
+
+
+%description
+The merit program analysizes the output from the GLAST simulation and
+reconstruction program.   The input is the generated n-tuple.
+
+
+%prep
+%setup
+
+
+%build
+./configure --prefix=%{prefix}
+make
+
+
+%install
+rm -rf ${RPM_BUILD_ROOT}
+
+make prefix=$RPM_BUILD_ROOT/%{prefix} install
+
+
+%post
+/sbin/ldconfig
+
+
+%postun
+/sbin/ldconfig
+
+
+%clean
+rm -rf ${RPM_BUILD_ROOT}
+
+
+%files
+%defattr(-,root,root)
+
+
+%{prefix}/bin/merit
+
+
+
+
+
+
+
+
+
+
