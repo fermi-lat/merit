@@ -1,29 +1,28 @@
 package merit
-version v6r14p9
-# $Id: requirements,v 1.71 2004/02/06 12:49:00 burnett Exp $
+version v6r15
+# $Id: requirements,v 1.72 2004/08/03 01:18:35 golpa Exp $
 
 branches doc
 
 use GlastPolicy v*
-use ntupleWriterSvc v*
-use classification v2*
-use astro *
 
 apply_pattern packageShr
 
 private
 #--------------------------------------------------------------
+use ntupleWriterSvc v*
+use classification v2*
+use astro *
 use AnalysisNtuple v*
 use GlastSvc *
 use Event *
 use GuiSvc v3*
 use OnboardFilter v1*
-
 use facilities *
 
 # read/ write ROOT trees (any old ROOT will do)
-use RootPolicy *
-
+use ROOT * IExternal
+ 
 apply_pattern package_Cshlibflags 
 
 
