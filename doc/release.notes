@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.59 2004/08/28 16:13:52 burnett Exp $
+ * $Id: release.notes,v 1.60 2004/09/08 20:36:36 burnett Exp $
  *
+ *  v6r17   THB  10-sep-04 Adjust to IValsTool interface change, implement floats 
  *  v6r16p3 THB  08-sep-04 add temporary variable for testing live time 
  *  v6r16p2 THB  29-aug-04 set up alias for event_time, use std::runtime_error for exceptions. 
  *  v6r16p1 THB  29-aug-04 restore names to v6r14 versions. 
