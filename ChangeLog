@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Mon Oct 22 11:34:32 PDT 2001
+merit/src FigureOfMerit.cxx MultiPSF.cxx
+
+Modified Files:
+	FigureOfMerit.cxx MultiPSF.cxx 
+Log Message:
+
+Put in possibility of setting number of events in cut string, remove some obsolete switches
+    *
+------------------------------------------------------------
 User: ritz  Fri Oct 19 13:49:00 PDT 2001
 merit/src/app meritapp.cxx
 
