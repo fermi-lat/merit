@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.35 2003/05/06 05:08:22 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.36 2003/05/08 15:46:39 burnett Exp $
 */
 // Include files
 
@@ -181,8 +181,10 @@ StatusCode meritAlg::initialize() {
     try { 
         ClassificationTree ctree(*m_tuple, m_IM_filename);
     //TODO: finish setup.
-    }catch ( const char * error){
-        log << MSG::ERROR << "Classification tree error, " << error << endreq;
+    }catch ( classification::Tree::Exception e){
+        log << MSG::ERROR << "Classification tree error, ";
+            e.printOn(log.stream());
+                log << endreq;
     }catch (...)  {
         log << MSG::ERROR << "Unexpected exception creating classification trees" << endreq;
     }
@@ -216,7 +218,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.35 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.36 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
