@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Aug 28 07:12:37 PDT 2004
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+event flags OK with new tag of LdfEvent
+    *
+------------------------------------------------------------
 User: burnett  Sat Aug 28 06:54:21 PDT 2004
 merit/src/meritAlg
 
