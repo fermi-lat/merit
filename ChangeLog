@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: tlindner  Fri Mar 23 18:00:30 PST 2001
+merit/mgr requirements
+
+Modified Files:
+	requirements 
+Log Message:
+Changes to build on linux
+    *
+------------------------------------------------------------
 User: burnett  Fri Mar 23 11:52:02 PST 2001
 merit/src/test GaudiMain.cxx jobOptions.txt
 
