@@ -1,4 +1,4 @@
-//$Header:$
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.1 2001/03/23 19:52:01 burnett Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #include "RootTuple.h"
 
@@ -12,21 +12,34 @@
 #include "TLeafF.h"
 
 
+
 RootTuple::RootTuple(std::string title, std::string file, std::string treeName)
 : Tuple(title), m_event(0) {
 
     // Initialize Root
     if ( 0 == gROOT )   {
         static TROOT meritRoot("root","ROOT I/O");
+#ifdef WIN32
         gSystem->Load("libTree.dll");
+#endif
     } 
     
     // Open the file, and get at the  TTree containing the data
     TFile* tfile =  new TFile(file.c_str(), "read");
-    tfile->ls();
-    m_tree =  (TTree*)tfile->Get(treeName.c_str());
-    if( m_tree ==0 ) return; // sorry
+    if( tfile==0 ) {
+        std::cerr << "file \""<< file << "\" not found." << std::endl;
+        exit(1);
+    }
 
+    m_tree =  (TTree*)tfile->Get(treeName.c_str());
+    if( m_tree ==0 ) {
+        std::cerr << "tree \""<<treeName<< "\" not found." << std::endl;
+        tfile->ls();
+        exit(1);
+    }
+    m_numEvents = m_tree->GetEntries();
+
+#if 0 // save this for reference
     // get the list of branches
     TObjArray* ta = m_tree->GetListOfBranches();
 
@@ -38,9 +51,8 @@ RootTuple::RootTuple(std::string title, std::string file, std::string treeName)
         const char * name = leaf->GetName();
         float * pf = (float*)leaf->GetValuePointer();
     }
+#endif
 
-    // Determine the # of events stored in ntuple
-    m_numEvents = m_tree->GetEntries();
 
 }
 

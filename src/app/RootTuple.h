@@ -1,4 +1,4 @@
-//$Header:$
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.h,v 1.1 2001/03/23 19:52:02 burnett Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #ifndef ROOTTUPLE_H
 #define ROOTTUPLE_H
@@ -23,6 +23,8 @@ public:
 
     //! return false when no more events
     bool nextEvent();
+
+    int numEvents(){return m_numEvents;}
 private:
     TTree * m_tree;
 
