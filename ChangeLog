@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: igable  Wed Jul 18 10:55:19 PDT 2001
+merit/mgr requirements
+
+Modified Files:
+	requirements 
+Log Message:
+Fix ../merit/*.h error. Causes killing of header files
+    *
+------------------------------------------------------------
 User: burnett  Mon Jul 16 17:12:18 PDT 2001
 merit/mgr requirements
 
