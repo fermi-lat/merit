@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.70 2003/12/12 16:28:37 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.71 2004/02/06 12:49:01 burnett Exp $
 */
 // Include files
 
@@ -41,6 +41,7 @@
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
 
 #include "OnboardFilter/FilterStatus.h"
+#include "OnboardFilter/FilterAlgTds.h"
 #include "astro/PointingTransform.h"
 
 #include <sstream>
@@ -150,7 +151,8 @@ private:
   // places to put stuff found in the TDS
   double m_run, m_event, m_mc_src_id;
   double m_time;
-  double m_statusHi, m_statusLo;
+  double m_statusHi, m_statusLo,m_separation;
+  double m_filterAlgStatus;
 
   int m_generated;
   int m_warnNoFilterStatus;   // count WARNINGs: no FilterStatus found
@@ -290,6 +292,8 @@ StatusCode meritAlg::initialize() {
   new TupleItem("FilterStatus_HI", &m_statusHi);
   //  new TupleItem("GltFilterStatusLO", &m_statusLo);
   new TupleItem("FilterStatus_LO", &m_statusLo);
+  new TupleItem("FilterAlgStatus",&m_filterAlgStatus);
+  new TupleItem("FilterAngularSeparation", &m_separation);
 
   //FT1 INFO:
   new TupleItem("FT1EventId",           &m_ft1eventid);
@@ -493,7 +497,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-  out << "Merit tuple, " << "$Revision: 1.70 $" << std::endl;
+  out << "Merit tuple, " << "$Revision: 1.71 $" << std::endl;
 
   for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
     const TupleItem& item = **tit;
@@ -536,6 +540,7 @@ StatusCode meritAlg::execute() {
   if( filterStatus ){
     m_statusHi=filterStatus->getHigh();
     m_statusLo=filterStatus->getLow();
+    m_separation=filterStatus->getSeparation();
   }else {
     m_statusHi = m_statusLo = 0;
 
@@ -546,6 +551,10 @@ StatusCode meritAlg::execute() {
 	log << " -- Further WARNINGs on missing FilterStatus are suppressed"; }
       log  << endreq;
     }
+  }
+  SmartDataPtr<FilterAlgTds::FilterAlgData> filterAlgStatus(eventSvc(),"/Event/Filter/FilterAlgData");
+  if(filterAlgStatus){
+    m_filterAlgStatus=(double)filterAlgStatus->getVetoWord();
   }
   m_ctree->execute();
   m_fm->execute();
