@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.2 2002/05/26 03:35:11 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.4 2002/05/30 02:30:34 burnett Exp $
 
 // Include files
 
@@ -85,7 +85,7 @@ StatusCode meritAlg::initialize() {
 #else
     std::strstream title;
     title <<  "TDS: gen(" << m_generated <<  ")";
-    m_tuple = new Tuple(title.c_str());
+    m_tuple = new Tuple(title.str());
 #endif
     // define tuple items
     new TupleItem("MC_Energy",      &m_mce);
