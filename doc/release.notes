@@ -2,8 +2,12 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.42 2003/10/21 18:20:37 burnett Exp $
+ * $Id: release.notes,v 1.43 2003/11/15 15:26:11 burnett Exp $
  *
+ *  v6r14   THB  25-nov-03 Update rest of trees with post-Rome Atwood analysis
+                           root trees merged, names changed
+                           new gui print options
+                           new applications to create text tuples, reprocess classification
  *  v6r13   THB  15-nov-03 New classification trees
  *  v6r12p1 THB  21-oct-03 Fix background classification tree cuts (again)
                            simplify calculation of earth -based angles for FT1.
