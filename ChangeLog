@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sat Aug 28 09:13:14 PDT 2004
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx 
+Log Message:
+fix typo from last commit, make analysis independent of  event time name, make exceptions use std::runtime_error
+    *
+------------------------------------------------------------
+User: burnett  Sat Aug 28 09:13:14 PDT 2004
 merit/src
 
 Modified Files:
