@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sun May 25 20:03:01 PDT 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx 
+Log Message:
+fix default path
+    *
+------------------------------------------------------------
+User: burnett  Sun May 25 20:03:01 PDT 2003
 merit/cmt
 
 Modified Files:
