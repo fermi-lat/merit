@@ -2,7 +2,7 @@
   @brief Implementation of FigureOfMerit, many Analyze subclasses 
 
 
-  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.18 2003/05/26 03:09:21 burnett Exp $
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.19 2003/05/28 00:13:53 burnett Exp $
 */
 
 #include "FigureOfMerit.h"
@@ -56,8 +56,10 @@ private:
 
     virtual bool apply (){ 
         float val = item();
-        if( val < m_last ) m_last=0;  // in case concatenated input files
-        m_total += val - m_last;
+        if( m_last>0 ){ // use first entry  for setting start time
+            if( val < m_last ) m_last=0;  // in case concatenated input files
+            m_total += val - m_last;
+        }
         m_last = val;
         return    true;
     };
