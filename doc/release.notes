@@ -1,6 +1,7 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/FluxDisplay/doc/release.notes,v 1.1 2002/05/11 22:08:21 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/doc/release.notes,v 1.1 2002/05/26 03:34:56 burnett Exp $
 /*   Package merit
  *
  *
+ *  v5r1  28-may-02  use vertex for layer number.
  *  v5r0  25-may-02  convert to Gaudi 9, set up for Gleam TDS 
  */
