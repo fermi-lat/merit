@@ -1,22 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Sun Aug 17 11:48:40 PDT 2003
-merit/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-tagging v6r7p1
-    *
-------------------------------------------------------------
-User: burnett  Sun Aug 17 11:46:47 PDT 2003
-merit/src/meritAlg
-
-Modified Files:
-	meritAlg.cxx 
-Log Message:
-protect filter status access
-    *
-------------------------------------------------------------
 User: burnett  Sat Aug 16 20:19:21 PDT 2003
 merit/doc
 
