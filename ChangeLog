@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Aug 26 18:42:51 PDT 2004
+merit/src/meritAlg
+
+Modified Files:
+      Tag: v6r14p9-em-branch
+	meritAlg.cxx 
+Log Message:
+add gem condition summary and event flags
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 26 18:42:36 PDT 2004
 merit/doc
 
