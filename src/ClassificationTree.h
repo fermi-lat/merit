@@ -2,7 +2,7 @@
 @brief 
 
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.1 2003/05/09 01:31:01 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.2 2003/05/09 22:32:51 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -20,7 +20,7 @@ public:
     * @param t The input tuple -- will create a new column with the output
     * @param xml_file 
     */
-    ClassificationTree( Tuple&t,  std::string xml_file="");
+    ClassificationTree( Tuple&t, std::ostream& log, std::string xml_file="");
     /** run the classification
     */
     void execute();  
@@ -29,6 +29,7 @@ public:
 
 private:
     classification::Tree * m_classifier;
+    std::ostream& m_log;
 };
 
 #endif
