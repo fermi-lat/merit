@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: golpa  Mon Oct 20 12:57:29 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+Added macro to detect compiler and use workaround for gcc2 optimization
+    *
+------------------------------------------------------------
 User: cohen  Mon Oct 20 12:48:51 PDT 2003
 merit/src/meritAlg
 
