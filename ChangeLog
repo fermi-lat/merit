@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Mon Oct 14 22:25:30 PDT 2002
+merit/src
+
+Modified Files:
+	PSFanalysis.cxx 
+Log Message:
+
+check for NAN in PSF; 
+tag v5r12
+    *
+------------------------------------------------------------
 User: burnett  Mon Oct 14 22:25:29 PDT 2002
 merit/doc
 
