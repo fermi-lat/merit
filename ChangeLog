@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Oct 11 14:24:59 PDT 2004
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+remove quantities duplicated in AnaTup: livetime, eventflag, GemConditionSummary.
+    *
+------------------------------------------------------------
 User: burnett  Mon Sep 13 16:24:14 PDT 2004
 merit/doc
 
