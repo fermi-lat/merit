@@ -1,5 +1,5 @@
 /** @file PruneTree.h
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PruneTree.h,v 1.5 2004/01/07 03:42:32 hansl Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PruneTree.h,v 1.6 2004/01/07 17:47:34 hansl Exp $
  */
 #ifndef  MERIT_PRUNETREE_H
 #define  MERIT_PRUNETREE_H
@@ -49,8 +49,8 @@ private:
     class Lookup;                // nested class
     class PreClassify;           // nested class
 
-    PreClassify *          m_preclassify; /// association of ROOT branches to TupleItems
-    classification::Tree * m_classifier;  /// interface to IM classification tree 
+    PreClassify *          m_preclassify; //! association of ROOT branches to TupleItems
+    classification::Tree * m_classifier;  //! interface to IM classification tree 
 };
 #endif   //  MERIT_PRUNETREE_H
 

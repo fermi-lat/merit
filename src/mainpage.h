@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.6 2003/03/08 22:00:19 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.7 2003/12/20 00:10:45 hansl Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -88,14 +88,16 @@ Analysis cuts: nA
  <h3>Usage </h3>
       @verbatim
       fastFilter.exe   [input_merit.root]   [output.root]
-         input-merit.root    default   src/test/merit100.root
-         output.root         default   <input_merit.root>_filt.root       
+         input_merit.root    default   src/test/merit100.root
+         output.root         default   <input_merit.root>_filt.root
+
+         imfile              IM xml file defined by env var IM_FILE_FILTER
       @endverbatim
       Default path to input and output Root files and the path to the IM xml
       file are set in the requirements. 
 
- <h3> Purpose: </h3>
-      Read the input merit Root file and generate a new output Root tuple
+ <h3> Purpose </h3>
+      Read the input merit Root Ntuple and generate a new output Root Ntuple
       with selected events only. Additional branches are added, which contain
       the event category and gamma probability. The selection is tuned to reduce 
       the background (typically by a factor of 5) and keep the gamma signal. 
@@ -107,7 +109,8 @@ Analysis cuts: nA
       are implemented in 
       PruneTree::PreClassify. This subclass immitates the decision chain of the CT. 
       The result is per event the leave category, which in turn is used to evaluate the
-      gamma probability of the event via the classification::Tree. 
+      gamma probability of the event via the classification::Tree 
+      (package classification). 
       <li>
       PruneTree creates an instance of PruneTree::PreClassify and  
       classification::Tree. 
@@ -128,11 +131,20 @@ Analysis cuts: nA
            IM Classification Tree </a> 
            <li>Plot of 
            <a href=http://www.slac.stanford.edu/~hansl/soft/glastSw/fastFilter/cat-prob-merit100.ps>
-           Leave category versus probability </a> for test file merit100.root. 
+           Leaf category versus probability </a> for test file merit100.root 
+           (196 gammas of 100 MeV). 
            </ul>
-      <li> It would be easy to reduce in addition the number of branches written to
-      the output tuple, to further reduce the sice of the output files.
+      <li> It would be easy to limit in addition the number of branches written to
+      the output tuple, to further reduce the size of the output files.
       </ul></p>
+
+<h3> Updates of the classification Tree </h3>
+     In case that the CT changes the following updates of the code are needed.
+       <ul><li> If the IM tree structure changes, the declarations in PruneTree, 
+                IMnodeInfo and typedef Category have to be revised. 
+           <li> If the structure of the CT is unchanged, only an updated IM xml
+                file is needed. The cuts in PruneTree::operator Category() may
+                have to be revised. </ul>
 
   <hr>
   @section notes release notes
@@ -141,9 +153,10 @@ Analysis cuts: nA
   @section requirements requirements
   @verbinclude requirements
   <hr>
+    @todo Change name PruneTree to FastFilter and fastFilter to FastFilterApp
     @todo Separate the different applications into subpackages
     @todo Define base class for the common parts of PruneTree and ClassificationTree.
-    @todo Awaiting feedback from Bill on some parts of the decision tree implemented
+    @todo Waiting for feedback from Bill on some parts of the decision tree implemented
     in PruneTree::PreClassify. 
 
 */
