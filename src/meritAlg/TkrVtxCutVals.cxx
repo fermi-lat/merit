@@ -15,8 +15,8 @@ TkrVtxCutVals::TkrVtxCutVals(const Event::TkrVertex* vtx) : vertex(vtx)
     bestTrkQual = 0.;
     pairTrkQual = 0;
 
-    fitKink     = -9999.;
-    tangle      = -9999.;
+    fitKink     = -9.;
+    tangle      = -9.;
 
     SmartRefVector<Event::TkrFitTrack>::const_iterator trackIter = vertex->getTrackIterBegin();
 

@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.4 2002/05/31 19:37:49 burnett Exp $
+// $Id: Tuple.cxx,v 1.5 2002/06/01 15:33:24 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -11,7 +11,6 @@
 #else
 #include <strstream>
 #endif
-
 
 static inline void WARNING(const char* text){ std::cerr << text;}
 static inline void FATAL(const char* text) {
@@ -95,17 +94,38 @@ Tuple::index(const std::string& nam)const
     if ((look=find(nam)) == end() ) return -1;
     return look-begin();
 }
+namespace {
+    // comparison predicate
+    class uncase_compare{
+    public:
+        uncase_compare(const std::string& s):m_left(s){}
+
+        bool operator==( const std::string& right){
+            int s1=m_left.size(), s2 = right.size();
+            if( s1!=s2) return false;
+            for(int i = 0; i< s1; ++i){
+                if( ::tolower(m_left[i]) != ::tolower(right[i]) ) return false;
+            }
+            return true;
+        }
+
+        const std::string& m_left;
+    };
+}
+
+
 Tuple::const_iterator
 Tuple::find(const std::string& nam)const
 {
-//## begin Tuple::find%-650323776.body preserve=yes
+    uncase_compare check(nam);
     const_iterator it=begin();
     for(;  it !=end(); ++it) {
-	if( nam==(*it)->name() )break;
+        if( check==(*it)->name() )break;
+	//if( nam==(*it)->name() )break;
     }
     return it;
-//## end Tuple::find%-650323776.body
 }
+
 void
 Tuple::fillArray(float array[])const
 {
@@ -228,12 +248,12 @@ std::ostream& operator<< (std::ostream& out, const TupleItem& t)
    out << t.name() << '=' << *t.m_pdatum;
    return out;
 }
-
-
 const TupleItem*
 Tuple::tupleItem(const std::string& name)const
 {
+    // make lowercase version
     Tuple::const_iterator it = find(name);
+    // compare lowercase only
     if( it != end() ) return *it;
 #ifndef DEFECT_NO_STRINGSTREAM
     std::stringstream  errmsg;

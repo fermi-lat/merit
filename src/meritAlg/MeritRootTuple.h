@@ -1,11 +1,10 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.1 2002/08/31 21:55:20 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.2 2002/09/01 04:53:48 burnett Exp $
 // Original author T. Burnett 
 #ifndef MERITROOTTUPLE_H
 #define MERITROOTTUPLE_H
 
 #include <string>
 class Tuple;
-class TNtuple;
 class TFile;
 class TTree;
 
@@ -14,7 +13,7 @@ class TTree;
  *
  * @author T. Burnett
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.1 2002/08/31 21:55:20 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.2 2002/09/01 04:53:48 burnett Exp $
  */
 
 class MeritRootTuple  {
@@ -33,8 +32,7 @@ public:
 private:
     Tuple* m_tuple;
 
-    /// the ROOT stuff
-    //TNtuple  * m_tnt;
+    /// the ROOT stuff: a file and a tree to put into it
     TTree * m_tree;
     TFile *  m_tf;
 
