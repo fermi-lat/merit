@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.21 2002/09/02 15:41:28 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.22 2002/09/13 23:14:39 burnett Exp $
 
 // Include files
 
@@ -9,7 +9,10 @@
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/NTuple.h"
 #include "GaudiKernel/INTupleSvc.h"
+#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/AlgTool.h"
 #include "GaudiTuple.h"
+
 
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/TopLevel/Event.h"
@@ -21,6 +24,8 @@
 #include "Event/Recon/CalRecon/CalCluster.h"
 #include "Event/Recon/CalRecon/CalXtalRecData.h"
 #include "Event/Recon/AcdRecon/AcdRecon.h"
+
+#include "GlastSvc/Reco/IReconTool.h"
 
 #include "FigureOfMerit.h"
 #include "analysis/Tuple.h"
@@ -76,6 +81,8 @@ private:
     
     MeritRootTuple* m_root_tuple;
 
+    IToolSvc* m_pToolSvc;
+
     // places to put stuff found in the TDS
     float m_event, m_mc_src_id;
     float m_mce, m_trig, m_angle_diff, m_recon_energy;
@@ -89,6 +96,7 @@ private:
     float m_tkr_gamma_zdir;
 
     float m_tkr_qual, m_tkr_t_angle, m_tkr_fit_kink;
+    float m_surplus_hit_ratio, m_tkr_skirtX, m_tkr_skirtY;
     float m_tkr_eneslope[2]; 
 
     // set by cal analysis
@@ -171,6 +179,10 @@ StatusCode meritAlg::initialize() {
     new TupleItem("TKR_xeneXSlope", &m_tkr_eneslope[0]);
     new TupleItem("TKR_xeneYSlope", &m_tkr_eneslope[1]);
 
+    new TupleItem("REC_Surplus_Hit_ratio", &m_surplus_hit_ratio);
+    new TupleItem("REC_Tkr_SkirtX",        &m_tkr_skirtX);
+    new TupleItem("REC_Tkr_SkirtY",        &m_tkr_skirtY);
+
 
     new TupleItem("REC_CsI_Corr_Energy", &m_recon_energy);
 
@@ -209,10 +221,7 @@ StatusCode meritAlg::initialize() {
     new TupleItem("ACD_Deposit_Max3", &m_acd_deposit_max[3]);
 
     // not implemented at all
-    new TupleItem("REC_Surplus_Hit_ratio", &dummy);
     new TupleItem("ACD_Throttle_Bits",     &dummy);
-    new TupleItem("REC_Tkr_SkirtX",        &dummy);
-    new TupleItem("REC_Tkr_SkirtY",        &dummy);
 
     //now make the parallel ROOT tuple
     if(!m_root_filename.value().empty() ){
@@ -225,6 +234,13 @@ StatusCode meritAlg::initialize() {
     // setup defaults in case no primary info
     m_incident_dir=Hep3Vector(0,0,-1);
     m_mce = 0.1f;
+
+    m_pToolSvc = 0;
+    sc = service("ToolSvc", m_pToolSvc, true);
+    if (!sc.isSuccess ()){
+        log << MSG::INFO << "Can't find ToolSvc, will quit now" << endreq;
+        return StatusCode::FAILURE;
+    }
 
     // setup tuple output via the print service
         // get the Gui service
@@ -246,7 +262,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.21 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.22 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -303,10 +319,7 @@ void meritAlg::particleReco(const Event::McParticleCol& particles)
 //------------------------------------------------------------------------------
 void meritAlg::processTDS(const Event::EventHeader& header,
                           const Event::TkrVertexCol& tracks)
-{
-    
-    // Procedure and Method:  Process the collection of Monte carlo particles
-    
+{    
     MsgStream   log( msgSvc(), name() );
     
     m_time = header.time();
@@ -341,8 +354,35 @@ void meritAlg::processTDS(const Event::EventHeader& header,
         m_tkr_t_angle = cuts.getTangle();
         m_tkr_fit_kink = cuts.getFitKink();
 
+        IReconTool* itool;
+        StatusCode sc = m_pToolSvc->retrieveTool("TkrMeritTool", itool);
+        if( sc.isFailure() ) {
+            log << MSG::ERROR << "Unable to find a test tool" << endreq;
+        }
+
+        double surplus_hit_ratio = -1;
+        double tkr_skirtX = -9999.;
+        double tkr_skirtY = -9999.;
+
+        sc = itool->get("REC_Surplus_Hit_Ratio", surplus_hit_ratio);
+        sc = sc || itool->get("REC_Tkr_SkirtX", tkr_skirtX);
+        sc = sc || itool->get("REC_Tkr_SkirtY", tkr_skirtY);
+        if( sc.isFailure() ) {
+            log << MSG::ERROR << "Unable to retrieve TkrMeritTool variables" << endreq;
+            log << MSG::ERROR << "Set to default" << endreq;
+        }
+
+        log<< MSG::DEBUG << "From TkrMeritTool: " << surplus_hit_ratio << " "
+            << tkr_skirtX << " " << tkr_skirtY << endreq;
+
+        m_surplus_hit_ratio = (float) surplus_hit_ratio;
+        m_tkr_skirtX        = (float) tkr_skirtX;
+        m_tkr_skirtY        = (float) tkr_skirtY;
+
         m_tkr_eneslope[0] =  -999.;
         m_tkr_eneslope[1] =  -999.; //TODO
+
+
     }
     
 
