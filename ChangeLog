@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: burnett  Sat Mar 15 09:59:33 PST 2003
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+update names to agree with Leons revision of Bill's tuple.
+Replace the test root file
+Some clean-up.
+    *
+------------------------------------------------------------
 User: burnett  Fri Mar 14 19:40:32 PST 2003
 merit/src/meritAlg
 
