@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.49 2003/08/17 18:46:47 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.50 2003/08/25 21:54:05 burnett Exp $
 */
 // Include files
 
@@ -34,7 +34,6 @@
 #include "gui/PrintControl.h"
 #include "gui/GuiMgr.h"
 
-//#include "MeritRootTuple.h"
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
 
 #include "OnboardFilter/FilterStatus.h"
@@ -72,12 +71,7 @@ private:
     std::string m_cuts; 
     StringProperty m_root_filename;
     StringProperty m_IM_filename;
-    StringProperty m_treename;    
-#if 0
-    MeritRootTuple* m_root_tuple;
-#else
     INTupleWriterSvc* m_rootTupleSvc;;
-#endif
 
     IToolSvc* m_pToolSvc;
 
@@ -110,8 +104,6 @@ Algorithm(name, pSvcLocator), m_tuple(0)
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
     declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
-// deprecated:: needed to flag that using the RootTupleSvc
-    declareProperty("RootTreeName", m_treename="MeritTuple"); 
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::setupTools() {
@@ -203,13 +195,13 @@ StatusCode meritAlg::initialize() {
         log << MSG::ERROR << "Unexpected exception creating classification trees" << endreq;
     }
 
-     //now make the parallel ROOT tuple
+    //now make the parallel ROOT tuple--the file name is not actually used except as a flag :-(
     if(!m_root_filename.value().empty() ){
-    // get a pointer to RootTupleSvc 
-    if( (sc = service("RootTupleSvc", m_rootTupleSvc)). isFailure() ) {
-        log << MSG::ERROR << " failed to get the RootTupleSvc" << endreq;
-        return sc;
-    }
+        // get a pointer to RootTupleSvc 
+        if( (sc = service("RootTupleSvc", m_rootTupleSvc)). isFailure() ) {
+            log << MSG::ERROR << " failed to get the RootTupleSvc" << endreq;
+            return sc;
+        }
 
     }
 
@@ -250,7 +242,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.49 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.50 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
