@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri Mar 23 11:52:01 PST 2001
+merit acinclude.m4 merit.spec.in
+
+Removed Files:
+	acinclude.m4 merit.spec.in 
+Log Message:
+initial mods for Gaudi environment
+    *
+------------------------------------------------------------
 User: burnett  Fri Mar 23 11:51:18 PST 2001
 merit/src/app - New directory
 
