@@ -1,0 +1,11 @@
+#! /bin/sh
+# autogen -- run configuration things in the right order
+
+if [ ! -d config ] ; then 
+    mkdir config
+fi
+
+aclocal
+autoconf
+autoheader
+automake --add-missing --foreign

@@ -3,3 +3,11 @@ Win32Debug
 Win32
 msdev
 Linux
+config
+aclocal.m4
+config.*
+configure
+libtool
+Makefile
+stamp-h
+*.in
