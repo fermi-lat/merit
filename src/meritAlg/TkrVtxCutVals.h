@@ -3,6 +3,7 @@
 #define TKRVTXCUTVALS_H
 
 #include "Event/Recon/TkrRecon/TkrVertex.h"
+#include "Event/Recon/TkrRecon/TkrFitTrackBase.h"
 #include <vector>
 
 /** 
@@ -20,7 +21,7 @@
 *
 * @author The Tracking Software Group
 *
-* $Header: /nfs/slac/g/glast/ground/cvs/TkrRecon/src/Track/TkrVtxCutVals.h,v 1.0 2002/08/19 13:30:43 usher Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease/merit/src/meritAlg/TkrVtxCutVals.h,v 1.1 2002/08/29 00:53:00 burnett Exp $
 */
 
 class TkrVtxCutVals
@@ -31,35 +32,35 @@ public:
    ~TkrVtxCutVals();
 
     // Return the gamma direction
-   Vector                      getVertexDir()   {return vertex->getDirection();}
+   Vector                          getVertexDir()   {return vertex->getDirection();}
 
     // Access methods for "best" and "pair" tracks
-    const Event::TkrFitTrack*  getBestTrack()   {return best;}
-    const Event::TkrFitTrack*  getPairTrack()   {return pair;}
-    double                     getBestQuality() {return bestTrkQual;}
-    double                     getPairQuality() {return pairTrkQual;}
+    const Event::TkrFitTrackBase*  getBestTrack()   {return best;}
+    const Event::TkrFitTrackBase*  getPairTrack()   {return pair;}
+    double                         getBestQuality() {return bestTrkQual;}
+    double                         getPairQuality() {return pairTrkQual;}
 
     // Global event cut variables
-    double                     getTangle()      {return tangle;}
-    double                     getFitKink()     {return fitKink;}
+    double                         getTangle()      {return tangle;}
+    double                         getFitKink()     {return fitKink;}
 
 
 private:
     // Functions
-    void                       calcTangle();
-    void                       calcFitKink();
+    void                           calcTangle();
+    void                           calcFitKink();
 
     // Data members
-    const Event::TkrVertex*    vertex;
+    const Event::TkrVertex*        vertex;
 
-    const Event::TkrFitTrack*  best;
-    double                     bestTrkQual;
-    const Event::TkrFitTrack*  pair;
-    double                     pairTrkQual;
+    const Event::TkrFitTrackBase*  best;
+    double                         bestTrkQual;
+    const Event::TkrFitTrackBase*  pair;
+    double                         pairTrkQual;
 
-    int                        numTracks;
-    double                     tangle;
-    double                     fitKink;
+    int                            numTracks;
+    double                         tangle;
+    double                         fitKink;
 };
 
 #endif
