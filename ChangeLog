@@ -1,31 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Sat Aug 28 07:14:34 PDT 2004
-merit/doc
-
-Modified Files:
-	release.notes 
-Log Message:
-mew tag, v6r16p1, that should be consistent with the EM branch
-    *
-------------------------------------------------------------
-User: burnett  Sat Aug 28 07:14:34 PDT 2004
-merit/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-mew tag, v6r16p1, that should be consistent with the EM branch
-    *
-------------------------------------------------------------
-User: burnett  Sat Aug 28 07:12:37 PDT 2004
-merit/src/meritAlg
-
-Modified Files:
-	meritAlg.cxx 
-Log Message:
-event flags OK with new tag of LdfEvent
-    *
-------------------------------------------------------------
 User: burnett  Sat Aug 28 06:54:21 PDT 2004
 merit/src/meritAlg
 
