@@ -234,7 +234,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             if( *m_evtEnergySumOpt>450.){ 
                 //1TRK-HI
                 if( *m_evtTkrComptonRatio > 0.70 &&
-                    *m_calMIPDiff> 0.80 &&
+                    *m_calMIPDiff> 80. &&
                     *m_calLRmsRatio < 20.) m_gammaProb = imnodes[BKG_1TRK_HI].evaluate();
             }else{
                 //1TRK-LO
