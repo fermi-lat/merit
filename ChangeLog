@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Sun Oct 27 11:28:40 PST 2002
+merit/src/app
+
+Modified Files:
+	meritapp.cxx 
+Log Message:
+
+remove W flag for default
+    *
+------------------------------------------------------------
 User: burnett  Sun Oct 27 11:00:04 PST 2002
 merit/src/meritAlg
 
