@@ -118,8 +118,6 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             t.add_alias(tname, alias_pairs[i].first);
         }
 #endif
-        // since at least one of the background rejection trees needs to know about the core prob
-        t.add_alias( "IMcoreProb", "Pr(CORE)");
 
         // special tuple items we want on the output: make sure they are included in the list
         t.tupleItem("AcdActiveDist");
@@ -163,16 +161,18 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_calMIPDiff = t.tupleItem("CalMIPDiff");
         m_calLRmsRatio = t.tupleItem("CalLRmsRatio");
         m_acdTileCount = t.tupleItem("AcdTileCount");
-        
-
+        m_vtxAngle = t.tupleItem("VtxAngle");
 
         // New items to create
-
         new TupleItem("IMgoodCalProb",&m_goodCalProb);
         new TupleItem("IMvertexProb", &m_vtxProb);
         new TupleItem("IMcoreProb",   &m_coreProb);
         new TupleItem("IMpsfErrPred", &m_psfErrPred);
         new TupleItem("IMgammaProb",  &m_gammaProb);
+
+        // since at least one of the background rejection trees needs to know about the core prob
+        t.add_alias( "IMcoreProb", "Pr(CORE)");
+
         m_classifier = new classification::Tree(looker, log, 0); // verbosity
         // translate the Tuple map
   

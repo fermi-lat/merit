@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
-    @brief Declaration and implementation of mertAlg
+    @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.50 2003/08/25 21:54:05 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.51 2003/08/25 23:38:47 burnett Exp $
 */
 // Include files
 
@@ -20,6 +20,8 @@
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/MCEvent.h"
+#include "Event/MonteCarlo/Exposure.h"
+
 
 #include "AnalysisNtuple/IValsTool.h"
 
@@ -41,12 +43,13 @@
 #include <sstream>
 #include <algorithm>
 #include <numeric>
+#include <cassert>
 
 static std::string  default_cuts("LntA");
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /** @class meritAlg
-
+@brief Apply the merit processing as an Algorithm, constructing a NTuple
 
   */
 class meritAlg : public Algorithm {
@@ -64,7 +67,8 @@ private:
     StatusCode setupTools();
 
     void calculate(); 
-   
+    void setupPointingInfo();
+    void copyPointingInfo();
 
     FigureOfMerit* m_fm;
     Tuple*   m_tuple;
@@ -78,7 +82,7 @@ private:
     // places to put stuff found in the TDS
     double m_run, m_event, m_mc_src_id;
     double m_time;
-	double m_statusHi, m_statusLo;
+    double m_statusHi, m_statusLo;
 
     int m_generated;
 
@@ -87,6 +91,12 @@ private:
 
     /// classification
     ClassificationTree* m_ctree;
+
+    /// the event tuple name
+    StringProperty m_eventTreeName;
+    StringProperty m_pointingTreeName;
+
+    double m_point_info[11];
 
 };
 
@@ -103,6 +113,8 @@ Algorithm(name, pSvcLocator), m_tuple(0)
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
+    declareProperty("EventTreeName",     m_eventTreeName="MeritTuple");
+    declareProperty("PointingTreeName", m_pointingTreeName="Exposure");
     declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,12 +173,13 @@ StatusCode meritAlg::initialize() {
     StatusCode  sc = StatusCode::SUCCESS;
     
     MsgStream log(msgSvc(), name());
-    log << MSG::INFO << "initialize" << endreq;
-    
+   
     // Use the Job options service to get the Algorithm's parameters
     setProperties();
     
-
+    if(m_root_filename.value().empty()){
+        log << MSG::WARNING << "file name was set, but is not used now" << endreq;
+    }
     // setup the pseudo-tuple
     std::stringstream title;
     title <<  "TDS: gen(" << m_generated <<  ")";
@@ -179,6 +192,8 @@ StatusCode meritAlg::initialize() {
     new TupleItem("elapsed_time",   &m_time);
     new TupleItem("FilterStatus_HI",&m_statusHi);
     new TupleItem("FilterStatus_LO",&m_statusLo);
+
+    // add some of the AnalysisNTuple items
     if( setupTools().isFailure()) return StatusCode::FAILURE;
 
     // the tuple is made: create the classification object 
@@ -195,8 +210,8 @@ StatusCode meritAlg::initialize() {
         log << MSG::ERROR << "Unexpected exception creating classification trees" << endreq;
     }
 
-    //now make the parallel ROOT tuple--the file name is not actually used except as a flag :-(
-    if(!m_root_filename.value().empty() ){
+    //now make the parallel ROOT tuple--the treename must be set
+    if(!m_eventTreeName.value().empty() ){
         // get a pointer to RootTupleSvc 
         if( (sc = service("RootTupleSvc", m_rootTupleSvc)). isFailure() ) {
             log << MSG::ERROR << " failed to get the RootTupleSvc" << endreq;
@@ -211,17 +226,23 @@ StatusCode meritAlg::initialize() {
          // now tell the root tuple service about our tuple
         for(Tuple::iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
             TupleItem& item = **tit;
-            m_rootTupleSvc->addItem("",item.name(), &item.value());
+            m_rootTupleSvc->addItem(m_eventTreeName.value(), item.name(), &item.value());
         }
+
+        // and also the pointing branch
+        setupPointingInfo();
     }
+
+
 
     // setup tuple output via the print service
         // get the Gui service
     IGuiSvc* guiSvc=0;
     sc = service("GuiSvc", guiSvc);
 
+    
     if (!sc.isSuccess ()){
-        log << MSG::INFO << "No GuiSvc, so no interactive printout" << endreq;
+        log << MSG::DEBUG << "No GuiSvc, so no interactive printout" << endreq;
         return StatusCode::SUCCESS;
     }
 
@@ -233,6 +254,37 @@ StatusCode meritAlg::initialize() {
     return sc;
 }
 //------------------------------------------------------------------------------
+void meritAlg::setupPointingInfo(){
+
+    std::string treeName= m_pointingTreeName.value();
+    if( treeName.empty()) return;
+    const char * point_info_name[] = {"time","lat","lon","alt","posx","posy","posz","rax","decx","raz","decz"};
+    for( int i = 0; i< sizeof(m_point_info)/sizeof(double); ++i){
+        m_rootTupleSvc->addItem(std::string(m_pointingTreeName), point_info_name[i], m_point_info+i);
+    }
+}
+//------------------------------------------------------------------------------
+void meritAlg::copyPointingInfo(){
+
+        Event::ExposureCol* elist = 0;
+        eventSvc()->retrieveObject("/Event/MC/ExposureCol",(DataObject *&)elist);
+        //Event::ExposureCol::iterator curEntry = (*elist).begin();
+        const Event::Exposure& exp = **(*elist).begin();
+        int n= 0;
+        m_point_info[n++]=exp.intrvalstart();
+        m_point_info[n++]=exp.lat();
+        m_point_info[n++]=exp.lon();
+        m_point_info[n++]=exp.alt();
+        m_point_info[n++]=exp.posX();
+        m_point_info[n++]=exp.posY();
+        m_point_info[n++]=exp.posZ();
+        m_point_info[n++]=exp.RAX();
+        m_point_info[n++]=exp.DECX();
+        m_point_info[n++]=exp.RAZ();
+        m_point_info[n++]=exp.DECZ();
+        assert( n==sizeof(m_point_info)/sizeof(double));
+}
+//------------------------------------------------------------------------------
 void meritAlg::calculate(){
 
     for( std::vector<IValsTool*>::iterator i =m_toolvec.begin(); i != m_toolvec.end(); ++i){
@@ -242,7 +294,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.50 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.51 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -277,7 +329,10 @@ StatusCode meritAlg::execute() {
     }
     m_ctree->execute();
     m_fm->execute();
-    if( m_rootTupleSvc)  m_rootTupleSvc->storeRowFlag(true);
+    if( m_rootTupleSvc) {
+            copyPointingInfo();
+            m_rootTupleSvc->storeRowFlag(true);
+    }
     
     return sc;
 }
@@ -296,6 +351,7 @@ StatusCode meritAlg::finalize() {
     log << endreq;
     delete m_tuple;
     delete m_fm;
+    delete m_ctree;
     return StatusCode::SUCCESS;
 }
 
