@@ -1,8 +1,10 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/doc/release.notes,v 1.14 2002/10/27 19:29:20 burnett Exp $
-/*   Package merit
- *
+/** @file release.notes
+ * @brief package merit <pre>
+ * package manager:T.Burnett
+ * $Id:  $
  *
 
+ *  v5r12p3 THB 25-nov-02 gcc 3.2 patch; also ok for gaudi v11
  *  v5r12p2 THB 31-oct-02 fix src_id calculation
  *  v5r12p1THB 27-oct-02 gcc 3.x mods
  *  v5r12  14-oct-02 skirt now ok; check for NAN in PSFAnalysis
@@ -17,5 +19,5 @@
  *  v5r4  06-jun-02  fix to direction: grabbed some code for cal analyis.
  *  v5r2  31-may-02  Really use vertex.
  *  v5r1  28-may-02  use vertex for layer number.
- *  v5r0  25-may-02  convert to Gaudi 9, set up for Gleam TDS 
+ *  v5r0  25-may-02  convert to Gaudi 9, set up for Gleam TDS </pre>
  */
