@@ -1,5 +1,5 @@
 /** @file main.cxx 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.23 2003/11/15 15:25:03 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,v 1.1 2003/11/22 15:34:55 burnett Exp $
 */
 
 #include "app/RootTuple.h"
@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     }
 
 
-    std::cerr << "Converting CT variables from: \"" << input_filename << "\" to \"" 
+    std::cerr << "Converting CT variables from: \"" << input_filename << "\" to\n\t\"" 
         << output_filename << "\"" << std::endl;
 
     RootTuple* tuple = new RootTuple("unknown", input_filename, tree_name);
@@ -74,6 +74,8 @@ int main(int argc, char* argv[])
     }
 
 
+
+    int k=0;
     try {
         const char* imfile = ::getenv("IM_FILE");
         // create the ct: pass in the tuple.
@@ -84,6 +86,7 @@ int main(int argc, char* argv[])
             pct.execute();   // fill in the classification (testing here)
             out_file.cd();
             out_tree->Fill();
+            ++k;
         }
     }catch(std::exception& e){
         std::cerr << "Caught: " << e.what( ) << std::endl;
@@ -92,6 +95,8 @@ int main(int argc, char* argv[])
         std::cerr << "Unknown exception from classification " << std::endl;
     }
     out_file.Write();
+    std::cout << "Wrote " << k << " entries" << std::endl;
+        
     return 0;
 }
 
