@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Mar 10 07:58:52 PST 2003
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx Tuple.h 
+Log Message:
+patch for root float
+    *
+------------------------------------------------------------
 User: burnett  Sat Mar  8 14:00:19 PST 2003
 merit/src/meritAlg
 
