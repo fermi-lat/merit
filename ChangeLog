@@ -1,4 +1,12 @@
 ------------------------------------------------------------
+TAG activity
+User: burnett  Wed May 30 16:48:14 2001
+Tag name: v3
+Tag operation: mov
+Repository: /nfs/slac/g/glast/ground/cvs/merit/src/app
+File(s) and revision(s): meritapp.cxx
+    *
+------------------------------------------------------------
 User: burnett  Wed May 30 15:09:28 PDT 2001
 merit/src/app meritapp.cxx
 
