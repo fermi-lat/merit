@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: burnett  Tue Aug 10 20:25:00 PDT 2004
+merit/src/analysis
+
+Modified Files:
+	Tuple.h 
+Log Message:
+rename localally generated variables according to standard convention
+make local guys float (can't do that yet for AnaTup)
+clean up logic a bit
+    *
+------------------------------------------------------------
+User: burnett  Tue Aug 10 20:25:00 PDT 2004
 merit/src
 
 Modified Files:
