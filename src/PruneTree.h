@@ -1,8 +1,8 @@
 /** @file PruneTree.h
-     @brief declare PruneTree
-*/
-#ifndef PRUNETREE_H
-#define  PRUNETREE_H
+ $Header$
+ */
+#ifndef  MERIT_PRUNETREE_H
+#define  MERIT_PRUNETREE_H
 
 #include <string>
 
@@ -10,48 +10,48 @@
 namespace classification { class Tree;}
 class Tuple;
 
+
 /** @class PruneTree
-     @brief apply the set of Bill's cuts for pruning background 
+ *  @brief Reduce number of rows of merit NTuple 
+ *              applying IM selections defined in xml file.  
+ *
+ *  @authors Traudl Hansl-Kozanecka <hansl@slac.stanford.edu>
+ *  @authors Toby Burnett <tburnett@u.washington.edu>
+ *
+ *  Usage:
+ *     @verbatim
+ *       Tuple tuple; 
+ *       PruneTree pt(tuple);
+ *       [...]
+ *       double prob = pt();
+ *     @endverbatim  
+ */ // ________________________________________________________
 
-     @authors Traudl Hansl-Kozanecka, Toby Burnett
-
-     Usage:
-     @verbatim
-    Tuple tuple; 
-     PruneTree pt(tuple);
-     [...]
-     double prob = pt();
-     @endverbatim
-  
-*/
 
 class PruneTree {
 
     public:
-    /** set up the tree:
-    * @param t The input tuple
-    * @param xml_file -- IM file containing descriptions of the predict nodes 
-    */
-    PruneTree( Tuple&t,  std::string xml_file="");
 
-    /** run the prediction nodes on the current tuple instance, return the value of the 
-        selected CT, a gamma probability
-    */
-    double operator()(); 
+    /** Set up the selection
+     *  @param t           The input ROOT tuple
+     *  @param xml_file    IM file containing descriptions of the predict nodes 
+     */
+    PruneTree( Tuple& t,  std::string xml_file = "");
 
     ~PruneTree();
 
+    /** Apply the selection to the current tuple instance 
+     *  @return  Probability assigned to this event
+     */
+    double operator()(); 
+
 private:
+    class Lookup;                // nested class
+    class PreClassify;           // nested class 
+    PreClassify * m_preclassify; // 
     classification::Tree * m_classifier;
-
-    // nested helper classes,  only declare here
-    class Lookup;
-
-    class PreClassify;
-    PreClassify * m_preclassify;
-
 };
-#endif
+#endif   //  MERIT_PRUNETREE_H
 
 
 

@@ -40,28 +40,28 @@ Following names were needed by nodes, but not supplied in the map:
 
 namespace {
 
-    // Identifiers used for the nodes
-    //   Nodes before NODE_COUNT have the equivalent IMnodeInfo
-    //   nodes after  NODE_COUNT have no  IMnodeInfo (no probability assigned?)
+    // Identifiers used for the terminating leaves
+    //   Nodes before NODE_COUNT are associated to the vector imNodeInfo and  
+    //   method IMpredictNode.evaluate can be used to extract the probability.
+    //   Nodes after  NODE_COUNT have no IMnodeInfo and must be evaluated by added code
    
     typedef enum{ ONE, TWO, THREE,  FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, 
        NODE_COUNT, CAT_HiE, NONE
     } Category;
 
 
-    // table of information about nodes to expect in the IM file.
+    // Information per terminating leaf
     //      ( similar to ClassificationTree.cxx )
     //___________________________________________________________________________
 
     class IMnodeInfo { 
     public:
         int         id;    // unique ID for local identification
-        const char* name;  // the name of the Prediction node in the IM XML file
+        const char* name;  // the name of the Prediction node in the IM xml file
         int         index; // index of the classification type within the list of probabilites
     };
 
-    // these have to correspond to the IM xml file
-    // the index to be checked
+    // The vector imNodeInfo must list the terminating leaves of the IM xml file   
     IMnodeInfo imNodeInfo[] = {
         { ONE,   "Tiles&Hi-E",             1 }, 
         { TWO,   "NoTiles&LowE&GoodXR",    1 }, 
@@ -76,25 +76,33 @@ namespace {
     };
 
 
-    // Manage interface to one of the prediction nodes
+    // Interface to IM node
+    // 
     //    (same as in ClassificationTree.cxx )
     //___________________________________________________________________________
 
     class IMpredictNode { 
     public:
-        IMpredictNode( const IMnodeInfo& info, const classification::Tree* tree )
-            :  m_offset(info.index), m_tree(tree)
+        // Locate the node using the node info and ptr to the classification tree 
+        //_______________________________________________________________________
+
+        IMpredictNode( const IMnodeInfo& info, const classification::Tree* ctree )
+            :  m_offset(info.index), m_tree(ctree)
         {
             m_node = m_tree->getPredictTree(info.name);
             if( m_node==0) std::cerr << "IMpredictNode: Tree " << info.name 
-                                     << " not found in tree" << std::endl;
+                                     << " not found in classification tree" << std::endl;
             assert(m_node);
         }
+
+        //  Evaluate the probability for this node or leaf
+        //______________________________________________________________________
 
         double evaluate() const {
             return m_tree->navigate(m_node)[m_offset];
         }
 
+         // private: ?
         int m_offset;
         const classification::Tree*        m_tree;
         const classification::Tree::Node*  m_node;
@@ -106,35 +114,45 @@ namespace {
 
 
 
-// create lookup class to make translations
-//   (same as in ClassificationTree.cxx )
+// Interface to ROOT tuple and access item_values by name
+//    (same as in ClassificationTree.cxx )
 //___________________________________________________________________________
 
-class PruneTree::Lookup : public classification::Tree::ILookUpData {
+class PruneTree::Lookup : 
+      public classification::Tree::ILookUpData {
 public:
-    Lookup(Tuple& t):m_t(t){}
+    Lookup( Tuple& t ): m_t(t){}
 
-    const double * operator()(const std::string& name){
+    // Return pointer to tuple value given the item name
+    const double * operator()(const std::string& name) {
         TupleItem* ti = const_cast<TupleItem*>(m_t.tupleItem(name));
-        if( ti==0) return 0;
-        const double * f = & (ti->value());
+        if( ti==0 ) return 0;
+        const double * f = &(ti->value());
         return f;
     }
 
-    // note that float flag depends on how the tuple does it.
-    bool isFloat()const{return m_t.isFloat();}
-    Tuple& m_t;
+    // Default type for all tuple items is double, 
+    // use isFloat to allow for float type also
+    bool isFloat() const { return  m_t.isFloat(); }
+  //private: ? <===
+    Tuple&  m_t;
 };
 
 
-//  Preselection to reduce background events before further analysis
+//  Classify the event 
+//  for fast filter (eg reduce background events before further analysis)
+//  
 //     (similar to ClassificationTree::BackgroundCut or 
 //       Classificationtree::ClassificationTree  plus  ::execute)
 //___________________________________________________________________________
 
 class PruneTree::PreClassify {
 public:
-    //! ctor: associate with ROOT tree and find the branches we need
+    // Constructor: 
+    //   associate with the branches of the (input) ROOT tree and
+    //   prepare additional tuple items for output tree 
+    //_______________________________________________________________________
+
     PreClassify( PruneTree::Lookup& lookup ) 
         : CalEnergySum  (*lookup( "CalEnergySum" )) 
         , CalXtalRatio  (*lookup( "CalXtalRatio" ))
@@ -147,11 +165,20 @@ public:
 	, Tkr1SSDVeto   (*lookup( "Tkr1SSDVeto"))
 	, CalCsIRLn     (*lookup( "CalCsIRLn"))
     { 
-        // need an additional tuple item
-      new TupleItem("AcdUpperTileCnt", AcdUpperTileCnt);  //  int ?
+      // Add to current RootTuple
+      //   additional item needed for decision
+      new TupleItem( "AcdUpperTileCnt",  AcdUpperTileCnt  ); 
+ 
+      //   tuple items with result of decision
+      new TupleItem( "IMFilterCategory", IMFilterCategory );
+      new TupleItem( "IMFilterProb",     IMFilterProb     );
+
+      std::cout << "PruneTree::PreClassify: done" << std::endl;
     }
 
-    //! return truth value, for current TTree position
+    //  Return Category for current event (TTree row)
+    //_______________________________________________________________________
+
     operator Category()
     {
       // Bill's IM node names are shown with quotes  "..."
@@ -222,9 +249,7 @@ public:
               else           { return NINE;  }
 
             }   // end !Acdlt150
-
-          }   // end !HiE
-        
+          }   // end !HiE        
 	}   // end active ACD Tiles
 
         return NONE;
@@ -252,15 +277,14 @@ public:
        CalXtalRatio > .02 & CalXtalRatio < .98
        AcdActiveDist < -20 &MeasEnergyType == "Med-E"
 
-       add to new NTuple
-       double  IMPreSelProb;
-       double  IMPreselCat;
        */
 
-    }
+    }  // operator PruneTree::PreClassify.Category() 
+
 
 private:
-    // references to the values read in from ROOT, or set directly, in the tuple
+    // references to the values read from ROOT tree, or 
+    // added to the tuple
     const double &   CalEnergySum; 
     const double &   CalXtalRatio;
     const double &   CalXtalsTrunc;
@@ -272,41 +296,42 @@ private:
     const double &   Tkr1SSDVeto; 
     const double &   CalCsIRLn;
   
-    // added TupleItem
+    //  TupleItem to be added to tuple written out
     double  AcdUpperTileCnt;
+public:
+    double  IMFilterCategory;    // Category of event       (add to NTuple)
+    double  IMFilterProb;        // Probability for gamma   (add to NTuple)  
 
 }; // class PruneTree::PreClassify
 
 
-//  PruneTree
-//  @brief  
+//  Constructor PruneTree
+//
+//  @brief  Set up the access to the ROOT Tree leaves and 
+//          the classification using the IM xml file. 
+//
 //  @param  t         Tuple input file
 //  @param  xml_file  IM xml file or default $MERITROOT/xml/CTPruner_DC1.imw 
 //___________________________________________________________________________
 
 PruneTree::PruneTree( Tuple& t, std::string xml_file )
 {
-    // create a lookup object, pass it to the preclassifier and the classification tree code
-    PruneTree::Lookup looker(t) ;
-    m_preclassify = new PruneTree::PreClassify(looker);
-    m_classifier  = new classification::Tree(looker, std::cout, 0); // verbosity
+    // create a lookup object and 
+    // pass it to the preclassifier and the classification tree code
+    PruneTree::Lookup looker(t);
+    m_preclassify = new PruneTree::PreClassify( looker );
+    m_classifier  = new classification::Tree( looker, std::cout, 2); // verbosity=2
 
-   // accept, or generate filename 
-    std::string  default_file( "/xml/CTPruner_DC1.imw" );
-    if( xml_file.empty() ){
-        const char *sPath = ::getenv("MERITROOT");
-        xml_file = std::string(sPath==0 ?  "../" : sPath) + default_file;
-    }
+    // Analyze the IM xml file
+    m_classifier->load( xml_file );
 
-    // analyze the file
-    m_classifier->load(xml_file);
-
-    // get the list of root prediction tree nodes
+    // Get the list of prediction tree nodes
     imnodes.reserve( NODE_COUNT );
     for( unsigned int i=0; i<NODE_COUNT; ++i){
         IMpredictNode n( imNodeInfo[i], m_classifier );
-        imnodes[imNodeInfo[i].id] = n;  // 
+        imnodes[imNodeInfo[i].id] = n;  
     }
+
 }
 
 //  Destructor 
@@ -317,12 +342,25 @@ PruneTree::~PruneTree(){
     delete m_classifier;
 }
 
-//  Get the probability related to the node 
+
+
+
+//  Get the probability for the current event
 //___________________________________________________________________________
 
 double PruneTree::operator()()
 {
    Category  cat = *m_preclassify;
-   
-   return  (cat==NONE) ?  0.0 :  imnodes[cat].evaluate();
+
+   double prob;
+   if      (cat == CAT_HiE) { prob = 1.0; }
+   else if (cat == NONE )   { prob = 0.0; }
+   else                     { prob = imnodes[cat].evaluate(); }
+
+   m_preclassify->IMFilterCategory = (double)cat;
+   m_preclassify->IMFilterProb     = prob;
+
+   std::cout <<"PruneTree(): category  "<< cat <<"\t probability  "<< prob << std::endl;
+   return prob; 
 }
+
