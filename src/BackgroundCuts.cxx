@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/BackgroundCuts.cxx,v 1.1.1.1 1999/12/20 22:29:12 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/BackgroundCuts.cxx,v 1.2 2001/06/14 19:51:59 usher Exp $
 // Initial author Steve Ritz
 
 #include "BackgroundCuts.h"
@@ -10,10 +10,10 @@ class Cal2Dfrac : public Analyze {
 friend class BackgroundCuts;
 
     Cal2Dfrac (const Tuple& t) 
-        : Analyze (t, "Cal_eLayer8", "Cal2Dfrac")
-        , m_csi1(t.tupleItem ("Cal_eLayer1"))
-        , m_csi8(t.tupleItem ("Cal_eLayer8"))
-	  , m_csiESum(t.tupleItem ("Cal_Energy_Sum"))
+        : Analyze (t, "Cal_eLayer7", "Cal2Dfrac")
+        , m_csi1(t.tupleItem ("Cal_eLayer0"))
+        , m_csi8(t.tupleItem ("Cal_eLayer7"))
+	  , m_csiESum(t.tupleItem ("Cal_Energy_Deposit"))
     {    }
 
     virtual bool    apply () {
@@ -37,7 +37,7 @@ class SurplusHit : public Analyze {
         : Analyze (t, "REC_Surplus_Hit_Ratio", "Surplus_Hit_Ratio")
         , m_fstX(t.tupleItem ("TKR_Fst_Cnv_Lyr"))
         , m_SHR(t.tupleItem ("REC_Surplus_Hit_Ratio"))
-	  , m_csiESum(t.tupleItem ("Cal_Energy_Sum"))
+	  , m_csiESum(t.tupleItem ("Cal_Energy_Deposit"))
     {    }
 
     virtual bool    apply () {
@@ -59,7 +59,7 @@ class CalFitNrm : public Analyze {
     friend class BackgroundCuts;
     CalFitNrm (const Tuple& t) 
         : Analyze (t, "Cal_Fit_errNrm", "CalFitNrm")
-	  , m_csiESum(t.tupleItem ("Cal_Energy_Sum"))
+	  , m_csiESum(t.tupleItem ("Cal_Energy_Deposit"))
     {    }
 
     virtual bool    apply () {
@@ -88,8 +88,8 @@ class NumVetos : public Analyze {
     friend class BackgroundCuts;
     
     NumVetos (const Tuple& t) 
-        : Analyze (t, "No_Vetos_Hit", "NumVetos")
-	  , m_csiESum(t.tupleItem ("Cal_Energy_Sum"))
+        : Analyze (t, "ACD_TileCount", "NumVetos")
+	  , m_csiESum(t.tupleItem ("Cal_Energy_Deposit"))
     {    }
 
     virtual bool    apply () {
@@ -107,7 +107,7 @@ class CutWithEthresh : public Cut {
     friend class BackgroundCuts;
     CutWithEthresh(const Tuple& t, const std::string& expression, double thresh)
         : Cut(t,expression)
-        , m_csiESum(t.tupleItem ("Cal_Energy_Sum"))
+        , m_csiESum(t.tupleItem ("Cal_Energy_Deposit"))
         , m_thresh(thresh) {}
 
     virtual bool apply() {
@@ -132,9 +132,9 @@ BackgroundCuts::BackgroundCuts(const Tuple& t) : AnalysisList(" Ritz cuts")
     push_back( new NumVetos (t) );
     push_back( new Cal2Dfrac (t) );
     
-    push_back( new CutWithEthresh(t, "Cal_moment1<15.", 0.35 ) );
+    push_back( new CutWithEthresh(t, "Cal_long_rms<15.", 0.35 ) );
     push_back( new Cut(t, "Cal_Z>-30.") ); // will loosen slightly above 75 GeV, but still quite efficient even at 300 GeV
-    push_back( new Cut(t, "Quality_Parm>10.") );
+    push_back( new Cut(t, "TKR_qual>10.") );
     push_back( new CutWithEthresh(t, "Cal_No_Xtals_Trunc<20", 75.) );
 
 }
