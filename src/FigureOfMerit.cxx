@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.5 2001/10/19 20:48:59 ritz Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.6 2001/10/22 18:34:32 burnett Exp $
 
 
 #include "FigureOfMerit.h"
@@ -10,6 +10,10 @@
 #include <iomanip>
 #include <algorithm>
 
+// put these here because gcc could not find the inline versions???
+unsigned        FigureOfMerit::accepted() const { return m_accepted; }
+float    FigureOfMerit::area(){return s_area;}
+unsigned FigureOfMerit::generated()  { return s_generated; }
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-//  $Header: /cvs/glastsim/merit/FigureOfMerit.h,v 1.9 1999/07/05 19:08:03 burnett Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.h,v 1.1.1.1 1999/12/20 22:29:13 burnett Exp $
 //  Project: glast analysis
 //   Author: Toby Burnett
 //
@@ -39,10 +39,10 @@ public:
     void    accept();
     // process an accepted event
 
-    unsigned accepted() const { return m_accepted; }
+    unsigned accepted() const;// { return m_accepted; }
 
-    static float area(){return s_area;}
-    static unsigned generated()  { return s_generated; }
+    static float area(); //{return s_area;}
+    static unsigned generated();//  { return s_generated; }
     // data access
 
 private:
