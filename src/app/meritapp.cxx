@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.14 2003/05/11 04:45:13 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.15 2003/05/15 04:49:01 burnett Exp $
 
 // Main for merit
 
@@ -16,11 +16,12 @@
 #include <sys/timeb.h>
 #include <string>
 #include <sstream>
+#include <typeinfo>
 
-#include <assert.h>
+
 #define CLASSIF
 
-const char* _MERIT_VERSION = "$Revision: 1.14 $";
+const char* _MERIT_VERSION = "$Revision: 1.15 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
