@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Fri Mar 23 11:52:01 PST 2001
+merit/src Makefile.am
+
+Removed Files:
+	Makefile.am 
+Log Message:
+initial mods for Gaudi environment
+    *
+------------------------------------------------------------
+User: burnett  Fri Mar 23 11:52:01 PST 2001
 merit/mgr requirements
 
 Modified Files:
