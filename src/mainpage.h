@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.9 2004/07/06 18:42:37 hansl Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.10 2004/12/22 16:06:46 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -12,7 +12,7 @@
     @param  meritAlg.cuts ["LntA"]  remove the "t" to disable tree-based tail cuts
     @param  meritAlg.generated [10000]
     @param  meritAlg.RootFilename  [""]
-    @param  meritAlg.IM_filename ["$(MERITROOT)/xml/classification.imw"] 
+    @param  meritAlg.IM_filename ["$(MERITROOT)/xml/classification.imw"]  set this to null to not run the classification
     @param  meritAlg.PrimaryType ["RECO"] or "MC" (why not a bool?)
     @param  meritAlg.NbOfEvtsInFile [100000]  to define FT1 event ID. (see code)
 
@@ -147,7 +147,10 @@ Analysis cuts: nA
                 IMnodeInfo and typedef Category have to be revised. 
            <li> If the structure of the CT is unchanged, only an updated IM xml
                 file is needed. The cuts in PruneTree::operator Category() may
-                have to be revised. </ul>
+                have to be revised. 
+           <li> If the classification tree computations must be disabled, 
+                  set the joboptions parameter IM_filename to null. Also remove the "t" in the cuts parameter.
+       </ul>
 
   <hr>
   @section notes release notes
