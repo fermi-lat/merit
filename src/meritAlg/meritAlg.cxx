@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.19 2002/09/01 05:45:19 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.20 2002/09/02 03:06:39 burnett Exp $
 
 // Include files
 
@@ -243,7 +243,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.19 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.20 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -372,7 +372,7 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     Vector caldir = cl->getDirection();
     float caltheta = -1000.0;
     float calphi = -1000.0;
-    if(abs(caldir.z())<1.){ caltheta=acos(caldir.z());
+    if(fabs(caldir.z())<1.){ caltheta=acos(caldir.z());
     calphi=float(M_PI/2.);
     if(caldir.x()!=0.) calphi = atan(caldir.y()/caldir.x());
     }
