@@ -1,5 +1,5 @@
 /** @file  fastFilter.cxx 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.3 2003/12/18 03:25:10 hansl Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.4 2003/12/19 00:35:23 hansl Exp $
 */
 
 #include "app/RootTuple.h"
@@ -15,23 +15,31 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.3 2003/12
 
 
 
-//   Application: fastFilter: 
-//     - read merit input, apply loose filter selection and 
-//     - add filter category + probability to ntuple
-//     - writeout new ntuple with filtered events
-//
-//   usage: fastFilter  [input_file] [output_file]
-//
-//   input_file : if not present look at env var MERIT_INPUT_FILE
-//   output_file: if not present, and MERIT_OUTPUT_FILE is not defined, 
-//                append "_filt" to the file name
-//
-//   imfile     : IM xml file from env var IM_FILE_FILTER
-//_____________________________________________________________________________
+/**   Application: fastFilter: 
+ *   - read merit input, apply loose filter selection and 
+ *    - add filter category + probability to ntuple
+ *    - write out new ntuple with filtered events and 
+ *      gamma category and probability added 
+ *
+ *  usage: fastFilter  [input_file] [output_file]
+ *
+ *   input_file : if not provided, use env var MERIT_INPUT_FILE 
+ *   output_file: if not provided, and MERIT_OUTPUT_FILE is not defined, 
+ *                append "_filt" to the input_file name
+ *
+ *   imfile     : IM xml file defined by env var IM_FILE_FILTER,
+ *                if not defined, use default $MERITROOT/xml/CTPruner_DC1.imw
+ *  gammaProbCut : cut on probability that event is gamma candidate
+ * 
+ *  Environment variables are defined in the requirements
+ * _____________________________________________________________________________
+ */
 
 int main(int argc, char* argv[])
 {
-    int debug = 1;  // debug level increasing with value
+    int    debug = 1;           // debug level increasing with value
+    double gammaProbCut (0.0);  // cut on probability that event is a gamma candidate
+                                // = 0.0 for test of filter 
 
     // Set up input, output files and IM XML file
     //_________________________________________________________________________
@@ -80,7 +88,7 @@ int main(int argc, char* argv[])
     intuple->setTitle(title.str());
     intuple->loadBranches(); // create TupleItems from input tree
 
-    std::cout << "FastFilter: Input merit Tuple "
+    std::cout << "fastFilter: Input merit Tuple "
               << "\n\t number of events "  << intuple->numEvents()
               << "\n\t " << input_filename << "\"" << std::endl;
 
@@ -94,10 +102,12 @@ int main(int argc, char* argv[])
     //_________________________________________________________________________
 
     std::cout << "FastFilter: Output enhanced merit Tuple: "
-              << "\n\t " << output_filename   << "\"" << __DATE__ <<std::endl;
+              << "\n\t " << output_filename   << " \"" << __DATE__ << "\""
+              <<std::endl;
 
     // set up the output Root file and Root Tree
-    std::string outTitle( "Filtered" );
+    std::string outTitle( "Filtered " );
+    outTitle += __DATE__;
     TFile  out_file( output_filename.c_str(), "recreate",  outTitle.c_str() );
     TTree* out_tree = new TTree(tree_name.c_str(), outTitle.c_str() ); //name,title 
 
@@ -126,7 +136,7 @@ int main(int argc, char* argv[])
 	// event loop
           while ( intuple->nextEvent() ) { 
 	    double prob = pruner();
-            if (prob >= 0.0 ) {  // 0.0 for test of filter
+            if (prob >= gammaProbCut ) {  
               
               out_file.cd();
               nBytes = out_tree->Fill();
@@ -156,5 +166,3 @@ int main(int argc, char* argv[])
         
      return 0;
 }
-
-
