@@ -1,4 +1,4 @@
-//$Header:  $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.1 2002/08/31 21:55:20 burnett Exp $
 // Original author T. Burnett 
 #ifndef MERITROOTTUPLE_H
 #define MERITROOTTUPLE_H
@@ -7,20 +7,21 @@
 class Tuple;
 class TNtuple;
 class TFile;
+class TTree;
 
 /* 
- * @brief Creates a ROOT Ntuple from the merit list
+ * @brief Creates a ROOT tree from the merit list
  *
  * @author T. Burnett
  *
- * $Header:  $
+ * $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.1 2002/08/31 21:55:20 burnett Exp $
  */
 
 class MeritRootTuple  {
 
 public:
     /// define the associated root tuple and a file to write it too
-    MeritRootTuple::MeritRootTuple(const Tuple* tuple, std::string filename);
+    MeritRootTuple::MeritRootTuple(Tuple* tuple, std::string filename);
     ~MeritRootTuple();
 
     /// fill it
@@ -30,10 +31,11 @@ public:
     int entries()const;
 
 private:
-    const Tuple* m_tuple;
+    Tuple* m_tuple;
 
     /// the ROOT stuff
-    TNtuple  * m_tnt;
+    //TNtuple  * m_tnt;
+    TTree * m_tree;
     TFile *  m_tf;
 
 };
