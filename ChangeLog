@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: burnett  Mon Oct 14 22:25:29 PDT 2002
+merit/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+check for NAN in PSF; 
+tag v5r12
+    *
+------------------------------------------------------------
+User: burnett  Mon Oct 14 22:25:29 PDT 2002
 merit/cmt
 
 Modified Files:
