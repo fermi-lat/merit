@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.45 2003/11/26 13:42:36 burnett Exp $
+ * $Id: release.notes,v 1.46 2003/11/26 18:13:37 cohen Exp $
  *
+ *  v6r14p3 THB  26-nov-03 fix a problem in the reclassification app.
  *  v6r14p2 JCT  26-nov-03 revert the field names
  *  v6r14p1 THB  26-nov-03 fix one of the classification tree parameters
  *  v6r14   THB  25-nov-03 Update rest of trees with post-Rome Atwood analysis
