@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.8 2003/03/08 22:00:19 burnett Exp $
+// $Id: Tuple.cxx,v 1.9 2003/03/10 15:58:52 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -16,8 +16,8 @@ static inline void FATAL(const char* text) {
 Tuple::Tuple(const std::string& tname)
 : m_title(tname)
 {
-
-   s_currentTuple = this;
+    
+    s_currentTuple = this;
 }
 void Tuple::setTitle(const std::string& name)
 {
@@ -28,47 +28,47 @@ Tuple::Tuple(std::istream& infile)
 {
     s_currentTuple = this;
     char buffer[2000];
-
+    
     // assume first line is title
     infile.getline(buffer, sizeof(buffer) );
     m_title = buffer;
     if( std::count(m_title.begin(), m_title.end(), '\t')>2 ) {
-	// no, has column names
-	m_title = "";
+        // no, has column names
+        m_title = "";
     } else {
         // and second line is a list of space or tab-delimited names
-	infile.getline(buffer, sizeof(buffer) );
+        infile.getline(buffer, sizeof(buffer) );
     }
     char* token = strtok( buffer, " \t" );
     while( token != NULL )   {
-	new TupleItem(token);  // note that there is no logic to delete these
-	token = strtok( 0, " \t" );
+        new TupleItem(token);  // note that there is no logic to delete these
+        token = strtok( 0, " \t" );
     }
 }
 void Tuple::nextStream(std::istream& infile)
 {
     char buffer[2000];
-
+    
     // assume first line is title
     infile.getline(buffer, sizeof(buffer) );
     if( std::count(m_title.begin(), m_title.end(), '\t')>2 ) {
-	// no, has column names
-	m_title = "";
+        // no, has column names
+        m_title = "";
     } else {
         // and second line is a list of space or tab-delimited names
         m_title =std::string(buffer);
-	infile.getline(buffer, sizeof(buffer) );
+        infile.getline(buffer, sizeof(buffer) );
     }
     char* token = strtok( buffer, " \t" );
     int i=0;
-
+    
     while( token != NULL )   {
         if( std::string(token) != name(i++) ){
             FATAL( "new tuple not identical to last");
         }
-	token = strtok( 0, " \t" );
+        token = strtok( 0, " \t" );
     }
-
+    
 }
 Tuple*
 Tuple::s_currentTuple=0;
@@ -95,7 +95,7 @@ namespace {
     class uncase_compare{
     public:
         uncase_compare(const std::string& s):m_left(s){}
-
+        
         bool operator==( const std::string& right){
             int s1=m_left.size(), s2 = right.size();
             if( s1!=s2) return false;
@@ -104,7 +104,7 @@ namespace {
             }
             return true;
         }
-
+        
         const std::string& m_left;
     };
 }
@@ -117,7 +117,7 @@ Tuple::find(const std::string& nam)const
     const_iterator it=begin();
     for(;  it !=end(); ++it) {
         if( check==(*it)->name() )break;
-	//if( nam==(*it)->name() )break;
+        //if( nam==(*it)->name() )break;
     }
     return it;
 }
@@ -126,20 +126,20 @@ void
 Tuple::fillArray(double array[])const
 {
     for( const_iterator it=begin(); it !=end(); ++it)
-      *array++ = (*it)->datum;
+        *array++ = (*it)->datum;
 }
 
 void
 Tuple::writeHeader(std::ostream& os)const
 {
-
+    
     os << m_title << '\n';
     if( !size() ){
-	WARNING("Tuple::writeHeader--no items in tuple!");
-	return;
+        WARNING("Tuple::writeHeader--no items in tuple!");
+        return;
     }
     for( const_iterator it=begin(); it !=end(); ++it) {
-	  os <<  (*it)->name() << " \t";
+        os <<  (*it)->name() << " \t";
     }
     os << '\n';
 }
@@ -148,12 +148,12 @@ std::ostream& operator << (std::ostream& out, const Tuple& t)
 {
     unsigned len = t.size();
     if( !len) {
-	WARNING("Attempt to write empty tuple!");
-	
+        WARNING("Attempt to write empty tuple!");
+        
     }else {
-
-	for( Tuple::const_iterator it=t.begin(); it !=t.end(); ++it)
-	    out << double(**it) << '\t';
+        
+        for( Tuple::const_iterator it=t.begin(); it !=t.end(); ++it)
+            out << double(**it) << '\t';
     }
     out << '\n';
     return out;
@@ -163,54 +163,54 @@ std::istream& operator >> (std::istream& in, Tuple& t)
 {
     double x;
     for( Tuple::iterator it = t.begin(); it != t.end(); ++it) {
-	in >> x;
-	if( in.fail() ){  // protect against 1.#INF!
-	    if( in.eof() ) break;
-	    in.clear();
-	    char temp[200];
-
-	    if( it == t.begin()) {
-		do {
-		    // non-numeric at beginning of line. just read until OK
-		    in.clear();
-		    in.getline(temp, sizeof(temp) , '\n');
-		    std::cerr << "Text found & skipped: \""
-			      << temp << "\"" << std::endl;
-		    in >> x;
-		} while ( in.fail() && ! in.eof() );
-	    } else {
-
-		in.getline(temp, sizeof(temp), '\t');
-		if( fabs(x)==1 && temp[0]=='#') { // what we get on the PC
-		    --it; //back up because stopped at the #
-		    std::cerr << "Bad value for \"" <<
-		      (*it)->name() << "\": " << temp << std::endl;
-		    x= FLT_MAX;
-		}
-		else if( temp[0]=='N' || temp[0]=='I' ||
-			 (temp[0] =='-' && temp[1] == 'N') ){
-		    x = FLT_MAX;
-		}  // maybe it is 'NaN' or 'Infinity' (gcc)
-		else  {
-		    std::cerr << "Error message found: \"" << temp
-			      << "\"" << std::endl;
-		    std::cerr << "Can't recover, exiting" << std::endl;
+        in >> x;
+        if( in.fail() ){  // protect against 1.#INF!
+            if( in.eof() ) break;
+            in.clear();
+            char temp[200];
+            
+            if( it == t.begin()) {
+                do {
+                    // non-numeric at beginning of line. just read until OK
+                    in.clear();
+                    in.getline(temp, sizeof(temp) , '\n');
+                    std::cerr << "Text found & skipped: \""
+                        << temp << "\"" << std::endl;
+                    in >> x;
+                } while ( in.fail() && ! in.eof() );
+            } else {
+                
+                in.getline(temp, sizeof(temp), '\t');
+                if( fabs(x)==1 && temp[0]=='#') { // what we get on the PC
+                    --it; //back up because stopped at the #
+                    std::cerr << "Bad value for \"" <<
+                        (*it)->name() << "\": " << temp << std::endl;
+                    x= FLT_MAX;
+                }
+                else if( temp[0]=='N' || temp[0]=='I' ||
+                    (temp[0] =='-' && temp[1] == 'N') ){
+                    x = FLT_MAX;
+                }  // maybe it is 'NaN' or 'Infinity' (gcc)
+                else  {
+                    std::cerr << "Error message found: \"" << temp
+                        << "\"" << std::endl;
+                    std::cerr << "Can't recover, exiting" << std::endl;
                     throw("merit cannot read");
-		}
-	    }
- 	}
-	(*it)->datum = x;
+                }
+            }
+        }
+        (*it)->datum = x;
     }
     return in;
 }
 
 TupleItem::TupleItem(const std::string& iname, double x)
-: m_name(iname), datum(x), m_pdatum(&datum)
+: m_name(iname), datum(x), m_pdatum(&datum), m_isFloat(false)
 {
-
+    
     if( Tuple::s_currentTuple==0 )
-	FATAL("TupleItem, but no Tuple defined");
-
+        FATAL("TupleItem, but no Tuple defined");
+    
     // replace one blank with an underscore
     std::string::size_type i = name().find(' ');
     if( i != std::string::npos){
@@ -218,38 +218,32 @@ TupleItem::TupleItem(const std::string& iname, double x)
     }
     // die if another
     i = m_name.find(' ');
-
+    
     if( i != std::string::npos){
         std::string fatal("TupleItem: bad item name, \"");
         FATAL((fatal+iname+"\" ").c_str());
     }
     Tuple::s_currentTuple->push_back(this);
 }
-    
+
 TupleItem::TupleItem(const std::string& name, float* x)
-: m_name(name)
+: m_name(name), m_pdatum((double*)x),m_isFloat(true)
 {
-    std::cerr << "Float not implemented yet" << std::endl;
-    throw("Tuples with float pointer not implemented");
+    Tuple::s_currentTuple->push_back(this);
 }
 
 TupleItem::TupleItem(const std::string& iname, double* px)
-: m_name(iname), m_pdatum(px)
+: m_name(iname), m_pdatum(px), m_isFloat(false)
 {
     Tuple::s_currentTuple->push_back(this);
 }
 
 
-double &
-TupleItem::operator()(){
-    return *m_pdatum;
-}
-
 
 std::ostream& operator<< (std::ostream& out, const TupleItem& t)
 {
-   out << t.name() << '=' << *t.m_pdatum;
-   return out;
+    out << t.name() << '=' << *t.m_pdatum;
+    return out;
 }
 
 void Tuple::add_alias(std::string name1, std::string name2)
@@ -270,7 +264,7 @@ Tuple::tupleItem(const std::string& name)const
     Tuple::const_iterator it = find(name);
     // compare lowercase only
     if( it != end() ) return *it;
-
+    
     // try alias
     std::map<std::string, std::string>::const_iterator sit=m_alias_list.find(name);
     if( sit != m_alias_list.end() ) {
@@ -278,8 +272,8 @@ Tuple::tupleItem(const std::string& name)const
         it = find( alias );
         if( it != end() ) return *it;
     }
-
-
+    
+    
     // here if not found
     std::stringstream  errmsg;
     errmsg << "Sorry, did not find '" << name << "' in the tuple\n";
@@ -292,5 +286,5 @@ Tuple::~Tuple()
 {
     iterator it = begin();
     while( it != end() )
-	delete *it++;
+        delete *it++;
 }
