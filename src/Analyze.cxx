@@ -43,3 +43,16 @@ void Analyze::set_tuple_item(const Tuple& t, std::string item_name)
 {
     m_tupleItem = t.tupleItem(item_name);
 }
+
+const char* Analyze::getItem()
+{
+    const char* pItem = 0;
+
+    if (m_tupleItem)
+    {
+        std::string item(m_tupleItem->name());
+        pItem = item.data();
+    }
+
+    return pItem;
+}

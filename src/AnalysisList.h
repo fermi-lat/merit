@@ -17,6 +17,9 @@ public:
 
     void clear();
 
+    //Put these in for use with root
+    int      getListSize()        {return size();}
+    Analyze* getListItem(int idx) {return (*this)[idx];}
 private:
     bool apply();
     bool m_noline;
