@@ -1,6 +1,6 @@
 package merit
-version v5r12p2
-# $Id: requirements,v 1.19 2002/10/27 19:29:20 burnett Exp $
+version v5r12p3
+# $Id: requirements,v 1.20 2002/10/31 03:29:49 burnett Exp $
 
 branches doc
 
@@ -9,10 +9,9 @@ use Event *
 use GuiSvc v3*
 
 # read/ write ROOT trees (any old ROOT will do)
-use ROOT *
+use RootPolicy *
 
 apply_pattern packageShr
-ignore_pattern RuleChecker
 
 private
 
