@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Wed Oct 31 09:05:53 PST 2001
+merit/src BackgroundCuts.cxx
+
+Modified Files:
+	BackgroundCuts.cxx 
+Log Message:
+This version has changes to make current version of ntuple variables work
+    *
+------------------------------------------------------------
 User: usher  Wed Oct 31 09:04:09 PST 2001
 merit/src PSFtailCuts.cxx
 
