@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Wed Aug 28 17:53:00 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Added Files:
+	TkrVtxCutVals.cxx TkrVtxCutVals.h 
+Log Message:
+Code from the tracking group to calculate cut quantities.
+    *
+------------------------------------------------------------
 User: burnett  Wed Aug 28 17:52:59 PDT 2002
 merit/cmt
 
