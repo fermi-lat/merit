@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: cohen  Tue Nov 25 07:57:47 PST 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+FT1 merge completed, + renaming of some fields
+    *
+------------------------------------------------------------
+User: cohen  Tue Nov 25 07:57:47 PST 2003
 merit/src/analysis
 
 Modified Files:
