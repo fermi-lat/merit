@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Wed Nov 26 13:00:26 PST 2003
+merit/src/app
+
+Modified Files:
+	RootTuple.cxx RootTuple.h run_classification_main.cxx 
+Log Message:
+undo more of the name flipping; fix the rerun classification (double vs. float problem)
+    *
+------------------------------------------------------------
+User: burnett  Wed Nov 26 13:00:26 PST 2003
 merit/src
 
 Modified Files:
