@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.7 2003/05/25 17:12:53 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.8 2003/11/22 15:34:55 burnett Exp $
 
 #ifndef TUPLE_H
 #define TUPLE_H
@@ -26,6 +26,8 @@ public:
     
     // for making a root output tuple: must be  double?
     double & value() { return * m_pdatum;}
+    // root output
+    const float * pvalue() const{ return reinterpret_cast<const float*> (m_pdatum);}
 
     double operator()()const{      return value(); }
 
