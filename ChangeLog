@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Thu Oct  2 17:21:12 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+start a prototype FT1 tree in the tuple
+    *
+------------------------------------------------------------
+User: burnett  Thu Oct  2 17:21:12 PDT 2003
 merit/doc
 
 Modified Files:
