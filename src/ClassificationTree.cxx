@@ -33,6 +33,7 @@ namespace {
         const char* name; // the name of the Preciction node in the IM XML file
         int index;        // index of the classification type within the list of probabilites
     };
+    // these have to correspond to the IM file, derived from v3r3p7 in this case
     IMnodeInfo imNodeInfo[] = {
         { CALHIGH,           "CT Cal High",  1 },
         { CALMED,            "CT Cal Med",   1 },
@@ -83,7 +84,6 @@ namespace {
             };
 #endif
 
-#if defined(__GNUC__) && (__GNUC__ == 2)  
 // create lookup class to make translations
 class Lookup : public classification::Tree::ILookUpData {
 public:
@@ -98,7 +98,14 @@ public:
     bool isFloat()const{return m_t.isFloat();}
     Tuple& m_t;
 };
-#endif
+
+double * getTupleItemPointer(Tuple& t, std::string name)
+{
+    // simple little function that either finds an existing, or creates a new TupleItem
+    TupleItem* ti = const_cast<TupleItem*>(t.tupleItem(name));
+    if( ti==0) ti = new TupleItem(name);
+    return &(ti->value());
+}
 
 }// anonymous namespace
 
@@ -112,7 +119,6 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             xml_file= std::string(sPath==0?  "../": sPath) + default_file;
         }
 
-#if !defined(__GNUC__) || (__GNUC__ !=2)
         // create lookup class to make translations
         class Lookup : public classification::Tree::ILookUpData {
         public:
@@ -127,7 +133,6 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             bool isFloat()const{return m_t.isFloat();}
             Tuple& m_t;
         };
-#endif
         Lookup looker(t);
 #if 0  // uncomment this if needed
         //add aliases to the tuple
@@ -172,6 +177,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         t.tupleItem("Tkr1Hits");
         t.tupleItem("Tkr1KalEne");
 
+        // these are used for preliminary cuts to select the tree to use
         m_firstLayer = t.tupleItem("Tkr1FirstLayer");
         m_calEnergySum = t.tupleItem("CalEnergySum");
         m_calTotRLn =t.tupleItem("CalTotRLn");
@@ -183,12 +189,12 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_acdTileCount = t.tupleItem("AcdTileCount");
         m_vtxAngle = t.tupleItem("VtxAngle");
 
-        // New items to create
-        new TupleItem("IMgoodCalProb",&m_goodCalProb);
-        new TupleItem("IMvertexProb", &m_vtxProb);
-        new TupleItem("IMcoreProb",   &m_coreProb);
-        new TupleItem("IMpsfErrPred", &m_psfErrPred);
-        new TupleItem("IMgammaProb",  &m_gammaProb);
+        // New items to create or override
+        m_goodCalProb = getTupleItemPointer(t,"IMgoodCalProb");
+        m_vtxProb=      getTupleItemPointer(t,"IMvertexProb");
+        m_coreProb =    getTupleItemPointer(t,"IMcoreProb");
+        m_psfErrPred =  getTupleItemPointer(t,"IMpsfErrPred");
+        m_gammaProb=    getTupleItemPointer(t,"IMgammaProb");
 
         // since at least one of the background rejection trees needs to know about the core prob
         t.add_alias( "IMcoreProb", "Pr(CORE)");
@@ -214,7 +220,6 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         // return the cut on this quantity that is used by the analysis
         int path=0; // path through the maze
         double  cut=0.5;
-        m_gammaProb=0;
 
 
         // First apply the background check
@@ -262,8 +267,8 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
     {
 
         // initialize IM output variables
-        m_coreProb=m_psfErrPred=0;
-        m_vtxProb=m_gammaProb=0;
+        *m_coreProb=*m_psfErrPred=0;
+        *m_vtxProb=*m_gammaProb=0;
 
         // select cal energy type:
         //ifelse((CalEnergySum< 100. | CalTotRLn < 2), ifelse((CalTotRLn < 2 | CalEnergySum <  5), "NoCal", "LowCal"),"HighCal")
@@ -281,23 +286,23 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         }else if ( *m_calEnergySum >   5. && *m_calTotRLn > 2.){ cal_type=CALLOW;
         } 
         // evalue appropriate tree for good cal prob
-        m_goodCalProb= imnodes[cal_type].evaluate();
+        *m_goodCalProb= imnodes[cal_type].evaluate();
 
         // rest only if cal prob ok
-        if( m_goodCalProb<0.5 )   return;
+        if( *m_goodCalProb<0.5 )   return;
  
         // select vertex-vs-1 track, corresponding tree for core, psf
         int core_type=0, psf_type=0;
         if( *m_firstLayer < 12 ) {
-            m_vtxProb = imnodes[VTX_THIN].evaluate(); 
-            if( *m_vtxAngle>0 && m_vtxProb >0.5) { 
+            *m_vtxProb = imnodes[VTX_THIN].evaluate(); 
+            if( *m_vtxAngle>0 && *m_vtxProb >0.5) { 
                     core_type=VTX_THIN_TAIL;     psf_type= VTX_THIN_BEST;
             }else{
                     core_type=ONE_TRK_THIN_TAIL; psf_type= ONE_TRK_THIN_BEST;
             }
         }else {
-            m_vtxProb = imnodes[VTX_THICK].evaluate();
-            if(  *m_vtxAngle>0 &&  m_vtxProb >0.5) {
+            *m_vtxProb = imnodes[VTX_THICK].evaluate();
+            if(  *m_vtxAngle>0 &&  *m_vtxProb >0.5) {
                 core_type=VTX_THICK_TAIL;         psf_type= VTX_THICK_BEST;
             }else{
                 core_type=ONE_TRK_THICK_TAIL;     psf_type= ONE_TRK_THICK_BEST;
@@ -305,12 +310,12 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         }
 
         // now evalute the appropriate trees
-        m_coreProb =   imnodes[core_type].evaluate();
-        m_psfErrPred = imnodes[psf_type].evaluate();
+        *m_coreProb =   imnodes[core_type].evaluate();
+        *m_psfErrPred = imnodes[psf_type].evaluate();
 
         // background type to select appropriate tree for gamma prob.
         int bkg_type = backgroundRejection();
-        m_gammaProb= bkg_type==0? 0 : imnodes[bkg_type].evaluate();
+        *m_gammaProb= bkg_type==0? 0 : imnodes[bkg_type].evaluate();
 
     }
     ClassificationTree::~ClassificationTree()
