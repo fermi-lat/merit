@@ -84,7 +84,7 @@ namespace {
                 std::make_pair(   string( "VtxEAngle"),        string( "EvtVtxEAngle"))
             };
 #endif
-#if 0
+#if 1 
 // create lookup class to make translations
 class Lookup : public classification::Tree::ILookUpData {
 public:
@@ -127,6 +127,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             xml_file= std::string(sPath==0?  "../": sPath) + default_file;
         }
 
+        #if 0
         // create lookup class to make translations
         class Lookup : public classification::Tree::ILookUpData {
         public:
@@ -141,6 +142,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             bool isFloat()const{return m_t.isFloat();}
             Tuple& m_t;
         };
+        #endif
         Lookup looker(t);
 #if 0  // uncomment this if needed
         //add aliases to the tuple
