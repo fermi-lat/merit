@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Aug 28 06:54:21 PDT 2004
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+restore all tuple names to status quo ante.
+    *
+------------------------------------------------------------
 User: heather  Thu Aug 26 18:42:51 PDT 2004
 merit/src/meritAlg
 
