@@ -1,40 +1,13 @@
 /** @file PruneTree.cxx
-@brief apply the set of Bill's cuts for pruning background 
+@brief  Apply cuts to filter the background (cuts from Bill Atwood)
 */
 #include "PruneTree.h"
-#include "analysis/Tuple.h"
+#include "analysis/Tuple.h"        // Tuple, TupleItem
 #include "classification/Tree.h"   // package classification
 
 #include <cassert>
 
 
-//  Output of classification::Tree::load() with verbosity set to 1.
-//___________________________________________________________________________
-
-/*
-Loading Trees from file "D:\Users\burnett\dev_197\merit\v6r14p5/xml/CTPruner_DC1.imw"
-176                    Tiles&Hi-E       177           NoTiles&LowE&GoodXR       179                NoTiles&1Xtals
-180                NoTiles&0Xtals       181        Tiles&ACD< -170&GoodXR       182          Tiles&ACD<-170&1Xtal
-183          Tiles&ACD<-170&0Xtal       184           Tiles&ACD<-20&Med-E       185           Tiles&ACD>-20&Low-E
-Found 9 prediction nodes
-
-Combined used names:
-
-"AcdActiveDist", "AcdDoca", "AcdTotalEnergy", "AcdUpperTileCnt", "CalBkHalfRatio", "CalCsIRLn", "CalDeadTotRat", "CalDel
-taT", "CalEnergySum", "CalLATEdge", "CalLRmsRatio", "CalLyr0Ratio", "CalLyr7Ratio", "CalMIPDiff", "CalTotRLn", "CalTotSu
-mCorr", "CalTrackDoca", "CalTrackSep", "CalTwrEdge", "CalTwrGap", "CalXtalRatio", "CalXtalsTrunc", "EvtCalETLRatio", "Ev
-tCalETrackDoca", "EvtCalETrackSep", "EvtCalEXtalRatio", "EvtCalEXtalTrunc", "EvtCalEdgeAngle", "EvtEnergySumOpt", "EvtLo
-gESum", "EvtTkr1EChisq", "EvtTkr1EFirstChisq", "EvtTkr1EFrac", "EvtTkr1EQual", "EvtTkr1PSFMdRat", "EvtTkr2EChisq", "EvtT
-kr2EFirstChisq", "EvtTkrComptonRatio", "EvtTkrEComptonRatio", "EvtTkrEdgeAngle", "EvtVtxEAngle", "EvtVtxEDoca", "EvtVtxE
-EAngle", "EvtVtxEHeadSep", "Pr(CORE)", "Tkr1Chisq", "Tkr1DieEdge", "Tkr1FirstChisq", "Tkr1FirstLayer", "Tkr1Hits", "Tkr1
-KalEne", "Tkr1PrjTwrEdge", "Tkr1Qual", "Tkr1TwrEdge", "Tkr1ZDir", "Tkr2Chisq", "Tkr2KalEne", "TkrBlankHits", "TkrEnergy"
-, "TkrHDCount", "TkrNumTracks", "TkrRadLength", "TkrSumKalEne", "TkrThickHits", "TkrThinHits", "TkrTotalHits", "TkrTrack
-Length", "TkrTwrEdge", "VtxAngle", "VtxDOCA", "VtxHeadSep", "VtxS1", "VtxTotalWgt", "VtxZDir",
-
-Following names were needed by nodes, but not supplied in the map:
-
-"AcdUpperTileCnt",
-*/
 
 //___________________________________________________________________________
 
@@ -61,7 +34,7 @@ namespace {
         int         index; // index of the classification type within the list of probabilites
     };
 
-    // The vector imNodeInfo must list the terminating leaves of the IM xml file   
+    // The vector imNodeInfo lists the terminating leaves of the IM xml file   
     IMnodeInfo imNodeInfo[] = {
         { ONE,   "Tiles&Hi-E",             1 }, 
         { TWO,   "NoTiles&LowE&GoodXR",    1 }, 
@@ -114,16 +87,20 @@ namespace {
 
 
 
-// Interface to ROOT tuple and access item_values by name
+// Interface to RootTuple and access RootItem_values by name
 //    (same as in ClassificationTree.cxx )
 //___________________________________________________________________________
 
 class PruneTree::Lookup : 
       public classification::Tree::ILookUpData {
+
 public:
+
     Lookup( Tuple& t ): m_t(t){}
 
-    // Return pointer to tuple value given the item name
+    // Return pointer to TupleItem value, given the RootItem name
+    //_______________________________________________________________________
+
     const double * operator()(const std::string& name) {
         TupleItem* ti = const_cast<TupleItem*>(m_t.tupleItem(name));
         if( ti==0 ) return 0;
@@ -131,10 +108,13 @@ public:
         return f;
     }
 
-    // Default type for all tuple items is double, 
-    // use isFloat to allow for float type also
+    // Default type for all TupleItem values is double, 
+    // isFloat allows for float type also
+    //_______________________________________________________________________
+
     bool isFloat() const { return  m_t.isFloat(); }
-  //private: ? <===
+
+private:
     Tuple&  m_t;
 };
 
@@ -149,8 +129,8 @@ public:
 class PruneTree::PreClassify {
 public:
     // Constructor: 
-    //   associate with the branches of the (input) ROOT tree and
-    //   prepare additional tuple items for output tree 
+    //   associate TupleItems with the branches of the (input) ROOT tree and
+    //   add additional TupleItems 
     //_______________________________________________________________________
 
     PreClassify( PruneTree::Lookup& lookup ) 
@@ -167,13 +147,13 @@ public:
     { 
       // Add to current RootTuple
       //   additional item needed for decision
-      new TupleItem( "AcdUpperTileCnt",  AcdUpperTileCnt  ); 
+      new TupleItem( "AcdUpperTileCnt",  &AcdUpperTileCnt  ); // must use pointer 
  
       //   tuple items with result of decision
-      new TupleItem( "IMFilterCategory", IMFilterCategory );
-      new TupleItem( "IMFilterProb",     IMFilterProb     );
+      new TupleItem( "IMFilterCategory", &IMFilterCategory );
+      new TupleItem( "IMFilterProb",     &IMFilterProb     );
 
-      std::cout << "PruneTree::PreClassify: done" << std::endl;
+      std::cout << "PruneTree::PreClassify: RootTuple set up "<< std::endl;
     }
 
     //  Return Category for current event (TTree row)
@@ -182,14 +162,15 @@ public:
     operator Category()
     {
       // Bill's IM node names are shown with quotes  "..."
- 
+
+        AcdUpperTileCnt = AcdTileCount - AcdNoSideRow2 - AcdNoSideRow1; // calc always 
 	// precondition for accepting the event
         bool NoCal  = !( CalEnergySum > 5. && CalCsIRLn > 2.);
 	if ( NoCal ) {  return NONE; }
 
 
         // Prepare quantities for decisions 
-        AcdUpperTileCnt = AcdTileCount - AcdNoSideRow2 - AcdNoSideRow1;
+
 
         bool NoTiles  = AcdTileCount == 0 ; // AcdUpperTileCnt == 0 ?
 
@@ -255,31 +236,11 @@ public:
         return NONE;
 
 
-	// some comments extracted from xml -- keep until logic is checked
-        /*
-        CalEnergySum > 5 & CalCsIRLn > 2
-       (AcdActiveDist < -20 & AcdRibbonActDist < -20) | Tkr1SSDVeto > 1
+    }  // operator PruneTree::PreClassify.Category()
 
-       CalEnergySum &gt; 5 &amp; CalCsIRLn &gt; 2"
-
-       ifelse(
-       (AcdUpperTileCnt ==0),&quot;0Tiles&quot;,
-       ifelse((AcdUpperTileCnt &lt;3),&quot;1-2Tiles&quot;,
-       &quot;&gt;2Tiles&quot;))
-
-       MeasEnergyType	categorical	ifelse((CalEnergySum < 350),"Low-E",
-                                        ifelse((CalEnergySum < 3500),"Med-E","Hi-E"))
-       MeasEnergyType == "Hi-E"
-       AcdTileCount == 0
-       CalXtalRatio > .02 & CalXtalRatio < .98
-       CalXtalsTrunc > 0
-       AcdActiveDist <-150
-       CalXtalRatio > .02 & CalXtalRatio < .98
-       AcdActiveDist < -20 &MeasEnergyType == "Med-E"
-
-       */
-
-    }  // operator PruneTree::PreClassify.Category() 
+    // set methods for additional TupleItem values
+    void setCategory( double cat )     { IMFilterCategory = cat; }
+    void setProbability( double prob ) { IMFilterProb     = prob;}
 
 
 private:
@@ -296,18 +257,17 @@ private:
     const double &   Tkr1SSDVeto; 
     const double &   CalCsIRLn;
   
-    //  TupleItem to be added to tuple written out
-    double  AcdUpperTileCnt;
-public:
-    double  IMFilterCategory;    // Category of event       (add to NTuple)
-    double  IMFilterProb;        // Probability for gamma   (add to NTuple)  
+    //  TupleItems to be added to tuple written out
+    double   AcdUpperTileCnt;     // redundant 
+    double   IMFilterCategory;    // Category of event
+    double   IMFilterProb;        // Probability for gamma  
 
-}; // class PruneTree::PreClassify
+};  // class PruneTree::PreClassify
 
 
 //  Constructor PruneTree
 //
-//  @brief  Set up the access to the ROOT Tree leaves and 
+//  @brief  Set up the access to the RootTuple and 
 //          the classification using the IM xml file. 
 //
 //  @param  t         Tuple input file
@@ -331,8 +291,8 @@ PruneTree::PruneTree( Tuple& t, std::string xml_file )
         IMpredictNode n( imNodeInfo[i], m_classifier );
         imnodes[imNodeInfo[i].id] = n;  
     }
-
 }
+
 
 //  Destructor 
 //___________________________________________________________________________
@@ -341,7 +301,6 @@ PruneTree::~PruneTree(){
     delete m_preclassify;
     delete m_classifier;
 }
-
 
 
 
@@ -357,10 +316,10 @@ double PruneTree::operator()()
    else if (cat == NONE )   { prob = 0.0; }
    else                     { prob = imnodes[cat].evaluate(); }
 
-   m_preclassify->IMFilterCategory = (double)cat;
-   m_preclassify->IMFilterProb     = prob;
+   m_preclassify->setCategory( (double)cat );
+   m_preclassify->setProbability( prob );
 
-   std::cout <<"PruneTree(): category  "<< cat <<"\t probability  "<< prob << std::endl;
+   //std::cout <<"PruneTree(): category  "<<cat <<"\t  probability  "<<prob <<std::endl;
    return prob; 
 }
 
