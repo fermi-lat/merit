@@ -2,10 +2,12 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.56 2004/08/26 05:00:20 lsrea Exp $
+ * $Id: release.notes,v 1.57 2004/08/27 01:17:48 heather Exp $
  *
+ *  v6r16p1 THB  29-aug-04 restore names to v6r14 versions. 
+                           event flag word removed from HEAD (Still on branch)  
  *  v6r16   HMK  27-aug-04 Add new event flag word
- *  v6r15p1 LSR  25-aug-04 add new html file to doc/
+ *  v6r15p1 LSR  25-aug-04 add new html file to doc
  *  v6r15   THB  24-aug-04 add Gem summary word.
  *          THB  10-aug-04 rename local tuple variables and clean up logic
  *  v6r14p9 NG   02-aug-04 Writes out Angular Separation and FilterAlg status code from
