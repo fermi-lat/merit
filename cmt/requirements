@@ -1,6 +1,6 @@
 package merit
-version v6r14p7
-# $Id: requirements,v 1.69 2003/12/19 00:52:03 hansl Exp $
+version v6r14p8
+# $Id: requirements,v 1.70 2003/12/19 23:56:23 hansl Exp $
 
 branches doc
 

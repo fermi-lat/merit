@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.50 2003/12/12 16:28:37 cohen Exp $
+ * $Id: release.notes,v 1.51 2003/12/19 00:46:37 hansl Exp $
  *
+ *  v6r14p7 THB  06-jan-04 remove "CELESTIAL"
  *  v6r14p7 TRK  18-dec-03 New code for fastFilter: PruneTree.cxx, .h, app/fastFilter
  * 
  *  v6r14p6 JCT  12-dec-03 fix the FT1Energy entry which now uses EvtEnergySumOpt

@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.69 2003/11/26 16:43:41 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.70 2003/12/12 16:28:37 cohen Exp $
 */
 // Include files
 
@@ -493,7 +493,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-  out << "Merit tuple, " << "$Revision: 1.69 $" << std::endl;
+  out << "Merit tuple, " << "$Revision: 1.70 $" << std::endl;
 
   for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
     const TupleItem& item = **tit;
@@ -599,8 +599,8 @@ meritAlg::getCelestialCoords(const Hep3Vector glastDir)
   const Event::Exposure& exp = **(*elist).begin();
   
   // create a transformation object -- first get local directions
-  SkyDir zsky(exp.RAZ(), exp.DECZ(), SkyDir::CELESTIAL);
-  SkyDir xsky(exp.RAX(), exp.DECX(), SkyDir::CELESTIAL );
+  SkyDir zsky( exp.RAZ(), exp.DECZ() );
+  SkyDir xsky( exp.RAX(), exp.DECX() );
   // orthogonalize, since interpolation and transformations destory orthogonality (limit is 10E-8)
   Hep3Vector xhat = xsky() -  xsky().dot(zsky()) * zsky() ;
   PointingTransform toSky( zsky, xhat );
