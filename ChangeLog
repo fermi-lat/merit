@@ -1,4 +1,18 @@
 ------------------------------------------------------------
+User: burnett  Tue Oct 23 08:06:11 PDT 2001
+merit/merit AnalysisList.h Analyze.h BackgroundCuts.h Cut.h EnergyAnalysis.h FigureOfMerit.h LayerGroup.h Level1.h MultiPSF.h PSFanalysis.h PSFtailCuts.h RebinHist.h Resolution.h Statistic.h
+
+Removed Files:
+	AnalysisList.h Analyze.h BackgroundCuts.h Cut.h 
+	EnergyAnalysis.h FigureOfMerit.h LayerGroup.h Level1.h 
+	MultiPSF.h PSFanalysis.h PSFtailCuts.h RebinHist.h 
+	Resolution.h Statistic.h 
+Log Message:
+
+remove redundant copies of header files;
+add code to RootTuple to search for the TTree.
+    *
+------------------------------------------------------------
 User: burnett  Mon Oct 22 11:34:32 PDT 2001
 merit/src/app meritapp.cxx
 
