@@ -11,14 +11,14 @@
 #include "analysis/Tuple.h"
 #include "analysis/smplstat.h"
 
-#include "math.h"
+#include  <cmath>
 #include <iostream>
 
 //=============================================================================
 class PSFanalysis : public Analyze , public RebinHist{
 // analysis of the Point Spread Function
 public:
-    PSFanalysis(const Tuple& t, double emin=0, double emax=0);
+    PSFanalysis(const Tuple& t, double emin=0, double emax=0, std::string varName="McDirErr");
     // create new analysis object connected to the tuple, that will accept events in the 
     // energy range and layer range. (Default values: all events accepted)
     PSFanalysis();

@@ -1,7 +1,7 @@
 // Cut.cxx: implementation of the Cut class.
 //
 // Original author: T. Burnett tburnett@u.washington.edu
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/Cut.cxx,v 1.3 2002/11/25 15:58:20 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/Cut.cxx,v 1.4 2003/01/15 03:02:18 burnett Exp $
 //////////////////////////////////////////////////////////////////////
 
 #include "Cut.h"
@@ -71,7 +71,7 @@ void Cut::parse(const Tuple&t, std::string::const_iterator& it, std::string::con
     }
     m_cut = atof(value.c_str());
     set_tuple_item(t,name);
-    set_name(std::string(begin,--it));
+    set_name(std::string(begin, it));
 }
 
 bool Cut::apply()
