@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Sep  8 13:29:25 PDT 2004
+merit/src
+
+Modified Files:
+	PSFtailCuts.cxx 
+Log Message:
+replace strstream
+    *
+------------------------------------------------------------
 User: burnett  Wed Sep  8 13:28:37 PDT 2004
 merit/src/root/rootApp
 
