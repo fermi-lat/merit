@@ -1,6 +1,6 @@
 package merit
 version v5r12p3
-# $Id: requirements,v 1.20 2002/10/31 03:29:49 burnett Exp $
+# $Id: requirements,v 1.21 2002/11/25 16:08:47 burnett Exp $
 
 branches doc
 
@@ -39,5 +39,5 @@ macro libs ""   WIN32   "$(meritDir)/merit_lib.lib
 application merit_app app/*.cxx $(libs)
 
 public
-set MERIT_INPUT_FILE "$(MERITROOT)/src/test/merit100.root"
+set MERIT_INPUT_FILE "$(MERITROOT)/src/test/tuple50k.root"
 application test_merit app/*.cxx $(libs)
