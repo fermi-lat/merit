@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Oct 20 08:17:37 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+only write out the tuple if tracks were fouind.
+    *
+------------------------------------------------------------
 User: burnett  Sun Oct 19 18:36:35 PDT 2003
 merit/src
 
