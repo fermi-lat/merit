@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Wed May 14 21:49:01 PDT 2003
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx 
+Log Message:
+Implement alias from root tuple for testing.
+    *
+------------------------------------------------------------
+User: burnett  Wed May 14 21:49:01 PDT 2003
 merit/src
 
 Modified Files:
