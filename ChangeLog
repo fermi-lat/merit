@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Thu May 24 10:07:14 PDT 2001
+merit/src/app meritapp.cxx
+
+Modified Files:
+	meritapp.cxx 
+Log Message:
+first stab at setting output file.
+
+    *
+------------------------------------------------------------
 User: burnett  Wed Apr 18 18:07:28 PDT 2001
 merit/mgr requirements
 
