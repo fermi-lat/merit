@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: usher  Thu Dec 19 15:00:28 PST 2002
+merit/src/meritAlg
+
+Modified Files:
+	TkrVtxCutVals.cxx TkrVtxCutVals.h 
+Log Message:
+Modify to get data from TkrFitTrackBase TDS base class
+
+    *
+------------------------------------------------------------
 User: heather  Thu Dec 19 06:43:46 PST 2002
 merit/src/meritAlg
 
