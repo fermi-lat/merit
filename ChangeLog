@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun May 25 10:12:53 PDT 2003
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx Tuple.h 
+Log Message:
+float vs double determinded by tuple.
+    *
+------------------------------------------------------------
 User: burnett  Mon May 19 01:29:13 PDT 2003
 merit/src
 
