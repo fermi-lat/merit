@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.18 2003/05/26 04:50:19 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.19 2003/05/28 00:13:53 burnett Exp $
 
 // Main for merit
 
@@ -19,12 +19,11 @@
 #include <typeinfo>
 
 
-const char* _MERIT_VERSION = "$Revision: 1.18 $";
+const char* _MERIT_VERSION = "$Revision: 1.19 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
 
-static timeb t_init, t_final;
 static const char* helptext=
 "\n----------------------------------------------"
 "\nCalling syntax: merit  -CUTS [p] [file1 | - ] [file2] ..."
@@ -118,19 +117,22 @@ int main(int argc, char* argv[])
         tuple->setTitle(title.str());
 
         (*outstream) << "Tuple title: \""<< tuple->title() << "\"\n" ;
+
+        static _timeb t_init, t_final;
         try {
             const char* imfile = ::getenv("IM_FILE");
         // create the ct: pass in the tuple.
             ClassificationTree pct(*tuple, std::cout, imfile? std::string(imfile) : "");
             FigureOfMerit fm(*tuple, cutstr);
 
-            ::ftime(&t_init);
+
+            _ftime(&t_init);
 
             while ( tuple->nextEvent() ) { 
                 pct.execute();   // fill in the classification (testing here)
                 fm.execute(); // run the rest.
             }
-            ::ftime(&t_final);
+            _ftime(&t_final);
             fm.report(*outstream);
         }catch(std::exception& e){
             std::cerr << "Caught: " << e.what( ) << std::endl;
