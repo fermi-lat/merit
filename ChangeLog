@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Sep  1 20:06:39 PDT 2002
+merit/src
+
+Modified Files:
+	FigureOfMerit.cxx 
+Log Message:
+ define a test program, make a static lib for convenience
+    *
+------------------------------------------------------------
 User: burnett  Sun Sep  1 20:06:38 PDT 2002
 merit/cmt
 
