@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.23 2002/09/30 22:39:21 lsrea Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.24 2002/10/03 08:32:52 burnett Exp $
 
 // Include files
 
@@ -262,7 +262,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.23 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.24 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -364,11 +364,12 @@ void meritAlg::processTDS(const Event::EventHeader& header,
         double tkr_skirtX = -9999.;
         double tkr_skirtY = -9999.;
 
-        sc = itool->get("REC_Surplus_Hit_Ratio", surplus_hit_ratio);
-        sc = sc || itool->get("REC_Tkr_SkirtX", tkr_skirtX);
-        sc = sc || itool->get("REC_Tkr_SkirtY", tkr_skirtY);
-        if( sc.isFailure() ) {
-            log << MSG::ERROR << "Unable to retrieve TkrMeritTool variables" << endreq;
+        if( (sc = itool->get("REC_Surplus_Hit_Ratio", surplus_hit_ratio)).isFailure()
+            || (sc = itool->get("REC_Tkr_SkirtX", tkr_skirtX)).isFailure()
+            || (sc = itool->get("REC_Tkr_SkirtY", tkr_skirtY)).isFailure() ) 
+        {
+            log << MSG::ERROR << 
+                "Unable to retrieve TkrMeritTool variables" << endreq;
             log << MSG::ERROR << "Set to default" << endreq;
         }
 
