@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.7 2003/12/20 00:10:45 hansl Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.8 2004/01/07 18:56:13 hansl Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -84,7 +84,7 @@ Analysis cuts: nA
 
 </pre>
 <hr>
-\section fastFilter
+\section fastFilter Utility fastFilter: Event selection applying Insightful Miner selection 
  <h3>Usage </h3>
       @verbatim
       fastFilter.exe   [input_merit.root]   [output.root]
