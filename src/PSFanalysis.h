@@ -6,7 +6,7 @@
 
 #include "Analyze.h"
 
-#include "RebinHist.h"
+#include "analysis/RebinHist.h"
 
 #include "analysis/Tuple.h"
 #include "analysis/smplstat.h"
