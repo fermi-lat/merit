@@ -3,6 +3,7 @@ version v5r7
 
 use GlastSvc v8*
 use Event v8*
+use GuiSvc v3*
 
 branches doc
 
