@@ -1,11 +1,14 @@
 package merit
-version v5r8p1
+version v5r8p2
+
+branches doc
 
 use GlastSvc v8*
 use Event v8*
 use GuiSvc v3*
 
-branches doc
+# to write out a ROOT tuple (any old ROOT will do)
+use ROOT *
 
 apply_pattern packageShr
 
@@ -18,7 +21,7 @@ apply_pattern package_headers
 macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 
 #component library with meritAlg
-macro_append merit_headers "" WIN32 " analysis/*.h"
+macro_append merit_headers "" WIN32 " analysis/*.h meritAlg/*.h" 
 library merit  *.cxx analysis/*.cxx meritAlg/*.cxx Dll/*.cxx ${merit_headers}
 
 
