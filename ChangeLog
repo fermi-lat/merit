@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: burnett  Tue Oct 23 08:06:12 PDT 2001
+merit/src main.cxx
+
+Removed Files:
+	main.cxx 
+Log Message:
+
+remove redundant copies of header files;
+add code to RootTuple to search for the TTree.
+    *
+------------------------------------------------------------
+User: burnett  Tue Oct 23 08:06:12 PDT 2001
 merit/mgr requirements
 
 Modified Files:
