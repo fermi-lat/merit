@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Aug  4 14:03:25 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+Added missing run number
+    *
+------------------------------------------------------------
 User: burnett  Fri Jun 13 09:31:33 PDT 2003
 merit/src/meritAlg
 
