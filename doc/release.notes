@@ -2,9 +2,10 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.22 2003/05/09 20:01:43 burnett Exp $
+ * $Id: release.notes,v 1.23 2003/05/11 04:47:16 burnett Exp $
  *
 
+ *  v6r4    THB  15-may-03 Sets up classification (not run yet)
  *  v6r3p2  THB  10-may-03 fix test program with new names
  *  v6r3p1  THB  09-may-03 added clasification  code
  *  v6r3    THB  08-may-03 classification tree use; more name changes
