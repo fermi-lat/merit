@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Thu Aug 29 10:38:29 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+
+code to count tiles on top and sides, using an STL algorithm and custom predicate.
+    *
+------------------------------------------------------------
 User: burnett  Thu Aug 29 07:02:43 PDT 2002
 merit/src/meritAlg
 
