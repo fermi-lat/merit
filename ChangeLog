@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Thu Aug 29 07:02:43 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	TkrVtxCutVals.cxx 
+Log Message:
+
+fix unix warning.
+    *
+------------------------------------------------------------
 User: burnett  Thu Aug 29 06:57:39 PDT 2002
 merit/src/meritAlg
 
