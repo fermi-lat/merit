@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.1 2001/03/23 19:52:01 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.2 2001/03/25 00:02:51 burnett Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #include "RootTuple.h"
 
@@ -10,8 +10,54 @@
 #include "TTree.h"
 #include "TSystem.h"
 #include "TLeafF.h"
+#include "TIterator.h"
+#include "TKey.h"
 
+#include "TFile.h"
+#include "TDirectory.h"
+#include "TTree.h"
+#include "TKey.h"
+#include "TIterator.h"
+#include "TString.h"
+namespace {
+    // convenient utility from Heather
+TTree* getTree(TFile *f) {
+  // Create an iterator on the list of keys
+  TIter nextTopLevelKey(f->GetListOfKeys());
+  TKey *keyTopLevel, *curDirKey;
+  TTree* t=0; // return 
 
+  // loop on keys, and search for the TTree named "t1"
+  while  ( keyTopLevel=(TKey*)nextTopLevelKey() ) {
+    // I'm assuming we know the name of the TTree is "t1"
+    TString name(keyTopLevel->GetName());
+    TString className(keyTopLevel->GetClassName());
+
+    if ((name.CompareTo("t1")==0) && (className.CompareTo("TTree")==0))  {
+      // Found It
+      t = (TTree*)f->Get(keyTopLevel->GetName());
+      return t;
+    }
+    // If we find a directory - then we search it as well
+    // Here I'm assuming that our directory structure only goes down one-level
+    if (className.CompareTo("TDirectory")==0) {
+      TDirectory *curDir = (TDirectory*)f->Get(name);
+      TIter dirKeys(curDir->GetListOfKeys());
+      while ( (curDirKey = (TKey*)dirKeys() ) ) {
+        TString name(curDirKey->GetName());
+        TString className(curDirKey->GetClassName());
+        if ( (name.CompareTo("t1")==0) && (className.CompareTo("TTree")==0) ) {
+          // Found it
+          t = (TTree*)curDir->Get(curDirKey->GetName());
+          return t;
+        }
+      }
+    }
+  }
+  return t;
+}
+
+} // anonymous namespace
 
 RootTuple::RootTuple(std::string title, std::string file, std::string treeName)
 : Tuple(title), m_event(0) {
@@ -30,13 +76,15 @@ RootTuple::RootTuple(std::string title, std::string file, std::string treeName)
         std::cerr << "file \""<< file << "\" not found." << std::endl;
         exit(1);
     }
-
     m_tree =  (TTree*)tfile->Get(treeName.c_str());
-    if( m_tree ==0 ) {
+    if( m_tree==0)
+        m_tree = getTree(tfile);
+   if( m_tree ==0 ) {
         std::cerr << "tree \""<<treeName<< "\" not found." << std::endl;
         tfile->ls();
         exit(1);
     }
+
     m_numEvents = m_tree->GetEntries();
 
 #if 0 // save this for reference
