@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.2 2002/05/28 04:02:50 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.3 2002/05/28 18:48:01 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -10,42 +10,43 @@
 Sample output, the first sensible Gleam-related results, from Gleam v2r1p5. 
 <hr>
 <pre>
-         Generated events :   1000
+        Generated events :  10000
 =======================================================
 Analysis cuts: nA
-          Found in tuple :    221
+          Found in tuple :   2111
 -------------------------------------------------------
   Generated energy--mean :    0.1
-                     rms :      0
+                     rms : 1.35473e-008
                      min :    0.1
                      max :    0.1
-         TKR_No_Tracks>0 :    190
-   Accepted for analysis :    190
+         TKR_No_Tracks>0 :   1734
+   Accepted for analysis :   1734
 -------------------------------------------------------
  Layers 0-11
-             Events used :    103
-        eff. proj. sigma :   1.85 deg = 111 arc-min
-           68% contained :   3.88 deg = 1.39*(1.51*sigma)
-           95% contained :   26.4 deg = 5.85*(2.45*sigma)
-        Energy: meas/gen :  0.314
+             Events used :    920
+        eff. proj. sigma :   1.94 deg = 116 arc-min
+           68% contained :   3.97 deg = 1.36*(1.51*sigma)
+           95% contained :   17.7 deg = 3.73*(2.45*sigma)
+        Energy: meas/gen :  0.306
                      std :  0.172
-       events w/ no data :      0
-          effective area :   6180 cm^2
-         Figure of merit :   2440 cm
+       events w/ no data :     12
+          effective area :   5520 cm^2
+         Figure of merit :   2196 cm
 -------------------------------------------------------
  Layers 12-15
-             Events used :     87
-        eff. proj. sigma :    3.3 deg = 198 arc-min
-           68% contained :   6.18 deg = 1.24*(1.51*sigma)
-           95% contained :   17.2 deg = 2.13*(2.45*sigma)
-        Energy: meas/gen :  0.528
-                     std :  0.197
-       events w/ no data :      1
-          effective area :   5220 cm^2
-         Figure of merit :   1254 cm
+             Events used :    814
+        eff. proj. sigma :   3.97 deg = 238 arc-min
+           68% contained :   7.69 deg = 1.28*(1.51*sigma)
+           95% contained :   20.9 deg = 2.15*(2.45*sigma)
+        Energy: meas/gen :  0.535
+                     std :  0.193
+       events w/ no data :     19
+          effective area :   4884 cm^2
+         Figure of merit :   1009 cm
 -------------------------------------------------------
-    total effective area :  11400 cm^2
-            Combined FOM :   2743 cm
+    total effective area :  10404 cm^2
+            Combined FOM :   2416 cm
+
 </pre>
 
   <hr>
