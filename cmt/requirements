@@ -1,10 +1,10 @@
 package merit
-version v5r8p2
+version v5r8p3
 
 branches doc
 
-use GlastSvc v8*
-use Event v8*
+use GlastSvc *
+use Event *
 use GuiSvc v3*
 
 # read/ write ROOT trees (any old ROOT will do)
