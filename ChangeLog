@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Oct 19 18:36:35 PDT 2003
+merit/src
+
+Modified Files:
+	FigureOfMerit.cxx 
+Log Message:
+provide for interactive printout of trees.
+    *
+------------------------------------------------------------
 User: burnett  Sun Oct 19 18:35:45 PDT 2003
 merit/src/meritAlg
 
