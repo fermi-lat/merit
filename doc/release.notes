@@ -2,8 +2,11 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.40 2003/10/16 23:01:47 burnett Exp $
+ * $Id: release.notes,v 1.41 2003/10/21 14:04:54 burnett Exp $
  *
+ *  v6r12p1 THB  21-oct-03 Fix background classification tree cuts (again)
+                           simplify calculation of earth -based angles for FT1.
+
  *  v6r12   THB  21-oct-03 Fix background classification tree cuts 
  *  v6r11p2 THB  16-oct-03 Fix background classification tree cuts 
  *          Johann         FT1 elaboration   
