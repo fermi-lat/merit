@@ -1,5 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
+$Header:$
 
 */
 #include "ClassificationTree.h"
@@ -71,7 +72,6 @@ namespace {
         double evaluate() const{
             return m_tree->navigate(m_node)[m_offset];
         }
-
         int m_offset;
         const classification::Tree* m_tree;
         const classification::Tree::Node* m_node;
@@ -84,8 +84,9 @@ namespace {
                 std::make_pair(   string( "VtxEAngle"),        string( "EvtVtxEAngle"))
             };
 #endif
-#if 1 
-// create lookup class to make translations
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // create lookup class to make translations
 class Lookup : public classification::Tree::ILookUpData {
 public:
     Lookup(Tuple& t):m_t(t){}
@@ -99,7 +100,7 @@ public:
     bool isFloat()const{return m_t.isFloat();}
     Tuple& m_t;
 };
-#endif
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 double * getTupleItemPointer(Tuple& t, std::string name)
 {
     // simple little function that either finds an existing, or creates a new TupleItem
@@ -114,11 +115,90 @@ double * getTupleItemPointer(Tuple& t, std::string name)
       if( ti==0) ti = new TupleItem(name);
     return &(ti->value());
 }
-
 }// anonymous namespace
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/** @class BackgroundCut
+    @brief set up and apply post-Rome cuts to the data in merit Tuple
+    @author Toby Burnett
+@verbatim
+    Usage: 
+        TTree& t;
+        BackgroundCut bkg(t);
 
+        [...]
+        if( bkg ) { // this is background...
+        }
+@endverbatim
+
+*/
+class ClassificationTree::BackgroundCut {
+public:
+    //! ctor: just associate with tree and find the branches we need
+    BackgroundCut(Tuple& t) 
+        : VtxAngle (*getTupleItemPointer(t,                  "VtxAngle")) 
+        , EvtEnergySumOpt (*getTupleItemPointer(t,      "EvtEnergySumOpt"))
+        , EvtTkrComptonRatio (*getTupleItemPointer(t,"EvtTkrComptonRatio")) 
+        , Tkr1ToTFirst (*getTupleItemPointer(t,             "Tkr1ToTFirst"))
+        , Tkr1ToTAve (*getTupleItemPointer(t,             "Tkr1ToTAve"))
+        , AcdTotalEnergy (*getTupleItemPointer(t,        "AcdTotalEnergy"))  
+        , AcdRibbonActDist (*getTupleItemPointer(t,    "AcdRibbonActDist")) 
+        , AcdTileCount (*getTupleItemPointer(t,          "AcdTileCount"))
+        , FilterStatus_HI (*getTupleItemPointer(t,         "FilterStatus_HI"))
+        {  }
+
+    //! return truth value, for current TTree position
+    operator bool()
+    {
+        bool veto=false; // default no veto
+
+        if(VtxAngle>0.0){
+            // VERTEX 
+            if(EvtEnergySumOpt<=350.0) {
+                // LOCAL
+                veto= Tkr1ToTFirst > 4.5 
+                    || Tkr1ToTAve > 3.5
+                    || AcdTotalEnergy > 0.25
+                    || VtxAngle>0.4 ;
+            }
+            // MEDCAL, HICAL: pass
+        }
+        else{
+            // 1 TRACK
+            if(EvtEnergySumOpt <= 350.0) {
+                // LOCAL
+                veto = Tkr1ToTAve > 3.0
+                    || AcdTileCount > 0.0
+                    || AcdRibbonActDist >-300.0
+                    || EvtTkrComptonRatio <1.05
+                    || FilterStatus_HI >3.0 ;
+            }else if( EvtEnergySumOpt <= 3500.0){
+                // MEDCAL
+                veto = Tkr1ToTAve >3.0
+                    || AcdTotalEnergy >5.0
+                    || EvtTkrComptonRatio <1.0 ;
+            }
+            // HICAL: pass
+        }
+        return veto;
+    }
+private:
+    // references to the values read in from ROOT, or set directly, in the tuple
+    double &   VtxAngle; 
+    double &   EvtEnergySumOpt;
+    double &   EvtTkrComptonRatio;
+    double &   Tkr1ToTFirst;
+    double &   Tkr1ToTAve;
+    double &   AcdTotalEnergy;  
+    double &   AcdRibbonActDist; 
+    double &   AcdTileCount;
+    double &   FilterStatus_HI;
+};
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string xml_file)
 : m_log(log)
+, m_background(*new BackgroundCut(t))
     {
         std::string default_file("/xml/PSF_Analysis.imw");
 
@@ -127,22 +207,6 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             xml_file= std::string(sPath==0?  "../": sPath) + default_file;
         }
 
-        #if 0
-        // create lookup class to make translations
-        class Lookup : public classification::Tree::ILookUpData {
-        public:
-            Lookup(Tuple& t):m_t(t){}
-            const double * operator()(const std::string& name){
-                TupleItem* ti = const_cast<TupleItem*>(m_t.tupleItem(name));
-                if( ti==0) return 0;
-                const double * f = & (ti->value());
-                return f;
-            }
-            // note that float flag depends on how the tuple does it.
-            bool isFloat()const{return m_t.isFloat();}
-            Tuple& m_t;
-        };
-        #endif
         Lookup looker(t);
 #if 0  // uncomment this if needed
         //add aliases to the tuple
@@ -228,56 +292,6 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         return *m_vtxAngle>0 && *m_vtxProb >0.5;
     }
 
-    int ClassificationTree::backgroundRejection(){
-    
-        // Sets m_gammaProb from one of 4 different trees, corresponding to an initial split on vertex,
-        // then energy
-        // return the cut on this quantity that is used by the analysis
-        int path=0; // path through the maze
-        double  cut=0.5;
-
-
-        // First apply the background check
-        if( *m_vtxAngle>0 ) {
-            if( *m_evtEnergySumOpt>350){
-                //vTX-HI
-                if( *m_evtTkrEComptonRatio > 0.60 &&
-                    *m_calMIPDiff > 60. ){
-                        path = BKG_VTX_HI;
-                    }
-                
-            }else{
-                // VTX-LO
-                if( *m_acdTileCount==0 &&
-                    *m_calMIPDiff> -125 &&
-                    *m_evtTkrEComptonRatio > 0.8){
-                        path = BKG_VTX_LO;
-                        cut = 0.9;
-                    }
-            }
-        }else{
-            if( *m_evtEnergySumOpt>450.){ 
-                //1TRK-HI
-                if( *m_evtTkrComptonRatio > 0.70 &&
-                    *m_calMIPDiff> 80. &&
-                    *m_calLRmsRatio < 20.){
-                        path = BKG_1TRK_HI;
-                    }
-            }else{
-                //1TRK-LO
-                if( *m_acdTileCount==0 &&
-                    *m_evtTkrComptonRatio > 1. &&
-                    *m_calLRmsRatio >5.0 &&
-                    *m_firstLayer !=0 &&
-                    *m_firstLayer <15 ){
-                        path = BKG_1TRK_LO;
-                        cut = 0.9;
-                    }
-            }
-        }
-        return path;
-
-    }
     void ClassificationTree::execute()
     {
 
@@ -328,14 +342,12 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         *m_coreProb =   imnodes[core_type].evaluate();
         *m_psfErrPred = imnodes[psf_type].evaluate();
 
-        // background type to select appropriate tree for gamma prob.
-        if( *m_coreProb > 0.2){  // but only for good psf.
-            int bkg_type = backgroundRejection();
-            *m_gammaProb= bkg_type==0? 0 : imnodes[bkg_type].evaluate();
-        }
+        // gamma prob: for now just the preliminary cuts
+        *m_gammaProb= m_background?  0 : 1;
 
     }
     ClassificationTree::~ClassificationTree()
     {
         delete m_classifier;
+        delete &m_background;
     }
