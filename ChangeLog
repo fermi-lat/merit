@@ -1,5 +1,17 @@
 ------------------------------------------------------------
 User: burnett  Sat Mar 15 09:59:34 PST 2003
+merit/src/test
+
+Modified Files:
+	merit100.root 
+Log Message:
+
+update names to agree with Leons revision of Bill's tuple.
+Replace the test root file
+Some clean-up.
+    *
+------------------------------------------------------------
+User: burnett  Sat Mar 15 09:59:34 PST 2003
 merit/src/meritAlg
 
 Modified Files:
