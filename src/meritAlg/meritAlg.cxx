@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.80 2004/09/08 20:33:22 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.81 2004/09/10 20:08:52 burnett Exp $
 */
 // Include files
 
@@ -301,14 +301,10 @@ StatusCode meritAlg::initialize() {
     title << "TDS: gen(" << m_generated << ")";
     m_tuple = new Tuple(title.str());
 
-    addItem( "Run",  &m_run );
-    addItem( "Event_ID",   &m_event );
-    addItem( "elapsed_time", &m_time );
 
     //temporary until approved by Science Analysis group  
     addItem( "LiveTime", &m_livetime);
 
-    addItem( "MC_src_Id", &m_mc_src_id );
 
     addItem( "FilterStatus_HI",   &m_statusHi );
     addItem( "FilterStatus_LO",   &m_statusLo );
@@ -520,7 +516,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.80 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.81 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -556,8 +552,7 @@ StatusCode meritAlg::execute() {
     SmartDataPtr<LdfEvent::EventSummaryData> eventSummary(eventSvc(), "/Event/Gem"); 
  
     m_run = header->run();
-    m_mc_src_id = mcheader->getSourceId();
-    m_event = mcheader->getSequence();
+    if( mcheader )    m_mc_src_id = mcheader->getSourceId();
     m_time = header->time();
     m_event = header->event();
     m_livetime = header->livetime();
