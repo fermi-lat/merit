@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Oct 27 05:51:21 PST 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx ClassificationTree.h 
+Log Message:
+clean up a bit--no change in performance
+    *
+------------------------------------------------------------
 User: burnett  Tue Oct 21 11:20:37 PDT 2003
 merit/doc
 
