@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat May 25 20:35:09 PDT 2002
+merit/src
+
+Modified Files:
+	Analyze.cxx FigureOfMerit.h 
+Log Message:
+initial Gleam-compatible version
+    *
+------------------------------------------------------------
 User: burnett  Sat May 25 20:35:08 PDT 2002
 merit/mgr
 
