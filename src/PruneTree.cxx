@@ -3,9 +3,11 @@
 */
 #include "PruneTree.h"
 #include "analysis/Tuple.h"
+#include "classification/Tree.h"
 
 #include <cassert>
-/* 
+/*  This is the output of classification::Tree::load() with verbosity set to 1.
+--------------------------------------------------------------
 Loading Trees from file "D:\Users\burnett\dev_197\merit\v6r14p5/xml/CTPruner_DC1.imw"
 176                    Tiles&Hi-E       177           NoTiles&LowE&GoodXR       179                NoTiles&1Xtals
 180                NoTiles&0Xtals       181        Tiles&ACD< -170&GoodXR       182          Tiles&ACD<-170&1Xtal
@@ -30,7 +32,7 @@ Following names were needed by nodes, but not supplied in the map:
 "AcdUpperTileCnt",
 
 */
-// need to add: AcdUpperTileCnt=AcdTileCount-AcdNoSideRow2 -AcdNoSideRow1
+// needed to add: AcdUpperTileCnt=AcdTileCount-AcdNoSideRow2 -AcdNoSideRow1
 
 namespace {
 
@@ -48,7 +50,7 @@ namespace {
         const char* name; // the name of the Preciction node in the IM XML file
         int index;        // index of the classification type within the list of probabilites
     };
-    // these have to correspond to the IM file,
+    // these have to correspond to the IM file.
     IMnodeInfo imNodeInfo[] = {
         { ONE,  "Tiles&Hi-E",  1 },
         { TWO,  "NoTiles&LowE&GoodXR",   1 }, 
@@ -63,7 +65,6 @@ namespace {
     };
 
     /** Manage interface to one of the prediction nodes
-
     */
     class IMpredictNode { 
     public:
@@ -153,20 +154,20 @@ private:
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-PruneTree::PruneTree( Tuple& t, std::ostream& log, std::string xml_file)
-: m_log(log)
+PruneTree::PruneTree( Tuple& t,  std::string xml_file)
 {
+    // create a lookup object, pass it to the preclassifier and the classification tree code
     PruneTree::Lookup looker(t) ;
     m_preclassify = new PruneTree::PreClassify(looker);
-    m_classifier = new classification::Tree(looker, log, 0); // verbosity
-    // translate the Tuple map
+    m_classifier = new classification::Tree(looker, std::cout, 0); // verbosity
 
+   // accept, or generate filename 
     std::string default_file("/xml/CTPruner_DC1.imw");
-
     if( xml_file.empty() ){
         const char *sPath = ::getenv("MERITROOT");
         xml_file= std::string(sPath==0?  "../": sPath) + default_file;
     }
+    // analyze the file
     m_classifier->load(xml_file);
 
     // get the list of root prediction tree nodes
@@ -182,9 +183,8 @@ PruneTree::~PruneTree(){
     delete m_classifier;
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-void PruneTree::execute()
+double PruneTree::operator()()
 {
    Category  cat = *m_preclassify;
-   double gammaprob= (cat==NONE) ?  0 :  imnodes[cat].evaluate();
-    //TODO: save this in the tuple
+   return  (cat==NONE) ?  0 :  imnodes[cat].evaluate();
 }
