@@ -1,4 +1,4 @@
-// $Header: /cvs/glastsim/merit/MultiPSF.cxx,v 1.7 1999/08/23 16:49:40 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/MultiPSF.cxx,v 1.1.1.1 1999/12/20 22:29:13 burnett Exp $
 
 #include "MultiPSF.h"
 #include "FigureOfMerit.h"
@@ -100,11 +100,13 @@ void MultiPSF::report(ostream& out)
 
     for(unsigned int n=0; n< m_costheta_bin.size()-1; ++n) {
         
-        double areaPerEvent = n_ebins // n e-bins
-            /(m_costheta_bin[n]-m_costheta_bin[n+1]) // fraction of solid angle
-            *FigureOfMerit::area()/1e4   // area in meter**2
+        double areaPerEvent = 
+            FigureOfMerit::area()/1e4   // area in meter**2
             /FigureOfMerit::generated(); 
-        //need also total events generated, area used
+        // now adjust for bining. (Would be better to use actually generated numbers in each bin)
+        areaPerEvent *=
+            n_ebins // n e-bins
+            /(m_costheta_bin[n]-m_costheta_bin[n+1]); // fraction of solid angle
         if( n_ebins>1) {
             Analyze::separator(out);
             out << "\ncostheta Range: " << m_costheta_bin[n] 

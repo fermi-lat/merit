@@ -1,15 +1,10 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.4 2001/06/22 23:06:52 usher Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.5 2001/10/19 20:48:59 ritz Exp $
 
-#ifdef __GNUG__
-#pragma implementation
-#endif
 
 #include "FigureOfMerit.h"
 #include "Cut.h"
 #include "MultiPSF.h"
 #include "Level1.h"
-#include "BackgroundCuts.h"
-#include "PSFtailCuts.h"
 
 #include <cmath>
 #include <iomanip>
@@ -375,28 +370,6 @@ public:
         push_back( new Cut(t, "Cal_Xtal_Ratio",  Cut::GT, 0.25) );
     }
 };
-//=============================================================================
-class ResolutionCuts : public AnalysisList {	
-public:
-    ResolutionCuts(const Tuple& t, bool noline=false)
-        : AnalysisList("  ---Resolution cuts---",noline)
-    {
-        push_back( new Cut(t, "TKR_No_Tracks",      Cut::GT,  0,  "track found") );
-        push_back( new Cut(t, "TKR_Chisq",          Cut::LT, 50) );
-        push_back( new Cut(t, "TKR_First_Fit_Gaps", Cut::LT, 0.5) );
-        push_back( new Cut(t, "TKR_Diff_1st_Hit",   Cut::EQ, 0) );
-        push_back( new Cut(t, "REC_Active_Dist",    Cut::GT, 0 ) );
-    };
-};
-//=============================================================================
-class Atwood : public AnalysisList {	
-public:
-    Atwood(const Tuple& t): AnalysisList(" Atwood cuts")
-    {
-        push_back( new ResolutionCuts(t,true));
-        push_back( new CosmicCuts(t, true) );
-    };
-};
 
 
 //=============================================================================
@@ -413,7 +386,7 @@ private:
 const Tuple*	 FigureOfMerit::s_tuple=0;
 
 
-unsigned FigureOfMerit::s_generated = 10000;
+unsigned FigureOfMerit::s_generated = 100000;
 double FigureOfMerit::s_area = 60000.;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -422,91 +395,83 @@ void	FigureOfMerit::setCuts ( string istr )
     delete m_cuts;
     m_cuts = new AnalysisList( string("Analysis cuts: ")+istr );
     string::const_iterator	it = istr.begin();
-
+    
     m_cuts->push_back( new Analyze("Found in tuple") );  // an event count for starting (# in tuple)
     m_cuts->push_back( new Statistic(*s_tuple, "MC_Energy", "Generated energy"));
-
+    
     while (it != istr.end()) {
-	switch (*it++) {
-	case 'a':	    // a = Atwood cuts
-            m_cuts->push_back( new Atwood(*s_tuple) );
-	    break;
+        switch (*it++) {
+            
+        case 'G': // Gnn, -- override number generated
+            s_generated= ::atoi(it);
+            while( it !=istr.end() && (*it++)!=',');
+            cerr << "Overriding generated number to " << s_generated << endl;
 
-	case '1':	    // 1(one) = level I trigger
-	    m_cuts->push_back( new Level1(*s_tuple) );
-	    break;
-// added 18 oct 2001 by S.Ritz
-    case 'V':        // V = level 1 VETO using ACD
-        m_cuts->push_back( new FOML1V(*s_tuple) );
-        break;
-	case 'I':	    // I = level I trigger with ACD
-	    m_cuts->push_back( new Level1(*s_tuple,true) );
-	    break;
-//change 18 oct 2001 by S.Ritz to new L2T and L3T selections
-    case '2':	    // 2 = level II trigger - no veto
-	    m_cuts->push_back( new FOML2T(*s_tuple) );
-	    break;
-	case '3':	    // 3 = level 3 trigger 
+            break;
+        case '1':	    // 1(one) = level I trigger
+            m_cuts->push_back( new Level1(*s_tuple) );
+            break;
+            // added 18 oct 2001 by S.Ritz
+        case 'V':        // V = level 1 VETO using ACD
+            m_cuts->push_back( new FOML1V(*s_tuple) );
+            break;
+            
+            //change 18 oct 2001 by S.Ritz to new L2T and L3T selections
+        case '2':	    // 2 = level II trigger - no veto
+            m_cuts->push_back( new FOML2T(*s_tuple) );
+            break;
+        case '3':	    // 3 = level 3 trigger 
        	    m_cuts->push_back( new FOML3T(*s_tuple) );
-	    break;
-// 18 october 2001 by S.Ritz -- add selections for Front and Back
-    case 'F':		// F = Front TKR section only
-		m_cuts->push_back( new FOMFront(*s_tuple) );
-		break;
-	case 'B':		// B = Back TKR section only
-		m_cuts->push_back( new FOMBack(*s_tuple) );
-		break;
-	case 'd':		// d = level II trigger - with veto
-		m_cuts->push_back( new FOMtrigII(*s_tuple) );
-		break;
-	case 'n':	    // n = ntracks
-	    m_cuts->push_back( new Cut(*s_tuple, "TKR_No_Tracks>0" ) );
-	    break;
-	case 'r':	    // r = resolution cuts
-	    m_cuts->push_back( new ResolutionCuts(*s_tuple) );
-	    break;
-	case 'c':	    // c = Cosmic cuts
-	    m_cuts->push_back( new CosmicCuts(*s_tuple) );
-	    break;
-	case 's':
-	    m_cuts->push_back( new EventSize(*s_tuple) );
-	    break;
-	case 't':
-	    m_cuts->push_back( new FOMROtime(*s_tuple) );
-	    break;
-	case 'M': //M0, M1, ...
-	    m_cuts->push_back( new MultiPSF(*s_tuple, *(it++)) );
-	    break;
-
-        case 'S': ; 
-        case 'b': //b for background (or S for Steve Ritz) 
-            m_cuts->push_back( new BackgroundCuts(*s_tuple) );
             break;
-        case 'j': //j for Jose's cuts
-            m_cuts->push_back( new PSFtailCuts(*s_tuple) );
+            // 18 october 2001 by S.Ritz -- add selections for Front and Back
+        case 'F':		// F = Front TKR section only
+            m_cuts->push_back( new FOMFront(*s_tuple) );
             break;
-
-	case 'P': /* P = PSF analysis   */  m_cuts->push_back( new PSFanalysis(*s_tuple) );   break;
-	case 'E':	    break;
-
-	case 'A': /* A = accepted */
+        case 'B':		// B = Back TKR section only
+            m_cuts->push_back( new FOMBack(*s_tuple) );
+            break;
+        case 'd':		// d = level II trigger - with veto
+            m_cuts->push_back( new FOMtrigII(*s_tuple) );
+            break;
+        case 'n':	    // n = ntracks
+            m_cuts->push_back( new Cut(*s_tuple, "TKR_No_Tracks>0" ) );
+            break;
+        case 'c':	    // c = Cosmic cuts
+            m_cuts->push_back( new CosmicCuts(*s_tuple) );
+            break;
+        case 's':
+            m_cuts->push_back( new EventSize(*s_tuple) );
+            break;
+        case 't':
+            m_cuts->push_back( new FOMROtime(*s_tuple) );
+            break;
+        case 'M': //M0, M1, ...
+            m_cuts->push_back( new MultiPSF(*s_tuple, *(it++)) );
+            break;
+            
+        case 'P': /* P = PSF analysis   */  m_cuts->push_back( new PSFanalysis(*s_tuple) );   break;
+        case 'E':	    break;
+            
+        case 'A': /* A = accepted */
             m_layers.push_back(LayerGroup(*s_tuple,0,11));
             m_layers.push_back(LayerGroup(*s_tuple,12,15));
-
+            
             m_cuts->push_back( new FOMaccepted(this) );	    break;
-
+            
         case 'W': /* W = Write */        m_cuts->push_back( new WriteTuple(*s_tuple)); break;
-	case 'D': /* D = dead time */	 m_cuts->push_back( new FOMdeadtime(*s_tuple) ); break;
-	case 'L': /* L = elapsed time */ m_cuts->push_back( new FOMelapsed(*s_tuple) ); break;
-	case 'R': /* R = trigger rate */ m_cuts->push_back( new FOMtrigrate(*s_tuple) ); break;
+        case 'D': /* D = dead time */	 m_cuts->push_back( new FOMdeadtime(*s_tuple) ); break;
+        case 'L': /* L = elapsed time */ m_cuts->push_back( new FOMelapsed(*s_tuple) ); break;
+        case 'R': /* R = trigger rate */ m_cuts->push_back( new FOMtrigrate(*s_tuple) ); break;
         case '(': // (cut) -- pass in the iterator
             m_cuts->push_back(new Cut(*s_tuple, it, istr.end() )); break; 
         case 'X': // Xname, statistic on name
             m_cuts->push_back(new Statistic(*s_tuple, it, istr.end() )); break;
-        default:  /* counter */		    m_cuts->push_back( new Analyze() );	    break;
-	}   // switch
+        default: 
+            cerr << "Key '" << *(it-1) << "' ignored" << endl;
+              break;
+        }   // switch
     }	// while
-
+    
 }
 //=============================================================================
 FigureOfMerit::FigureOfMerit(const Tuple& t, std::string cut_string)
@@ -535,7 +500,7 @@ FigureOfMerit::FigureOfMerit(const Tuple& t, std::string cut_string)
 	    s_generated = atoi(a.data());
 	}
 	else if ( (pos = title.find("gen(")) != string::npos) {
-	    string a(title, pos+4, 10);
+            string a(title, pos+4, 10);
 	    s_generated = atoi(a.data());
 	}
 	else	cerr << "generated events not found in title" << endl;
