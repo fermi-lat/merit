@@ -1,7 +1,8 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/doc/release.notes,v 1.5 2002/06/16 23:51:23 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/doc/release.notes,v 1.6 2002/08/28 13:46:06 burnett Exp $
 /*   Package merit
  *
  *
+ *  v5r8p1 30-aug-02 more done; fix to new TRK code
  *  v5r7  28-aug-02  many of the CAL quantities, toward minimal tuple
  *  v5r6  15-jun-02  add acd quantities, a few fixes
  *  v5r4  06-jun-02  fix to direction: grabbed some code for cal analyis.
