@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Dec 16 11:15:20 PST 2004
+merit/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+Patch to get meritAlg to compile with new Tracker stuff
+    *
+------------------------------------------------------------
 User: usher  Thu Dec 16 08:31:18 PST 2004
 merit/src/meritAlg
 
