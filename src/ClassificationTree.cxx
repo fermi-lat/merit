@@ -14,7 +14,7 @@
 namespace {
 
     // Convenient identifiers used for the nodes
-    enum{  CALHIGH, CALLOW, NOCAL,
+    enum{  CALHIGH, CALMED, CALLOW, NOCAL,
        VTX_THIN, VTX_THICK,
        VTX_THIN_TAIL,     VTX_THIN_BEST,
        ONE_TRK_THIN_TAIL, ONE_TRK_THIN_BEST,
@@ -35,8 +35,9 @@ namespace {
     };
     IMnodeInfo imNodeInfo[] = {
         { CALHIGH,           "CT Cal High",  1 },
-        { CALLOW,            "CT Cal Low",  0 },
-        { NOCAL,             "CT No Cal",  0 },
+        { CALMED,            "CT Cal Med",   1 },
+        { CALLOW,            "CT Cal Low",   1 },
+        { NOCAL,             "CT No Cal",    1 },
         { VTX_THIN,          "CT VTX Thin",     1},
         { VTX_THICK,         "CT Thick VTX",     0 },
         { VTX_THIN_TAIL,     "CT VTX Thin Tail" ,1}, 
@@ -266,10 +267,18 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
         // select cal energy type:
         //ifelse((CalEnergySum< 100. | CalTotRLn < 2), ifelse((CalTotRLn < 2 | CalEnergySum <  5), "NoCal", "LowCal"),"HighCal")
+/*      ifelse((CalEnergySum< 3500. | CalTotRLn < 2), 
+            ifelse((CalTotRLn < 2 | CalEnergySum <  350),
+		ifelse((CalTotRLn < 2 | CalEnergySum <  5),
+		"NoCal", "LowCal"),
+              "MedCal")
+           ,"HighCal")
+ */
         int cal_type=NOCAL;
 
-        if(        *m_calEnergySum >100. && *m_calTotRLn > 2.){ cal_type=CALHIGH;
-        }else if ( *m_calEnergySum >  5. && *m_calTotRLn > 2.){ cal_type=CALLOW;
+        if(        *m_calEnergySum >3500. && *m_calTotRLn > 2.){ cal_type=CALHIGH;
+        }else if ( *m_calEnergySum > 350. && *m_calTotRLn > 2.){ cal_type=CALMED;
+        }else if ( *m_calEnergySum >   5. && *m_calTotRLn > 2.){ cal_type=CALLOW;
         } 
         // evalue appropriate tree for good cal prob
         m_goodCalProb= imnodes[cal_type].evaluate();
