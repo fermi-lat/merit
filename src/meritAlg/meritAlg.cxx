@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.62 2003/10/20 19:48:51 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.63 2003/10/20 19:57:29 golpa Exp $
 */
 // Include files
 
@@ -142,7 +142,7 @@ private:
   StringProperty m_FT1TreeName;
   StringProperty m_primaryType;
   long           m_nbOfEvtsInFile;
-#if defined(__GNUC__) && (__GNUC__ != 2)
+#if defined(__GNUC__) && (__GNUC__ == 2)
   //grab Bill's tuples
   class VisitBill : virtual public IValsTool::Visitor
   {
@@ -548,7 +548,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.62 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.63 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
