@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Mar 24 16:02:51 PST 2001
+merit/mgr requirements
+
+Modified Files:
+	requirements 
+Log Message:
+fix up root read, put in test file, disable Gaudi for now
+    *
+------------------------------------------------------------
 TAG activity
 User: tlindner  Fri Mar 23 18:01:41 2001
 Tag name: v2
