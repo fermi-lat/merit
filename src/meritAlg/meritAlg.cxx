@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.58 2003/10/16 22:35:23 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.59 2003/10/19 14:28:31 cohen Exp $
 */
 // Include files
 
@@ -77,13 +77,33 @@ private:
         /**
         */
         TTree(     INTupleWriterSvc* rootTupleSvc, 
-                       std::string treename,  
-                       std::vector<const char* >leaf_names);
+            std::string treeName,  
+            std::vector<const char* >leaf_names)
+            :m_name(treeName), m_leafNames(leaf_names)
+        {
+            m_values.resize(leaf_names.size());
+            int i=0;
+            for( std::vector<const char*>::const_iterator  it = leaf_names.begin();
+                it!=leaf_names.end(); 
+                ++it){
+                    rootTupleSvc->addItem(treeName,  *it,  &m_values[i++]);
+                }
+        }
         void fill(int n, double value){ m_values[n]=value;};
+        /** called from gui printer */
+        void printOn(std::ostream& out)const {
+            out << "Tree "<< m_name << std::endl;
+            std::vector<double>::const_iterator dit=m_values.begin();
+            for( std::vector<const char*> ::const_iterator nit=m_leafNames.begin(); nit!=m_leafNames.end(); ++nit,++dit){
+                out << std::setw(15) << *nit << "  " <<  *dit << std::endl;
+            }
+        }
+        /// data values: name of tree, leaves, and the values
+        std::string m_name;
+        std::vector<const char*> m_leafNames;
         std::vector< double> m_values;
-    private:
     };
-
+    //-----------------------------------------------
     /// TTree objects to manage the pointing and FT1 tuples
     TTree* m_pointingTuple;
     TTree* m_FT1tuple;
@@ -92,10 +112,10 @@ private:
     
     void setupFT1info();
     void copyFT1info();
+
     FigureOfMerit* m_fm;
     Tuple*   m_tuple;
     std::string m_cuts; 
-    StringProperty m_root_filename;
     StringProperty m_IM_filename;
     INTupleWriterSvc* m_rootTupleSvc;;
 
@@ -135,12 +155,11 @@ Algorithm(name, pSvcLocator), m_tuple(0)
     
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
-    declareProperty("RootFilename", m_root_filename="");
     declareProperty("EventTreeName",     m_eventTreeName="MeritTuple");
     declareProperty("PointingTreeName", m_pointingTreeName="Exposure");
     declareProperty("FT1TreeName", m_FT1TreeName="FT1");
     declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
-    declareProperty("PrimaryType", m_primaryType="RECO");
+    declareProperty("PrimaryType", m_primaryType="RECO"); // or "MC" (why not a bool?)
     declareProperty("NbOfEvtsInFile", m_nbOfEvtsInFile=100000);
 
 }
@@ -205,9 +224,6 @@ StatusCode meritAlg::initialize() {
     setProperties();
     m_warnNoFilterStatus = 0;   // Zero counter for warnings
 
-    if(m_root_filename.value().empty()){
-        log << MSG::WARNING << "file name was set, but is not used now" << endreq;
-    }
     // setup the pseudo-tuple
     std::stringstream title;
     title <<  "TDS: gen(" << m_generated <<  ")";
@@ -275,6 +291,10 @@ StatusCode meritAlg::initialize() {
     gui::PrintControl* printer = &guimgr->printer();
     printer->addPrinter("merit tuple",new gui::Printer_T<meritAlg>(this));
 
+    // also for the other trees
+    printer->addPrinter("FT1 tree", new gui::Printer_T<meritAlg::TTree>(m_FT1tuple));
+    printer->addPrinter("Exposure tree", new gui::Printer_T<meritAlg::TTree>(m_pointingTuple));
+
     return sc;
 }
 //------------------------------------------------------------------------------
@@ -329,9 +349,8 @@ void meritAlg::setupFT1info(){
 				"convPointY",
 				"convPointZ",
 				"convLayer"};
-    for( int i = 0; i< sizeof(FT1_names)/sizeof(void*); ++i){ names.push_back(FT1_names[i]); }
-    
-    m_FT1tuple = new TTree( m_rootTupleSvc,  std::string(m_FT1TreeName),  names);
+   for( int i = 0; i< sizeof(FT1_names)/sizeof(void*); ++i){ names.push_back(FT1_names[i]); }
+    m_FT1tuple = new TTree( m_rootTupleSvc,  treeName,  names );
 }
 //------------------------------------------------------------------------------
 void meritAlg::copyFT1info(){
@@ -480,7 +499,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.58 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.59 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -550,19 +569,3 @@ StatusCode meritAlg::finalize() {
     return StatusCode::SUCCESS;
 }
 
-//------------------------------------------------------------------------------
-//                               meritAlg::TTree implementation
-//------------------------------------------------------------------------------
-meritAlg::TTree::TTree(
-                       INTupleWriterSvc* rootTupleSvc, 
-                       std::string treeName,  
-                       std::vector<const char* >leaf_names)
-{
-    m_values.resize(leaf_names.size());
-    int i=0;
-    for( std::vector<const char*>::const_iterator  it = leaf_names.begin();
-        it!=leaf_names.end(); 
-        ++it){
-        rootTupleSvc->addItem(treeName,  *it,  &m_values[i++]);
-    }
-}
