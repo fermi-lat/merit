@@ -1,4 +1,7 @@
-// PSFanalysis.cxx
+/** @file PSFanalysis.cxx
+    @brief Implementation of the PSFanalysis class
+  $Id:$
+  */
 // June 12, 2001 - rename variables to TKR_...  TU
 
 #include "PSFanalysis.h"

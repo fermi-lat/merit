@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.21 2003/09/08 04:19:28 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.22 2003/09/08 14:40:41 burnett Exp $
 
 // Main for merit
 
@@ -17,7 +17,7 @@
 #include <typeinfo>
 
 
-const char* _MERIT_VERSION = "$Revision: 1.21 $";
+const char* _MERIT_VERSION = "$Revision: 1.22 $";
 static std::string  cutstr("ntA"); 
 static std::string  file_name("");
 
@@ -105,8 +105,8 @@ int main(int argc, char* argv[])
         std::cerr << "Merit reading from file: \"" << file_name << "\"" << std::endl;
         // charge a head with ROOT here, figure out later how to do it consistently
 
-        //    RootTuple* tuple = new RootTuple("unknown", file_name, "AORECON/t1");
-        RootTuple* tuple = new RootTuple("unknown", file_name, "MeritTuple");
+        std::string tree_name("MeritTuple");
+        RootTuple* tuple = new RootTuple("unknown", file_name, tree_name);
         // now assign input stream, either the file name or std input
         // Determine the # of events stored in ntuple
 
