@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: golpa  Fri Aug 15 15:23:09 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+Added FilterStatus
+    *
+------------------------------------------------------------
+User: golpa  Fri Aug 15 15:23:09 PDT 2003
 merit/cmt
 
 Modified Files:
