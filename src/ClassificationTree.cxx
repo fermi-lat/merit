@@ -213,6 +213,11 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
     }
  
+    bool ClassificationTree::useVertex()const
+    {
+        return *m_vtxAngle>0 && *m_vtxProb >0.5;
+    }
+
     int ClassificationTree::backgroundRejection(){
     
         // Sets m_gammaProb from one of 4 different trees, corresponding to an initial split on vertex,
