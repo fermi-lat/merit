@@ -1,31 +1,4 @@
 ------------------------------------------------------------
-User: cohen  Fri Dec 12 08:28:37 PST 2003
-merit/doc
-
-Modified Files:
-	release.notes 
-Log Message:
-fixed the Ft1Energy entry, now pointing to EvtEnergySumOpt
-    *
-------------------------------------------------------------
-User: cohen  Fri Dec 12 08:28:37 PST 2003
-merit/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-fixed the Ft1Energy entry, now pointing to EvtEnergySumOpt
-    *
-------------------------------------------------------------
-User: cohen  Fri Dec 12 08:28:37 PST 2003
-merit/src/meritAlg
-
-Modified Files:
-	meritAlg.cxx 
-Log Message:
-fixed the Ft1Energy entry, now pointing to EvtEnergySumOpt
-    *
-------------------------------------------------------------
 User: hansl  Wed Dec 10 17:45:42 PST 2003
 merit/src
 
