@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Thu Aug 14 17:08:53 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+change root tree name default to MeritTuple
+    *
+------------------------------------------------------------
+User: burnett  Thu Aug 14 17:08:53 PDT 2003
 merit/doc
 
 Modified Files:
