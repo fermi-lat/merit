@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.39 2003/10/04 07:28:59 burnett Exp $
+ * $Id: release.notes,v 1.40 2003/10/16 23:01:47 burnett Exp $
  *
+ *  v6r12   THB  21-oct-03 Fix background classification tree cuts 
  *  v6r11p2 THB  16-oct-03 Fix background classification tree cuts 
  *          Johann         FT1 elaboration   
  *  v6r11p1 THB  03-oct-03 need explicit use astro with CMT v1r14
