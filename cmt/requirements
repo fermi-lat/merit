@@ -1,5 +1,6 @@
 package merit
-version v5r8p3
+version v5r8
+# $Id:$
 
 branches doc
 

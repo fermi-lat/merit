@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.20 2002/09/02 03:06:39 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.21 2002/09/02 15:41:28 burnett Exp $
 
 // Include files
 
@@ -14,6 +14,8 @@
 #include "Event/MonteCarlo/McParticle.h"
 #include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/EventModel.h"
+#include "Event/TopLevel/MCEvent.h"
+
 
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"
@@ -64,6 +66,7 @@ private:
     void clusterReco(const Event::CalClusterCol& clusters, const Event::CalXtalRecCol&);
 
     void tileReco(const Event::AcdRecon& );
+    void processMCheader(const Event::MCEvent&);
     
     
     FigureOfMerit* m_fm;
@@ -243,7 +246,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.20 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.21 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -258,6 +261,7 @@ StatusCode meritAlg::execute() {
     StatusCode  sc = StatusCode::SUCCESS;
     
     SmartDataPtr<Event::EventHeader>   header(eventSvc(),    EventModel::EventHeader);
+    SmartDataPtr<Event::MCEvent>     mcheader(eventSvc(),    EventModel::MC::Event);
     SmartDataPtr<Event::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
     SmartDataPtr<Event::TkrVertexCol>  tracks(eventSvc(),    EventModel::TkrRecon::TkrVertexCol);
     SmartDataPtr<Event::CalClusterCol> clusters(eventSvc(),  EventModel::CalRecon::CalClusterCol);
@@ -266,6 +270,7 @@ StatusCode meritAlg::execute() {
     
     if( particles!=0 )particleReco(particles);
 
+    processMCheader( mcheader);
     processTDS( header,  tracks);
     clusterReco(clusters, xtalrecs);
 
@@ -276,6 +281,12 @@ StatusCode meritAlg::execute() {
     m_fm->execute();
     
     return sc;
+}
+//------------------------------------------------------------------------------
+void meritAlg::processMCheader(const Event::MCEvent& header){
+
+    m_mc_src_id = header.getSourceId();
+    m_event = header.getSequence();
 }
 //------------------------------------------------------------------------------
 void meritAlg::particleReco(const Event::McParticleCol& particles)
