@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/analysis/analysis/Tuple.h,v 1.3 2001/12/18 23:15:50 usher Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.1 2002/05/26 03:35:10 burnett Exp $
 
 #ifndef TUPLE_H
 #define TUPLE_H
@@ -22,6 +22,8 @@ public:
       datum=x;
 
     }
+     float & value(){ return *m_pdatum;}
+
     // assign value to the tuple element
     
     float operator()()const{
