@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: cohen  Tue Nov 25 03:10:55 PST 2003
+merit/src/app
+
+Modified Files:
+	AsciiTuple.h RootTuple.h 
+Log Message:
+add newline at end of file
+    *
+------------------------------------------------------------
+User: cohen  Tue Nov 25 03:10:55 PST 2003
 merit/src
 
 Modified Files:
