@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Fri Mar 23 11:52:01 PST 2001
+merit/src/Dll merit_dll.cxx merit_load.cxx
+
+Added Files:
+	merit_dll.cxx merit_load.cxx 
+Log Message:
+initial mods for Gaudi environment
+    *
+------------------------------------------------------------
+User: burnett  Fri Mar 23 11:52:01 PST 2001
 merit/src Makefile.am
 
 Removed Files:
