@@ -1,4 +1,20 @@
 ------------------------------------------------------------
+User: usher  Tue Dec 18 15:28:29 PST 2001
+merit/src
+
+Modified Files:
+	AnalysisList.h Analyze.cxx Analyze.h FigureOfMerit.cxx 
+	FigureOfMerit.h MultiPSF.h PSFanalysis.cxx PSFanalysis.h 
+	PSFtailCuts.cxx PSFtailCuts.h 
+Log Message:
+Add subfolder and files for interfacing root to merit.
+These classes will allow root to provide control over running
+merit and, most importantly, to allow root to provide plots of
+the results. MeritPlots, in particular, contains several example
+plots of final results.
+
+    *
+------------------------------------------------------------
 User: usher  Tue Dec 18 15:24:23 PST 2001
 merit/src/root/rootApp
 
