@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.72 2004/08/03 01:17:48 golpa Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.73 2004/08/11 03:25:00 burnett Exp $
 */
 // Include files
 
@@ -286,7 +286,7 @@ StatusCode meritAlg::initialize() {
     addItem( "GltFilterStatusHI",   &m_statusHi );
     addItem( "GltFilterStatusLO",   &m_statusLo );
     addItem( "GltFilterAlgStatus",  &m_filterAlgStatus );
-    addItem( "GltFilterAngSep",     &m_filterAlgStatus );
+    addItem( "GltFilterAngSep",     &m_separation );
 
     //FT1 INFO:
     addItem( "FT1EventId",          &m_ft1eventid);
@@ -487,7 +487,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.72 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.73 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
