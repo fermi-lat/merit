@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Jun  1 08:33:24 PDT 2002
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx 
+Log Message:
+restore strstream for linux
+    *
+------------------------------------------------------------
 User: burnett  Fri May 31 15:06:47 PDT 2002
 merit/doc
 
