@@ -115,7 +115,6 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 #endif
         // special tuple items we want on the output: make sure they are included in the list
         t.tupleItem("AcdActiveDist");
-        t.tupleItem("VtxAngle"); 
         t.tupleItem("CalEnergySum");
         t.tupleItem("TkrRadLength");
         t.tupleItem("CalCsIRLn");
@@ -151,6 +150,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_firstLayer = t.tupleItem("Tkr1FirstLayer");
         m_calEnergySum = t.tupleItem("CalEnergySum");
         m_calTotRLn =t.tupleItem("CalTotRLn");
+        m_vtxAngle = t.tupleItem("VtxAngle"); 
 
 
         // New items to create
@@ -193,7 +193,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
         if( *m_firstLayer < 12 ) {
             m_vtxProb = imnodes[VTX_THIN].evaluate(); 
-            if( m_vtxProb >0.5) {
+            if( *m_vtxAngle>0 && m_vtxProb >0.5) {
                 m_coreProb =   imnodes[VTX_THIN_TAIL].evaluate();
                 m_psfErrPred = imnodes[VTX_THIN_BEST].evaluate();
             }else{
@@ -202,7 +202,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             }
         }else {
             m_vtxProb = imnodes[VTX_THICK].evaluate();
-            if( m_vtxProb >0.5) {
+            if(  *m_vtxAngle>0 &&  m_vtxProb >0.5) {
                 m_coreProb =   imnodes[VTX_THICK_TAIL].evaluate();
                 m_psfErrPred = imnodes[VTX_THICK_BEST].evaluate();
             }else{
