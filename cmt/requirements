@@ -1,6 +1,6 @@
 package merit
 version v6r15
-# $Id: requirements,v 1.72 2004/08/03 01:18:35 golpa Exp $
+# $Id: requirements,v 1.73 2004/08/11 03:25:00 burnett Exp $
 
 branches doc
 
@@ -19,6 +19,7 @@ use Event *
 use GuiSvc v3*
 use OnboardFilter v1*
 use facilities *
+use LdfEvent *
 
 # read/ write ROOT trees (any old ROOT will do)
 use ROOT * IExternal

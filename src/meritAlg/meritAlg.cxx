@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.73 2004/08/11 03:25:00 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.74 2004/08/13 20:58:59 golpa Exp $
 */
 // Include files
 
@@ -18,7 +18,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.73 200
 #include "Event/MonteCarlo/Exposure.h"
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/TkrRecon/TkrFitTrack.h"
-
+#include "LdfEvent/Gem.h"
 
 #include "AnalysisNtuple/IValsTool.h"
 
@@ -161,7 +161,9 @@ private:
 
     // places to put stuff found in the TDS
     float m_run, m_event, m_mc_src_id;
+
     double m_time;
+    float m_livetime;
     double m_statusHi, m_statusLo,m_separation;
     double m_filterAlgStatus;
 
@@ -173,6 +175,9 @@ private:
     float m_ft1energy;
     float m_ft1theta,m_ft1phi,m_ft1ra,m_ft1dec,m_ft1zen,m_ft1azim;
     float m_ft1convpointx,m_ft1convpointy,m_ft1convpointz,m_ft1convlayer;
+
+    // Gem summary (only 8 bits set)
+    float m_gemCondition;
 
     /// Common interface to analysis tools
     std::vector<IValsTool*> m_toolvec;
@@ -280,6 +285,7 @@ StatusCode meritAlg::initialize() {
     addItem( "EvtRun",  &m_run );
     addItem( "EvtId",   &m_event );
     addItem( "EvtTime", &m_time );
+    addItem( "EvtLiveTime", &m_livetime);
 
     addItem( "McSrcId", &m_mc_src_id );
 
@@ -301,7 +307,8 @@ StatusCode meritAlg::initialize() {
     addItem( "FT1ConvPointY",       &m_ft1convpointy);
     addItem( "FT1ConvPointZ",       &m_ft1convpointz);
 
-
+    // Gem stuff
+    addItem( "GemConditionSummary", &m_gemCondition);
 
     // add some of the AnalysisNTuple items
     if( setupTools().isFailure()) return StatusCode::FAILURE;
@@ -487,7 +494,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.73 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.74 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -519,12 +526,14 @@ StatusCode meritAlg::execute() {
     calculate(); // setup Bill's tuple items
     SmartDataPtr<Event::EventHeader>   header(eventSvc(),    EventModel::EventHeader);
     SmartDataPtr<Event::MCEvent>     mcheader(eventSvc(),    EventModel::MC::Event);
-
+    SmartDataPtr<LdfEvent::Gem> gem(eventSvc(), "/Event/Gem"); 
+ 
     m_run = header->run();
     m_mc_src_id = mcheader->getSourceId();
     m_event = mcheader->getSequence();
     m_time = header->time();
     m_event = header->event();
+    m_livetime = header->livetime();
 
     SmartDataPtr<OnboardFilterTds::FilterStatus> filterStatus(eventSvc(), "/Event/Filter/FilterStatus");
     if( filterStatus ){
@@ -546,6 +555,9 @@ StatusCode meritAlg::execute() {
     if(filterAlgStatus){
         m_filterAlgStatus=(double)filterAlgStatus->getVetoWord();
     }
+ 
+    m_gemCondition = gem==0? -1 : gem->conditionSummary();
+
     m_ctree->execute();
     m_fm->execute();
 
@@ -553,11 +565,15 @@ StatusCode meritAlg::execute() {
     m_rootTupleSvc->storeRowFlag(this->m_eventTreeName.value(), true);
     // write out the FT1 and pointing  tuples only for reconstructed
     copyFT1Info();
+#if 0 // for Julie: so she gets all events as friends.
     double track_count = m_tuple->tupleItem("TkrNumTracks")->value();
     if( m_rootTupleSvc && track_count>0 ) {
+#endif
         copyPointingInfo();
         m_rootTupleSvc->storeRowFlag(this->m_pointingTreeName, true);
+#if 0 //see above
     }
+#endif
 
     return sc;
 }
