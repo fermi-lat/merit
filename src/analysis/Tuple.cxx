@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.2 2002/05/30 02:30:34 burnett Exp $
+// $Id: Tuple.cxx,v 1.3 2002/05/30 02:40:04 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -177,7 +177,7 @@ std::istream& operator >> (std::istream& in, Tuple& t)
 		    std::cerr << "Error message found: \"" << temp
 			      << "\"" << std::endl;
 		    std::cerr << "Can't recover, exiting" << std::endl;
-		    exit(-1);		
+                    throw("merit cannot read");
 		}
 	    }
  	}
@@ -233,15 +233,10 @@ Tuple::tupleItem(const std::string& name)const
 {
     Tuple::const_iterator it = find(name);
     if( it != end() ) return *it;
-#ifndef DEFECT_NO_STRINGSTREAM
     std::stringstream  errmsg;
     errmsg << "Sorry, did not find '" << name << "' in the tuple\n";
-    std::cerr << errmsg << std::endl;
+    std::cerr << errmsg.str() << std::endl;
     throw (errmsg.str());
-#else
-    std::cerr << "Did not find a tuple item " << std::endl;
-    throw("Tuple::tupleItem -- no tuple item");
-#endif
     return *it;
 }
 

@@ -1,7 +1,7 @@
 // Cut.cxx: implementation of the Cut class.
 //
 // Original author: T. Burnett tburnett@u.washington.edu
-// $Header: /cvs/glastsim/merit/Cut.cxx,v 1.8 1999/07/05 19:08:02 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/Cut.cxx,v 1.1.1.1 1999/12/20 22:29:12 burnett Exp $
 //////////////////////////////////////////////////////////////////////
 
 #include "Cut.h"
@@ -61,7 +61,7 @@ void Cut::parse(const Tuple&t, std::string::const_iterator& it, std::string::con
                 case '=': m_op=EQ; if(*(it+1)=='=')++it; break;
                 case '!': m_op=NE; ++it; break; // assume followed by =
                 default: std::cerr << "Unexpected character '" << *it << "' found" << std::endl;
-                    exit(-1);
+                    throw("Cut::parse: unexpected character");
                 }
                 first = false;
             }
