@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Mon Aug 25 14:54:05 PDT 2003
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+convert to use RootTupleSvc.
+    *
+------------------------------------------------------------
+User: burnett  Mon Aug 25 14:54:05 PDT 2003
 merit
 
 Modified Files:
