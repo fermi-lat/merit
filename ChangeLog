@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Mon Sep 13 16:22:11 PDT 2004
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+remove elapsed_time, Run, EventId, MC_src_Id from output tuple.
+    *
+------------------------------------------------------------
+User: burnett  Mon Sep 13 16:22:11 PDT 2004
 merit/src
 
 Modified Files:
