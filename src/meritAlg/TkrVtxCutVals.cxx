@@ -18,12 +18,12 @@ TkrVtxCutVals::TkrVtxCutVals(const Event::TkrVertex* vtx) : vertex(vtx)
     fitKink     = -9.;
     tangle      = -9.;
 
-    SmartRefVector<Event::TkrFitTrack>::const_iterator trackIter = vertex->getTrackIterBegin();
+    SmartRefVector<Event::TkrFitTrackBase>::const_iterator trackIter = vertex->getTrackIterBegin();
 
     int idx;
     for(idx = 0; idx < numTracks; idx++)
     {
-        const Event::TkrFitTrack* track = *trackIter++;
+        const Event::TkrFitTrackBase* track = *trackIter++;
 
         if (track->getQuality() > bestTrkQual)
         {
@@ -42,7 +42,7 @@ TkrVtxCutVals::TkrVtxCutVals(const Event::TkrVertex* vtx) : vertex(vtx)
 
             for (idx = 0; idx < numTracks; idx++)
             {
-                const Event::TkrFitTrack* track = *trackIter++;
+                const Event::TkrFitTrackBase* track = *trackIter++;
 
                 if (track->getQuality() > pairTrkQual && track->getQuality() < bestTrkQual)
                 {
@@ -67,7 +67,7 @@ TkrVtxCutVals::~TkrVtxCutVals()
 void TkrVtxCutVals::calcTangle()
 {
     Vector           vtxDir    = vertex->getDirection();
-    Event::TkrFitPar trkPar    = best->getTrackPar(Event::TkrRecInfo::Start);
+    Event::TkrFitPar trkPar    = best->getTrackPar(Event::TkrFitTrackBase::Start);
     Vector           trkDir    = Vector(-trkPar.getXSlope(),-trkPar.getYSlope(),-1.).unit();
     double           cosVtxTrk = trkDir * vtxDir;
 
@@ -81,7 +81,7 @@ void TkrVtxCutVals::calcTangle()
 // Calculate the Fit Kink
 void TkrVtxCutVals::calcFitKink()
 {
-    Event::TkrFitPlaneConPtr hitIter = best->getHitIterBegin();
+    Event::TkrFitPlaneConPtr hitIter = best->begin();
 
     Event::TkrFitHit firstHit  = hitIter[0].getHit(Event::TkrFitHit::SMOOTH);
     Event::TkrFitHit secondHit = hitIter[1].getHit(Event::TkrFitHit::SMOOTH);
