@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Oct 21 02:37:54 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+use new feature of RootTupleSvc to avoid writing out FT1 and pointing when not track reconstructed; change to degree units for consistency with FT1 definition
+    *
+------------------------------------------------------------
 User: golpa  Mon Oct 20 15:07:49 PDT 2003
 merit/src/meritAlg
 
