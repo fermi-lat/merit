@@ -1,6 +1,6 @@
 /** @file LayerGroup.cxx
    @brief implementation of the LayerGroup class.
-   $Id:$
+   $Id: LayerGroup.cxx,v 1.6 2003/11/15 15:25:03 burnett Exp $
    */
 //////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ LayerGroup::LayerGroup(const Tuple& t, int min_layer, int max_layer, CATEGORY ca
 ,  m_energy(t)
 ,  m_minlayer(min_layer), m_maxlayer(max_layer)
 , m_category(cat)
-, m_vertexProb(t.tupleItem("IMvertexProb"))
+, m_vertexProb(cat!=ALL? t.tupleItem("IMvertexProb") : 0)
 {
 }
 
