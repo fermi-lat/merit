@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Wed Oct 31 09:04:09 PST 2001
+merit/src PSFtailCuts.cxx
+
+Modified Files:
+	PSFtailCuts.cxx 
+Log Message:
+This version has the energy/angle dependent tangle and fitkink cut
+    *
+------------------------------------------------------------
 User: burnett  Tue Oct 23 08:06:12 PDT 2001
 merit/src/app RootTuple.cxx
 
