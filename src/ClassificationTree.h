@@ -2,7 +2,7 @@
 @brief 
 
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.6 2003/09/08 04:19:28 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.7 2003/09/09 19:21:19 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -31,18 +31,25 @@ public:
     ~ClassificationTree();
 
 private:
+    double backgroundRejection();
 
     classification::Tree * m_classifier;
     const TupleItem*  m_firstLayer; /// access to the first layer in the tuple
     const TupleItem*  m_calTotRLn; 
     const TupleItem*  m_calEnergySum;
-    const TupleItem*  m_vtxAngle; // needed for vtx cut
+    const TupleItem*  m_acdTileCount;
+    const TupleItem*  m_evtTkrEComptonRatio;
+    const TupleItem*  m_calMIPDiff;
+    const TupleItem*  m_evtEnergySumOpt;
+    const TupleItem*  m_calLRmsRatio;
+    const TupleItem*  m_vtxAngle;
+
 
     double m_goodCalProb;
     double m_coreProb; 
     double m_vtxProb ;
     double m_psfErrPred; 
-   
+    double m_gammaProb ;
     
 
     std::ostream& m_log;

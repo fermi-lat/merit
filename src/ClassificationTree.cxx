@@ -19,7 +19,8 @@ namespace {
        VTX_THIN_TAIL,     VTX_THIN_BEST,
        ONE_TRK_THIN_TAIL, ONE_TRK_THIN_BEST,
        VTX_THICK_TAIL,    VTX_THICK_BEST, 
-       ONE_TRK_THICK_TAIL, ONE_TRK_THICK_BEST, 
+       ONE_TRK_THICK_TAIL, ONE_TRK_THICK_BEST,
+       BKG_VTX_HI, BKG_VTX_LO, BKG_1TRK_HI, BKG_1TRK_LO,
        NODE_COUNT
     };
 
@@ -33,19 +34,23 @@ namespace {
         int index;        // index of the classification type within the list of probabilites
     };
     IMnodeInfo imNodeInfo[] = {
-        { CALHIGH,           "CT Cal High",  0 },
+        { CALHIGH,           "CT Cal High",  1 },
         { CALLOW,            "CT Cal Low",  0 },
         { NOCAL,             "CT No Cal",  0 },
-        { VTX_THIN,          "CT VTX Thin",     0},
+        { VTX_THIN,          "CT VTX Thin",     1},
         { VTX_THICK,         "CT Thick VTX",     0 },
-        { VTX_THIN_TAIL,     "CT VTX Thin Tail" ,0}, 
+        { VTX_THIN_TAIL,     "CT VTX Thin Tail" ,1}, 
         { VTX_THIN_BEST,     "RT VTX Thin Core", 0},
         { ONE_TRK_THIN_TAIL, "CT 1Tkr Thin Tail",0},
         { ONE_TRK_THIN_BEST, "RT 1Tkr Thin Core",0},
-        { VTX_THICK_TAIL,    "CT VTX Thick Tail", 0},
+        { VTX_THICK_TAIL,    "CT VTX Thick Tail", 1},
         { VTX_THICK_BEST,    "RT VTX Thick Core", 0},
-        { ONE_TRK_THICK_TAIL,"CT 1Tkr Thick Tail", 0},
-        { ONE_TRK_THICK_BEST,"RT 1Tkr Thick Core", 0}
+        { ONE_TRK_THICK_TAIL,"CT 1Tkr Thick Tail", 1},
+        { ONE_TRK_THICK_BEST,"RT 1Tkr Thick Core", 0},
+        { BKG_VTX_HI,        "CT VTX-HI", 1},
+        { BKG_VTX_LO,        "CT VTX-LO", 1},
+        { BKG_1TRK_HI,       "CT 1TRK-HI", 1},
+        { BKG_1TRK_LO,       "CT 1TRK-LO", 0}
     };
 
     /** Manage interface to one of the prediction nodes
@@ -113,6 +118,9 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             t.add_alias(tname, alias_pairs[i].first);
         }
 #endif
+        // since at least one of the background rejection trees needs to know about the core prob
+        t.add_alias( "IMcoreProb", "Pr(CORE)");
+
         // special tuple items we want on the output: make sure they are included in the list
         t.tupleItem("AcdActiveDist");
         t.tupleItem("CalEnergySum");
@@ -150,7 +158,12 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_firstLayer = t.tupleItem("Tkr1FirstLayer");
         m_calEnergySum = t.tupleItem("CalEnergySum");
         m_calTotRLn =t.tupleItem("CalTotRLn");
-        m_vtxAngle = t.tupleItem("VtxAngle"); 
+        m_evtEnergySumOpt = t.tupleItem("EvtEnergySumOpt");
+        m_evtTkrEComptonRatio = t.tupleItem("EvtTkrEComptonRatio");
+        m_calMIPDiff = t.tupleItem("CalMIPDiff");
+        m_calLRmsRatio = t.tupleItem("CalLRmsRatio");
+        m_acdTileCount = t.tupleItem("AcdTileCount");
+        
 
 
         // New items to create
@@ -159,20 +172,66 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         new TupleItem("IMvertexProb", &m_vtxProb);
         new TupleItem("IMcoreProb",   &m_coreProb);
         new TupleItem("IMpsfErrPred", &m_psfErrPred);
+        new TupleItem("IMgammaProb",  &m_gammaProb);
         m_classifier = new classification::Tree(looker, log, 0); // verbosity
         // translate the Tuple map
   
         m_classifier->load(xml_file);
 
         // get the list of root prediction tree nodes
-        imnodes.reserve(20);
+        imnodes.reserve(NODE_COUNT);
         for( unsigned int i=0; i<NODE_COUNT; ++i){
             IMpredictNode n(imNodeInfo[i],m_classifier);
            imnodes[imNodeInfo[i].id]=n;
         }
 
     }
+ 
+    double ClassificationTree::backgroundRejection(){
+    
+        // Sets m_gammaProb from one of 4 different trees, corresponding to an initial split on vertex,
+        // then energy
+        // return the cut on this quantity that is used by the analysis
+        double  cut=0.5;
+        m_gammaProb=0;
 
+        // First apply the background check
+        if( *m_vtxAngle>0 ) {
+            if( *m_evtEnergySumOpt>350){
+                //vTX-HI
+                if( *m_evtTkrEComptonRatio > 0.60 &&
+                    *m_calMIPDiff > 60. ) m_gammaProb= imnodes[BKG_VTX_HI].evaluate();
+                
+            }else{
+                // VTX-LO
+                if( *m_acdTileCount==0 &&
+                    *m_calMIPDiff> -125 &&
+                    *m_evtTkrEComptonRatio > 0.8){
+                        m_gammaProb= imnodes[BKG_VTX_LO].evaluate();
+                        cut = 0.9;
+                    }
+            }
+        }else{
+            if( *m_evtEnergySumOpt>450.){ 
+                //1TRK-HI
+                if( *m_evtTkrEComptonRatio > 0.70 &&
+                    *m_calMIPDiff> 0.80 &&
+                    *m_calLRmsRatio < 20.) m_gammaProb = imnodes[BKG_1TRK_HI].evaluate();
+            }else{
+                //1TRK-LO
+                if( *m_acdTileCount==0 &&
+                    *m_evtTkrEComptonRatio > 1. &&
+                    *m_calLRmsRatio >0.5 &&
+                    *m_firstLayer !=0 &&
+                    *m_firstLayer <15 ){
+                        m_gammaProb= imnodes[BKG_1TRK_LO].evaluate();
+                        cut = 0.9;
+                    }
+            }
+        }
+        return cut;
+
+    }
     void ClassificationTree::execute()
     {
 
@@ -210,6 +269,9 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
                 m_psfErrPred = imnodes[ONE_TRK_THICK_BEST].evaluate();
             }
         }
+        // return the cut that Bill wants to apply: either 0.5 for 0.9, and set the probability to apply it to.
+        // sets m_gammaProb, corresponding to the tuple IMgammaProb.
+        double cut = backgroundRejection();
 
     }
     ClassificationTree::~ClassificationTree()
