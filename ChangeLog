@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Aug 25 14:54:05 PDT 2003
+merit
+
+Modified Files:
+	.cvsignore 
+Log Message:
+convert to use RootTupleSvc.
+    *
+------------------------------------------------------------
 User: burnett  Sun Aug 17 11:48:41 PDT 2003
 merit/doc
 
