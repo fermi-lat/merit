@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 
 
     
-    // Set up the output 
+    // Set up the output file, tree and branches
     //_________________________________________________________________________
 
     std::cout << "FastFilter: Output enhanced merit Tuple: "
@@ -97,19 +97,15 @@ int main(int argc, char* argv[])
     TTree* out_tree = new TTree(tree_name.c_str(), outTitle.c_str() ); //name,title 
 
     // Create branches of out_tree from the TupleItems of the (enhanced) input Tuple
-    // 
-
     for( Tuple::iterator tit = intuple->begin(); tit != intuple->end(); ++tit) {
          TupleItem& item = **tit;
          Double_t * val  = &item.value();
-	 //         std::string leaf_name = item.isFloat() ? item.name() : item.name()+"/D";
-         std::string leaf_name = item.name();
+	 std::string leaf_name = item.isFloat() ? item.name() : item.name()+"/D";
          out_tree->Branch( item.name().c_str(), val, leaf_name.c_str() );
 
          std::cout << " name      " << item.name() 
                    << " value     " << val 
                    << " leaf name " << leaf_name << std::endl; 
-         
     }
 
     std::cout << "fastFilter: Number of branches "<< out_tree->GetNbranches() << std::endl;
@@ -118,7 +114,8 @@ int main(int argc, char* argv[])
 
     //  Loop over events, select and update output Tuple 
     //_________________________________________________________________________
-    int nBytes(0);
+
+    int nBytes   = 0;
     int nEntries = 0;
     try {
 	// event loop
@@ -127,15 +124,12 @@ int main(int argc, char* argv[])
             if (prob >= 0.0 ) {  // 0.0 for test of filter
               
               out_file.cd();
-	      // why is the tree not filled
-              nBytes = out_tree->Fill();
-              
-              nBytes = out_tree->GetEntry(nEntries, 0);
-	      std::cout << "nBytes = " << nBytes << std::endl;
+              nBytes = out_tree->Fill(); //  nBytes = out_tree->GetEntry(nEntries, 0); 
+	      std::cout << "nBytes = " << nBytes << std::endl; // # bytes 8*239 ok
 
               ++nEntries;
-            }  
-          }
+            }  // check prob  
+          }  // loop events
 
         }catch(std::exception& e){
             std::cerr << "Caught: " << e.what( ) << std::endl;
@@ -145,15 +139,15 @@ int main(int argc, char* argv[])
         }
 
     // leftovers from debug
-      // out_file.Recover();
+       // out_file.Recover();
        out_file.ls();
-     //out_file.Map();
+       //out_file.Map();
 
-     // out_tree->Print();
-     out_tree->ls();
+       // out_tree->Print();
+       out_tree->ls();
 
-     out_tree->BuildIndex("EvtRun", "EvtEventID");
-     // end leftovers
+       out_tree->BuildIndex("EvtRun", "EvtEventID");
+    // end leftovers
      
      out_file.Close();
      std::cout << "fastFilter: " << nEntries 
