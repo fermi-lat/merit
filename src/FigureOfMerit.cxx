@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.11 2002/05/31 17:48:02 burnett Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.12 2002/05/31 19:37:49 burnett Exp $
 
 
 #include "FigureOfMerit.h"
@@ -10,6 +10,7 @@
 #include <cmath>
 #include <iomanip>
 #include <algorithm>
+#include <fstream>
 
 // put these here because gcc could not find the inline versions???
 unsigned        FigureOfMerit::accepted() const { return m_accepted; }
@@ -382,13 +383,17 @@ private:
 //=============================================================================
 class WriteTuple : public Analyze {
 public:
-    WriteTuple(const Tuple& t) : Analyze( "Written to output tuple"),m_tuple(t)
+    WriteTuple(const Tuple& t, std::ostream &stream = std::cout) 
+        : Analyze( "Written to output tuple")
+        , m_tuple(t)
+        , m_stream(stream)
     {
-        m_tuple.writeHeader(std::cout);
+        m_tuple.writeHeader(m_stream);
     }
 private:
-    virtual bool    apply () {std::cout << m_tuple; ; return true; }
+    virtual bool    apply () {m_stream  << m_tuple ; return true; }
     const Tuple& m_tuple;
+    std::ostream& m_stream;
 };
 //=============================================================================
 // Only the Front
@@ -547,6 +552,9 @@ void	FigureOfMerit::setCuts ( string istr )
             break;            
         case 'W': /* W = Write */        
             m_cuts->push_back( new WriteTuple(*s_tuple));   
+            break;
+        case 'f': // f = file
+            m_cuts->push_back( new WriteTuple(*s_tuple, *(new std::ofstream("merit.tup")) ));
             break;
         case 'D': /* D = dead time */	 
             m_cuts->push_back( new FOMdeadtime(*s_tuple) ); 
