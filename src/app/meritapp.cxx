@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.2 2001/03/25 00:02:51 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.3 2001/05/24 17:07:14 burnett Exp $
 
 // Main for merit
 
@@ -18,7 +18,7 @@
 
 #include <assert.h>
 
-const char* _MERIT_VERSION = "$Revision: 1.2 $";
+const char* _MERIT_VERSION = "$Revision: 1.3 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     // first arg is option string if preceded by dash
     if( file_name[0]=='-' && file_name.size()>1) {
         cutstr = file_name.substr(1);
-        file_name = "-";
+        file_name = "";
     }
     if( argc>++n ) {			// optional
         if ( argv[n][0] == 'p' )  {
