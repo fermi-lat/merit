@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Wed Nov 26 08:43:41 PST 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+revert the 5 added entries to merit and the Exposure names
+    *
+------------------------------------------------------------
 User: burnett  Wed Nov 26 05:42:36 PST 2003
 merit/doc
 
