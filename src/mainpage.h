@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.3 2002/05/28 18:48:01 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.4 2002/05/30 02:30:33 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -6,6 +6,33 @@
   Implements an algorithm, meritAlg, that does a complete PSF and Aeff analysis.
   <br>
 
+  \section Keys
+  <pre>
+Cut keys are as follows:"
+Gnnnn, : Set number generated to nnnnn, overriding gen(nnn) in tuple title"
+1 : level 1 trigger: Track or LoCal or HiCal "
+V : level 1 VETO throttle "
+2 : level 2 trigger: track, no doca veto except if cal "
+3 : level 3 trigger"
+F : TKR FRONT Section only"
+B : TKR BACK Section only"
+n : number of tracks (N_tracks > 0)"
+c : cosmic rejection cuts (old set)"
+  \"(...)\" : cut expression, like Chisq<50 ( chars ()<>  must be enclosed in quotes)"
+X : Xname, -- statistics on name"
+A : Analysis of PSF, etc."                                                    \
+W : write the (ascii) event to standard output (useful for filtering tuples!)"
+L : elapsed time: last time found in variable 'elapsed_time'"
+R : Rate: number of events/elapsed time"
+s : size: report on event size (assuming various bits/hit)"
+Mx: Multi-PSF for bin x, x=0,1,2,3,4: do PSF analysis for 6 dE/E bins from "
+    31 MeV to 3.1 GeV, cos theta #n, bins are 0.2 wide"
+    x=a: all bins from 1 to 0.2, 0.2 bins"
+      b: all bins from 1 to 0.2, 0.1 bins"
+      n: one bin  from 1 to 0, appropriate for normal incidence, or average"
+      i: all costh bins but one energy bin, appropriate for single energy"
+
+  </pre>
 
 Sample output, the first sensible Gleam-related results, from Gleam v2r1p5. 
 <hr>
