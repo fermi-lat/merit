@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.4 2001/05/30 22:09:28 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.5 2001/06/14 19:52:00 usher Exp $
 
 // Main for merit
 
@@ -18,7 +18,7 @@
 
 #include <assert.h>
 
-const char* _MERIT_VERSION = "$Revision: 1.4 $";
+const char* _MERIT_VERSION = "$Revision: 1.5 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -37,15 +37,18 @@ static const char* helptext=
 "\nIf 'p' is specified  then percentages will be displayed as well."
 "\n Reads from stdin next parameter is \"-\", or from $(MERIT_INPUT_FILE) otherwise."
 "\n\n\tCut keys are as follows:"
-"\n\t\t1 : level 1 trigger: Track or LoCal "
-"\n\t\tI : level 1 trigger: (Track or Local)* !Veto + HiCal "
-"\n\t\t2 : level 2 trigger: track, no veto except if cal"
-"\n\t\t3 : level 3 trigger: track, veto, calorimeter error"
+"\n\t\t1 : level 1 trigger: Track or LoCal or HiCal "
+"\n\t\tV : level 1 VETO throttle "
+"\n\t\tI : level 1 trigger: (Track or Local)* !Veto + HiCal (OBSOLETE) "
+"\n\t\t2 : level 2 trigger: track, no doca veto except if cal "
+"\n\t\t3 : level 3 trigger"
+"\n\t\tF : TKR FRONT Section only"
+"\n\t\tB : TKR BACK Section only"
 "\n\t\tn : number of tracks (N_tracks > 0)"
 "\n\t\tc : cosmic rejection cuts (old set)"
-"\n\t\tb : background rejection cuts (Ritz version)"
-"\n\t\tr : resolution enhancement cuts "
-"\n\t\tj : Tail suppression cuts (Jose Hernando version) "
+"\n\t\tb : background rejection cuts (Ritz version-OBSOLETE)"
+"\n\t\tr : resolution enhancement cuts  (OBSOLETE)"
+"\n\t\tj : Tail suppression cuts (Jose Hernando version - OBSOLETE) "
 "\n\t    \"(...)\" : cut expression, like Chisq<50 ( chars ()<>  must be enclosed in quotes)"
 "\n\t\tX : Xname, -- statistics on name"
 "\n\t\tA : Analysis of PSF, etc."                                                    \

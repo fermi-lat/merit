@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.3 2001/06/14 20:15:04 usher Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.4 2001/06/22 23:06:52 usher Exp $
 
 #ifdef __GNUG__
 #pragma implementation
@@ -226,7 +226,82 @@ public:
 private:
     virtual bool  apply (){ return ((static_cast<unsigned>(item()) & 1) == 1); }
 };
+//=============================================================================
+class FOML2T : public Analyze {
+public:
+    FOML2T (const Tuple& t) 
+        : Analyze (t, "ACD_DOCA", "L2 Selections")
+        , m_sourceid(t.tupleItem ("MC_src_Id"))
+	  , m_numtracks(t.tupleItem ("TKR_No_Tracks"))
+	  , m_edeposit(t.tupleItem ("Cal_Energy_Deposit"))
 
+    {    }
+private:
+    virtual bool    apply () {
+        float doca = item();
+	    float sourceid = *m_sourceid;
+        float numtracks = *m_numtracks;
+        float edeposit = *m_edeposit;
+
+        return (sourceid!=2&&((numtracks>0.&&doca>25.)||(edeposit>10000.)));
+    }
+    
+    const TupleItem*	m_sourceid;
+    const TupleItem*	m_numtracks;
+    const TupleItem*	m_edeposit;
+};
+//=============================================================================
+class FOML3T : public Analyze {
+public:
+    FOML3T (const Tuple& t) 
+        : Analyze (t, "Cal_Energy_Deposit", "L3 Selections")
+        , m_surplushit(t.tupleItem ("REC_Surplus_Hit_Ratio"))
+	  , m_xtalrat(t.tupleItem ("Cal_Xtal_Ratio"))
+	  , m_fiterrnrm(t.tupleItem ("Cal_Fit_errNrm"))
+
+    {    }
+private:
+    virtual bool    apply () {
+        float edeposit = item();
+    	float surplushit = *m_surplushit;
+        float xtalrat = *m_xtalrat;
+        float fiterrnrm = *m_fiterrnrm;
+
+        return (((edeposit<1.&&surplushit>2.)||(xtalrat>.2))&&fiterrnrm<15.); 
+//        return (xtalrat>.2&&fiterrnrm<15.); 
+    }
+    const TupleItem*	m_surplushit;
+    const TupleItem*	m_xtalrat;
+    const TupleItem*	m_fiterrnrm;
+};
+//=============================================================================
+class FOML1V : public Analyze {
+public:
+    FOML1V (const Tuple& t) 
+        : Analyze (t, "ACD_Throttle_Bits", "L1 Throttle")
+        , m_tilecount(t.tupleItem ("ACD_TileCount"))
+	  , m_siderow3(t.tupleItem ("ACD_No_SideRow3"))
+	  , m_siderow2(t.tupleItem ("ACD_No_SideRow2"))
+	  , m_trigbits(t.tupleItem ("Trig_Bits"))
+
+    {    }
+private:
+    virtual bool    apply () {
+        float throttlebits = item();
+	  float tilecount = *m_tilecount;
+        float siderow3 = *m_siderow3;
+        float siderow2 = *m_siderow2;
+        int trigbits = *m_trigbits;
+
+        return (((throttlebits==0||throttlebits>127.)&&(tilecount-siderow2-siderow3)<3.)||(trigbits&16));
+    }
+    
+    const TupleItem*	m_throttlebits;
+    const TupleItem*	m_tilecount;
+    const TupleItem*	m_siderow3;
+    const TupleItem*    m_siderow2;
+    const TupleItem*    m_trigbits;
+};
 //=============================================================================
 class WriteTuple : public Analyze {
 public:
@@ -237,6 +312,36 @@ public:
 private:
     virtual bool    apply () {std::cout << m_tuple; ; return true; }
     const Tuple& m_tuple;
+};
+//=============================================================================
+// Only the Front
+class FOMFront : public AnalysisList {	
+public: 
+
+    FOMFront(const Tuple& t): AnalysisList(" TKR Front only")
+    {
+        push_back( new Cut(t, "TKR_First_XHit<12.") );
+    };
+    void report(ostream& out)
+    {
+        separator(out);
+        AnalysisList::report(out);
+    }
+};
+//=============================================================================
+// Only the Back
+class FOMBack : public AnalysisList {	
+public: 
+
+    FOMBack(const Tuple& t): AnalysisList(" TKR Back only")
+    {
+        push_back( new Cut(t, "TKR_First_XHit>11.") );
+    };
+    void report(ostream& out)
+    {
+        separator(out);
+        AnalysisList::report(out);
+    }
 };
 //=============================================================================
 // Analyze the level 3 cuts
@@ -330,16 +435,27 @@ void	FigureOfMerit::setCuts ( string istr )
 	case '1':	    // 1(one) = level I trigger
 	    m_cuts->push_back( new Level1(*s_tuple) );
 	    break;
+// added 18 oct 2001 by S.Ritz
+    case 'V':        // V = level 1 VETO using ACD
+        m_cuts->push_back( new FOML1V(*s_tuple) );
+        break;
 	case 'I':	    // I = level I trigger with ACD
 	    m_cuts->push_back( new Level1(*s_tuple,true) );
 	    break;
-	case '2':	    // 2 = level II trigger - no veto
-	    m_cuts->push_back( new Level2(*s_tuple) );
+//change 18 oct 2001 by S.Ritz to new L2T and L3T selections
+    case '2':	    // 2 = level II trigger - no veto
+	    m_cuts->push_back( new FOML2T(*s_tuple) );
 	    break;
 	case '3':	    // 3 = level 3 trigger 
-       	    m_cuts->push_back( new Level3(*s_tuple) );
+       	    m_cuts->push_back( new FOML3T(*s_tuple) );
 	    break;
-
+// 18 october 2001 by S.Ritz -- add selections for Front and Back
+    case 'F':		// F = Front TKR section only
+		m_cuts->push_back( new FOMFront(*s_tuple) );
+		break;
+	case 'B':		// B = Back TKR section only
+		m_cuts->push_back( new FOMBack(*s_tuple) );
+		break;
 	case 'd':		// d = level II trigger - with veto
 		m_cuts->push_back( new FOMtrigII(*s_tuple) );
 		break;
