@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Mon Mar  3 21:49:00 PST 2003
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx Tuple.h 
+Log Message:
+
+start adapting to WBAtuple, AKA AnalysisNtuple
+    *
+------------------------------------------------------------
+User: burnett  Mon Mar  3 21:49:00 PST 2003
 merit/cmt
 
 Modified Files:
