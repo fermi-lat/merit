@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Mon Oct 20 12:48:51 PDT 2003
+merit
+
+Modified Files:
+	.cvsignore 
+Log Message:
+use Classification tree to determine which direction to record
+    *
+------------------------------------------------------------
 User: golpa  Mon Oct 20 12:44:59 PDT 2003
 merit/src
 
