@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.5 2002/05/30 02:40:07 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.7 2002/05/31 19:37:50 burnett Exp $
 
 // Include files
 
@@ -21,7 +21,11 @@
 #include "FigureOfMerit.h"
 #include "analysis/Tuple.h"
 
+#ifndef DEFECT_NO_STRINGSTEAM
 # include <sstream>
+#else
+# include <strstream>
+#endif
 
 static std::string  default_cuts("LnA");
 
@@ -64,7 +68,6 @@ Algorithm(name, pSvcLocator), m_tuple(0) {
 
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
-    declareProperty("cuts" , m_cuts=default_cuts);
 }
 
 StatusCode meritAlg::initialize() {
@@ -109,13 +112,10 @@ StatusCode meritAlg::execute() {
     
     StatusCode  sc = StatusCode::SUCCESS;
 
-    SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
-
+    SmartDataPtr<Event::EventHeader>   header(eventSvc(),    EventModel::EventHeader);
     SmartDataPtr<Event::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
-
-    SmartDataPtr<Event::TkrVertexCol> tracks(eventSvc(), EventModel::TkrRecon::TkrVertexCol);
-
-    SmartDataPtr<Event::CalClusterCol> clusters(eventSvc(), EventModel::CalRecon::CalClusterCol);
+    SmartDataPtr<Event::TkrVertexCol>  tracks(eventSvc(),    EventModel::TkrRecon::TkrVertexCol);
+    SmartDataPtr<Event::CalClusterCol> clusters(eventSvc(),  EventModel::CalRecon::CalClusterCol);
 
     processTDS( header, particles, tracks, clusters);
 
