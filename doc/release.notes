@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.47 2003/11/26 21:02:58 burnett Exp $
+ * $Id: release.notes,v 1.48 2003/12/03 00:30:56 burnett Exp $
  *
+ *  v6r14p5 THB  07-dec-03 implement post-Rome background cut calculation for gammas only
  *  v6r14p4 THB  02-dec-03 required by obsolete gcc
  *  v6r14p3 THB  26-nov-03 fix a problem in the reclassification app.
  *  v6r14p2 JCT  26-nov-03 revert the field names
