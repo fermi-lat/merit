@@ -6,8 +6,12 @@
 #include "classification/Tree.h"   // package classification
 
 #include <cassert>
-/*  This is the output of classification::Tree::load() with verbosity set to 1.
---------------------------------------------------------------
+
+
+//  Output of classification::Tree::load() with verbosity set to 1.
+//___________________________________________________________________________
+
+/*
 Loading Trees from file "D:\Users\burnett\dev_197\merit\v6r14p5/xml/CTPruner_DC1.imw"
 176                    Tiles&Hi-E       177           NoTiles&LowE&GoodXR       179                NoTiles&1Xtals
 180                NoTiles&0Xtals       181        Tiles&ACD< -170&GoodXR       182          Tiles&ACD<-170&1Xtal
@@ -30,20 +34,25 @@ Length", "TkrTwrEdge", "VtxAngle", "VtxDOCA", "VtxHeadSep", "VtxS1", "VtxTotalWg
 Following names were needed by nodes, but not supplied in the map:
 
 "AcdUpperTileCnt",
-
 */
-// need to add: AcdUpperTileCnt=AcdTileCount-AcdNoSideRow2 -AcdNoSideRow1
+
+//___________________________________________________________________________
 
 namespace {
 
     // Convenient identifiers used for the nodes
+    //   Nodes before NODE_COUNT have the equivalent IMnodeInfo
+    // 
     typedef enum{ ONE, TWO, THREE,  FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, 
-       NODE_COUNT, NONE
+       NODE_COUNT, CAT_HiE, NONE
     } Category;
 
 
     /** table of information about nodes to expect in the IM file.
-    */
+     *      ( similar to ClassificationTree.cxx )
+     */
+    //___________________________________________________________________________
+
     class IMnodeInfo { 
     public:
         int id;           // unique ID for local identification
@@ -51,7 +60,8 @@ namespace {
         int index;        // index of the classification type within the list of probabilites
     };
 
-    // these have to correspond to the IM file.
+    // these have to correspond to the IM file
+    // the index to be checked
     IMnodeInfo imNodeInfo[] = {
         { ONE,   "Tiles&Hi-E",             1 }, 
         { TWO,   "NoTiles&LowE&GoodXR",    1 }, 
@@ -67,7 +77,8 @@ namespace {
 
 
     /** Manage interface to one of the prediction nodes
-    */
+     *    (same as in ClassificationTree.cxx )
+     */
     //___________________________________________________________________________
 
     class IMpredictNode { 
@@ -76,7 +87,8 @@ namespace {
             :  m_offset(info.index), m_tree(tree)
         {
             m_node = m_tree->getPredictTree(info.name);
-            if( m_node==0) std::cerr << "IMpredictNode: Tree " << info.name << " not found in tree" << std::endl;
+            if( m_node==0) std::cerr << "IMpredictNode: Tree " << info.name 
+                                     << " not found in tree" << std::endl;
             assert(m_node);
         }
 
@@ -91,12 +103,14 @@ namespace {
 
   std::vector<IMpredictNode> imnodes;
 
-} //anonymous namespace
+} // anonymous namespace
 
 
 
 // create lookup class to make translations
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//   (same as in ClassificationTree.cxx )
+//___________________________________________________________________________
+
 class PruneTree::Lookup : public classification::Tree::ILookUpData {
 public:
     Lookup(Tuple& t):m_t(t){}
@@ -113,11 +127,14 @@ public:
     Tuple& m_t;
 };
 
+//  Preselection to reduce background events before further analysis
+//     (similar to ClassificationTree::BackgroundCut or 
+//       Classificationtree::ClassificationTree  plus  ::execute)
+//___________________________________________________________________________
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class PruneTree::PreClassify {
 public:
-    //! ctor: just associate with tree and find the branches we need
+    //! ctor: associate with tree and find the branches we need
     PreClassify( PruneTree::Lookup& lookup ) 
         : CalEnergySum  (*lookup( "CalEnergySum" )) 
         , CalXtalRatio  (*lookup( "CalXtalRatio" ))
@@ -128,51 +145,114 @@ public:
         , AcdNoSideRow2 (*lookup( "AcdNoSideRow2"))
 	, AcdRibbonActDist (*lookup( "AcdRibbonActDist"))
 	, Tkr1SSDVeto   (*lookup( "Tkr1SSDVeto"))
+	, CalCsIRLn     (*lookup( "CalCsIRLn"))
     { 
-        // need a new tuple item
-        new TupleItem("AcdUpperTileCnt", AcdUpperTileCnt);
+        // need an additional tuple item
+      new TupleItem("AcdUpperTileCnt", AcdUpperTileCnt);  // claim : is int
     }
 
     //! return truth value, for current TTree position
     operator Category()
     {
+      // Bill's IM node names are shown with quotes  "..."
+ 
+	// precondition for accepting the event
+        bool NoCal   = CalEnergySum > 5. && CalCsIRLn > 2.;
+	if ( NoCal ) {  return NONE; }
+
+
+        // Prepare quantities for decisions 
         AcdUpperTileCnt = AcdTileCount - AcdNoSideRow2 - AcdNoSideRow1;
 
-        bool NoTiles = AcdTileCount == 0.0 ;
-	bool Tiles   = !NoTiles;
-        
+        bool NoTiles = AcdTileCount == 0 ; // AcdUpperTileCnt == 0 ?
+
         bool lowE    = CalEnergySum < 350.;
         bool medE    = CalEnergySum >= 350. && CalEnergySum < 3500.;
-        bool hiE     = !(lowE || medE);
+        bool HiE     = !(lowE || medE);
 
-	// Tkr1SSDVeto  number of hit layers before start of track
-        bool Acdlt20  = (AcdActiveDist < -20.0 && AcdRibbonActDist < -20.0) || Tkr1SSDVeto > 1 ;
-        bool Acdgt20  = !Acdlt20;      //?
-        bool Acdlt150 =  AcdActiveDist < -150. ;
-
-        bool Xtals    = CalXtalsTrunc > 0.0 ;  // ?
-        bool noXtal   = !Xtals ;
         bool GoodXR   = CalXtalRatio > 0.02 && CalXtalRatio < 0.98 ;  // ?
+        bool Xtals    = CalXtalsTrunc > 0.0 ;  // ?
 
+        bool Acdlt150 =  AcdActiveDist < -150. ;
+	// Tkr1SSDVeto  is the number of hit layers before start of track
+        bool Acdlt20  = (AcdActiveDist < -20.0 && AcdRibbonActDist < -20.0) 
+                        || Tkr1SSDVeto > 1 ;
 
-       
+        // node "No ACD Tiles"
+        if ( NoTiles ) {
+	  // node "HiE"
+          if ( HiE ) { return CAT_HiE ; }
+     
+          else {
+	    // node  "CalXtalratio"
+            if ( GoodXR ) { return ONE; }   // graph uses LowE (= !HiE ?)
+	    
+            else {
+	      // node "Xtals > 0"
+              if ( Xtals ) { return TWO;   }
+              else         { return THREE; }             
+            }
 
-        // todo: apply pre-categorization logic
-        /*
-        CalEnergySum > 5 & CalCsIRLn > 2
-(AcdActiveDist < -20 & AcdRibbonActDist < -20) | Tkr1SSDVeto > 1
+	  } // end !HiE
+        }   // end NoTiles
 
-MeasEnergyType	categorical	ifelse((CalEnergySum < 350),"Low-E",ifelse((CalEnergySum < 3500),"Med-E","Hi-E"))
-MeasEnergyType == "Hi-E"
-AcdTileCount == 0
-CalXtalRatio > .02 & CalXtalRatio < .98
-CalXtalsTrunc > 0
-AcdActiveDist <-150
-CalXtalRatio > .02 & CalXtalRatio < .98
-AcdActiveDist < -20 &MeasEnergyType == "Med-E"
-*/
+        
+        //  active ACD Tiles
+        else { 
+          if ( HiE ) { return FOUR; }
+
+          // branch !HiE
+          // node "AcdActiveDist < -170" (should be 150)
+          else { 
+            if ( Acdlt150 ) {
+	      // node "CalXtalRatio (23)"
+              if ( GoodXR )  { return FIVE; }
+
+              else {
+              // node "Xtals > 0"
+                if ( Xtals ) { return SIX;   }
+		else         { return SEVEN; }
+              } 
+            }   // end Acdlt150
+ 
+            
+            else { 
+              // node "AcdActiveDist<-20 & Med-E"
+              if ( Acdlt20 ) { return EIGHT; }
+              else           { return NINE;  }
+
+            }  // end Acdlt150
+
+          }   // end !HiE
+        
+	}   // end Tiles
 
         return NONE;
+
+
+	// some comments extracted from xml -- keep until logic is checked
+        /*
+        CalEnergySum > 5 & CalCsIRLn > 2
+       (AcdActiveDist < -20 & AcdRibbonActDist < -20) | Tkr1SSDVeto > 1
+
+       CalEnergySum &gt; 5 &amp; CalCsIRLn &gt; 2"
+
+       ifelse(
+       (AcdUpperTileCnt ==0),&quot;0Tiles&quot;,
+       ifelse((AcdUpperTileCnt &lt;3),&quot;1-2Tiles&quot;,
+       &quot;&gt;2Tiles&quot;))
+
+       MeasEnergyType	categorical	ifelse((CalEnergySum < 350),"Low-E",
+                                        ifelse((CalEnergySum < 3500),"Med-E","Hi-E"))
+       MeasEnergyType == "Hi-E"
+       AcdTileCount == 0
+       CalXtalRatio > .02 & CalXtalRatio < .98
+       CalXtalsTrunc > 0
+       AcdActiveDist <-150
+       CalXtalRatio > .02 & CalXtalRatio < .98
+       AcdActiveDist < -20 &MeasEnergyType == "Med-E"
+       */
+
     }
 
 private:
@@ -185,12 +265,15 @@ private:
     const double &   AcdNoSideRow1 ;
     const double &   AcdNoSideRow2 ;
     const double &   AcdRibbonActDist;
-    const double &   Tkr1SSDVeto;   
+    const double &   Tkr1SSDVeto; 
+    const double &   CalCsIRLn;  
     // output
     double  AcdUpperTileCnt;
 };
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//___________________________________________________________________________
+
 PruneTree::PruneTree( Tuple& t,  std::string xml_file)
 {
     // create a lookup object, pass it to the preclassifier and the classification tree code
@@ -214,12 +297,16 @@ PruneTree::PruneTree( Tuple& t,  std::string xml_file)
         imnodes[imNodeInfo[i].id]=n;
     }
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//___________________________________________________________________________
+
 PruneTree::~PruneTree(){
     delete m_preclassify;
     delete m_classifier;
 }
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//___________________________________________________________________________
+
 double PruneTree::operator()()
 {
    Category  cat = *m_preclassify;
