@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: ritz  Fri Oct 19 13:49:00 PDT 2001
+merit/src/app meritapp.cxx
+
+Modified Files:
+	meritapp.cxx 
+Log Message:
+updated L2 and L3 selections, cleaned up L1 definition to use new bit pattern,
+added Front and Back (F, B) switches, updated -? help info to reflect changes
+
+    *
+------------------------------------------------------------
+User: ritz  Fri Oct 19 13:49:00 PDT 2001
 merit/src FigureOfMerit.cxx Level1.cxx main.cxx
 
 Modified Files:
