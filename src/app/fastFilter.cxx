@@ -1,5 +1,5 @@
 /** @file  fastFilter.cxx 
-$Header$
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.2 2003/12/18 03:01:26 hansl Exp $
 */
 
 #include "app/RootTuple.h"
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
 
        out_tree->BuildIndex("EvtRun", "EvtEventID");
     // end leftovers
-     
+       out_file.Write();
      out_file.Close();
      std::cout << "fastFilter: " << nEntries 
                << " events selected for filtered file " << std::endl;
