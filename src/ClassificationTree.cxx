@@ -81,7 +81,24 @@ namespace {
                 std::make_pair(   string( "VtxEAngle"),        string( "EvtVtxEAngle"))
             };
 #endif
-  
+
+#if defined(__GNUC__) && (__GNUC__ == 2)  
+// create lookup class to make translations
+class Lookup : public classification::Tree::ILookUpData {
+public:
+    Lookup(Tuple& t):m_t(t){}
+    const double * operator()(const std::string& name){
+        TupleItem* ti = const_cast<TupleItem*>(m_t.tupleItem(name));
+        if( ti==0) return 0;
+        const double * f = & (ti->value());
+        return f;
+    }
+    // note that float flag depends on how the tuple does it.
+    bool isFloat()const{return m_t.isFloat();}
+    Tuple& m_t;
+};
+#endif
+
 }// anonymous namespace
 
 ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string xml_file)
@@ -94,6 +111,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             xml_file= std::string(sPath==0?  "../": sPath) + default_file;
         }
 
+#if !defined(__GNUC__) || (__GNUC__ !=2)
         // create lookup class to make translations
         class Lookup : public classification::Tree::ILookUpData {
         public:
@@ -108,6 +126,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             bool isFloat()const{return m_t.isFloat();}
             Tuple& m_t;
         };
+#endif
         Lookup looker(t);
 #if 0  // uncomment this if needed
         //add aliases to the tuple
