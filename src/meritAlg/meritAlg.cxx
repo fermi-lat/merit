@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.12 2002/06/16 23:51:24 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.13 2002/08/21 17:01:09 burnett Exp $
 
 // Include files
 
@@ -18,10 +18,18 @@
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"
 #include "Event/Recon/CalRecon/CalXtalRecData.h"
-#include "Event/Recon/AcdRecon.h"
+#include "Event/Recon/AcdRecon/AcdRecon.h"
 
 #include "FigureOfMerit.h"
 #include "analysis/Tuple.h"
+
+#include "GuiSvc/IGuiSvc.h"
+#include "gui/DisplayControl.h"
+#include "gui/PrintControl.h"
+#include "gui/GuiMgr.h"
+
+#include "TkrVtxCutVals.h"
+
 
 #ifndef DEFECT_NO_STRINGSTREAM
 # include <sstream>
@@ -40,6 +48,8 @@ public:
     StatusCode initialize();
     StatusCode execute();
     StatusCode finalize();
+
+    void printOn(std::ostream& out)const;
 private:
     void processTDS(
         const Event::EventHeader & header,
@@ -68,6 +78,9 @@ private:
     float m_first_hit;
     float m_tkr_gamma_zdir;
 
+    float m_tkr_qual, m_tkr_t_angle, m_tkr_fit_kink;
+    float m_tkr_eneslope[2]; 
+
     // set by cal analysis
     float m_cal_energy_deposit;
     float m_no_xtals;
@@ -85,7 +98,10 @@ private:
     float m_acd_doca;
     float m_doca[5];
     float m_acd_actdist;
+    float m_acd_actdist_top;
+    float m_acd_actdist_side[3];
     float m_acd_tileCount;
+    float m_acd_deposit_max[4];
 
     int m_generated;
     Hep3Vector m_incident_dir;
@@ -103,6 +119,7 @@ Algorithm(name, pSvcLocator), m_tuple(0) {
     declareProperty("generated" , m_generated=10000);
 }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::initialize() {
     StatusCode  sc = StatusCode::SUCCESS;
     
@@ -135,6 +152,11 @@ StatusCode meritAlg::initialize() {
     new TupleItem("TKR_No_Tracks",  &m_tracks);
     new TupleItem("TKR_First_XHit", &m_first_hit);
     new TupleItem("TKR_Gamma_zdir", &m_tkr_gamma_zdir);
+    new TupleItem("TKR_qual",       &m_tkr_qual);
+    new TupleItem("TKR_t_angle",    &m_tkr_t_angle);
+    new TupleItem("TKR_xeneXSlope", &m_tkr_eneslope[0]);
+    new TupleItem("TKR_xeneYSlope", &m_tkr_eneslope[1]);
+
 
     new TupleItem("REC_CsI_Corr_Energy", &m_recon_energy);
 
@@ -150,7 +172,7 @@ StatusCode meritAlg::initialize() {
     const char* digit[8]={"0","1","2","3","4","5","6","7"};
     for (int layer=0; layer<8; layer++){
         
-        new TupleItem(std::string("Cal_eLayer")+digit[layer],m_cal_elayer[layer]);
+        new TupleItem(std::string("Cal_eLayer")+digit[layer],&m_cal_elayer[layer]);
     }
     new TupleItem("CAL_Z",           &m_cal_z);
 
@@ -160,6 +182,9 @@ StatusCode meritAlg::initialize() {
     new TupleItem("ACD_S1DOCA",      &m_doca[2]);
     new TupleItem("ACD_S2DOCA",      &m_doca[3]);
     new TupleItem("ACD_Act_Dist",    &m_acd_actdist);
+    new TupleItem("REC_Act_Dist_SideRow0",&m_acd_actdist_side[0]);
+    new TupleItem("REC_Act_Dist_SideRow1",&m_acd_actdist_side[1]);
+    new TupleItem("REC_Act_Dist_SideRow2",&m_acd_actdist_side[2]);
     new TupleItem("ACD_TileCount",   &m_acd_tileCount);
     new TupleItem("ACD_No_SideRow2", &dummy);
     new TupleItem("ACD_No_SideRow3", &dummy);
@@ -170,9 +195,35 @@ StatusCode meritAlg::initialize() {
     // setup defaults in case no primary info
     m_incident_dir=Hep3Vector(0,0,-1);
     m_mce = 0.1f;
+
+    // setup tuple output via the print service
+        // get the Gui service
+    IGuiSvc* guiSvc=0;
+    sc = service("GuiSvc", guiSvc);
+
+    if (!sc.isSuccess ()){
+        log << MSG::INFO << "No GuiSvc, so no interactive printout" << endreq;
+        return StatusCode::SUCCESS;
+    }
+
+    gui::GuiMgr* guimgr = guiSvc->guiMgr();
+    gui::PrintControl* printer = &guimgr->printer();
+    printer->addPrinter("merit tuple",new gui::Printer_T<meritAlg>(this));
+
+
     return sc;
 }
 
+//------------------------------------------------------------------------------
+void meritAlg::printOn(std::ostream& out)const{
+    out << "Merit tuple" << std::endl;
+
+    for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
+        const TupleItem& item = **tit;
+        out << std::setw(25) << item.name() 
+            << "  " << std::setprecision(3)<< float(item) << std::endl;
+    }
+}
 
 //------------------------------------------------------------------------------
 StatusCode meritAlg::execute() {
@@ -241,8 +292,19 @@ void meritAlg::processTDS(const Event::EventHeader& header,
         
         // conversion layer
         m_first_hit = track.getLayer();
+
+        // special code from T. Usher
+        TkrVtxCutVals cuts(&track);
+        
+        m_tkr_qual= cuts.getBestQuality();
+        m_tkr_t_angle = cuts.getTangle();
+        m_tkr_fit_kink = cuts.getFitKink();
+
+        m_tkr_eneslope[0] =  -999.;
+        m_tkr_eneslope[1] =  -999.; //TODO
     }
     
+
 }
 //------------------------------------------------------------------------------
 void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::CalXtalRecCol& crl)
@@ -367,8 +429,11 @@ void meritAlg::tileReco(const Event::AcdRecon& acd)
     m_acd_actdist = acd.getActiveDist();
     m_acd_tileCount = acd.getTileCount();
     const std::vector<double> & doca = acd.getRowDocaCol();
+        
+    const std::vector<double> & adist = acd.getRowActDistCol();
     int nd = doca.size();
     std::copy(doca.begin(), doca.end(), m_doca);
+    std::copy(adist.begin(), adist.end(), m_acd_actdist_side);
 
 
 }
