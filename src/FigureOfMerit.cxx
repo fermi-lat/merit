@@ -2,7 +2,7 @@
   @brief Implementation of FigureOfMerit, many Analyze subclasses 
 
 
-  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.23 2003/11/26 21:21:03 burnett Exp $
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.24 2004/08/11 03:25:00 burnett Exp $
 */
 
 #include "FigureOfMerit.h"
@@ -361,6 +361,7 @@ FigureOfMerit::FigureOfMerit(const Tuple& t, std::string cut_string)
 
     //need this to add these aliases
     Tuple& tt = const_cast<Tuple&>(t);
+    tt.add_alias( "elapsed_time","EvtTime");
 
     if( !cut_string.empty()) setCuts(cut_string);
 
