@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.45 2003/08/15 00:08:53 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.46 2003/08/15 22:23:09 golpa Exp $
 */
 // Include files
 
@@ -178,7 +178,7 @@ StatusCode meritAlg::initialize() {
     new TupleItem("MC_src_Id",      &m_mc_src_id);
     new TupleItem("elapsed_time",   &m_time);
     new TupleItem("FilterStatus_HI",&m_statusHi);
-	new TupleItem("FilterStatus_LO",*m_statusLo);
+    new TupleItem("FilterStatus_LO",&m_statusLo);
     if( setupTools().isFailure()) return StatusCode::FAILURE;
 
     // the tuple is made: create the classification object 
@@ -230,7 +230,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.45 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.46 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
