@@ -1,6 +1,6 @@
 package merit
 version v6r14p7
-# $Id: requirements,v 1.68 2003/12/12 16:28:37 cohen Exp $
+# $Id: requirements,v 1.69 2003/12/19 00:52:03 hansl Exp $
 
 branches doc
 
@@ -47,22 +47,32 @@ macro merit_app_linkopts  $(merit_linkopts)
 macro test_merit_linkopts $(merit_linkopts)
 macro write_text_linkopts $(merit_linkopts)
 macro run_classification_linkopts $(merit_linkopts)
+macro fastFilter_linkopts $(merit_linkopts)
 
 macro libs ""   WIN32   "$(meritDir)/merit_lib.lib
 
 #set MERIT_OUTPUT_FILE "$(MERITROOT)/cmt/merit.txt"
 set IM_FILE "$(MERITROOT)/xml/classification.imw"
 
+# IM xml file for fastFilter
+set IM_FILE_FILTER  "$(MERITROOT)/xml/CTPruner_DC1.imw"
+
+
 application merit_app app/meritapp.cxx app/RootTuple.cxx $(libs)
 
-# special application to rewrite the IM variables
+# application to rewrite the IM variables
 macro run_classification $(merit_linkopts) 
 application run_classification app/run_classification_main.cxx app/RootTuple.cxx $(libs)
+
+# application to read merit tuple and reject background-type events
+macro fastFilter $(merit_linkopts)
+application fastFilter app/fastFilter.cxx app/RootTuple.cxx PruneTree.cxx $(libs)
 
 # application to write out the tuple as a text file
 macro write_text $(merit_linkopts) 
 application write_text app/write_text_main.cxx app/RootTuple.cxx $(libs)
 
+# application to read merit and write selected events
 
 public
 set MERIT_INPUT_FILE "$(MERITROOT)/src/test/merit100.root"
