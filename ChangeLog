@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Sun Oct 12 23:21:33 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+adding several FT1 variable, taken from the RECO or the MC info: the MC info does not seem to make much sense though, the RECO info relies on first vertex in the list (probably temporary)
+    *
+------------------------------------------------------------
 User: burnett  Sat Oct  4 00:28:59 PDT 2003
 merit/doc
 
