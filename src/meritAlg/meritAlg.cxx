@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.16 2002/08/30 17:13:36 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.17 2002/08/31 15:50:33 burnett Exp $
 
 // Include files
 
@@ -30,6 +30,7 @@
 
 #include "TkrVtxCutVals.h"
 
+#include "MeritRootTuple.h"
 
 #ifndef DEFECT_NO_STRINGSTREAM
 # include <sstream>
@@ -68,7 +69,9 @@ private:
     FigureOfMerit* m_fm;
     Tuple*   m_tuple;
     std::string m_cuts; 
+    StringProperty m_root_filename;
     
+    MeritRootTuple* m_root_tuple;
 
     // places to put stuff found in the TDS
     float m_event, m_mc_src_id;
@@ -117,10 +120,11 @@ static const AlgFactory<meritAlg>  Factory;
 const IAlgFactory& meritAlgFactory = Factory;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 meritAlg::meritAlg(const std::string& name, ISvcLocator* pSvcLocator) :
-Algorithm(name, pSvcLocator), m_tuple(0) {
+Algorithm(name, pSvcLocator), m_tuple(0), m_root_tuple(0) {
     
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
+    declareProperty("RootFilename", m_root_filename="");
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -181,12 +185,13 @@ StatusCode meritAlg::initialize() {
         new TupleItem(std::string("Cal_eLayer")+digit[layer],&m_cal_elayer[layer]);
     }
     new TupleItem("CAL_Z",           &m_cal_z);
-
+#if 0 // no longer need?
     new TupleItem("ACD_DOCA",        &m_acd_doca);
     new TupleItem("ACD_TopDOCA",     &m_doca[0]);
     new TupleItem("ACD_S0DOCA",      &m_doca[1]);
     new TupleItem("ACD_S1DOCA",      &m_doca[2]);
     new TupleItem("ACD_S2DOCA",      &m_doca[3]);
+#endif
     new TupleItem("ACD_Act_Dist",    &m_acd_actdist[0]);
     new TupleItem("REC_Act_Dist_SideRow0",&m_acd_actdist[1]);
     new TupleItem("REC_Act_Dist_SideRow1",&m_acd_actdist[2]);
@@ -205,6 +210,12 @@ StatusCode meritAlg::initialize() {
     new TupleItem("REC_Surplus_Hit_ratio", &dummy);
     new TupleItem("ACD_Throttle_Bits",     &dummy);
 
+
+    //now make the parallel ROOT tuple
+    if(!m_root_filename.value().empty() ){
+        log << MSG::INFO << "OPening " << m_root_filename << " to write ROOT tuple" << endreq;
+        m_root_tuple=new MeritRootTuple(m_tuple, m_root_filename);
+    }
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
     
@@ -232,7 +243,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.17 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -260,6 +271,8 @@ StatusCode meritAlg::execute() {
 
     tileReco(acdrec);
     
+    if(m_root_tuple)m_root_tuple->fill();
+
     m_fm->execute();
     
     return sc;
@@ -376,30 +389,6 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     
     
     
-    /*
-    sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Transv_Offset", transvOffset);
-    sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Fit_errNrm", calFitErrNrm);
-    
-      
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Energy_Deposit", energy_sum);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Energy_Inc_Prof", fit_ener);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Energy_Inc_LeakCorr", eleak);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Energy_Incident", fit_ener);  // for the moment
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Energy_Incident_CalTkr", energy_sum);  // to be updated
-        
-          const std::string name_eLayer = "Cal_eLayer";
-          const char* digit[8]={"0","1","2","3","4","5","6","7"};
-          for (int layer=0; layer<8; layer++)
-          sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), (name_eLayer+digit[layer]).c_str(), eneLayer[layer]);
-          
-            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Z", zpos);
-            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_X", xpos);
-            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Y", ypos);
-            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_transv_rms", trans_rms);
-            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_long_rms", long_rms);
-            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_theta", caltheta);
-            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_phi", calphi);
-    */       
     // set tuple items for this cluster. (What if more????)
     m_cal_z=zpos;
     std::copy(eneLayer.begin(), eneLayer.end(), m_cal_elayer);
@@ -496,6 +485,11 @@ StatusCode meritAlg::finalize() {
     m_fm->report(log.stream());
     log << endreq;
     delete m_tuple;
+    if(m_root_tuple !=0) {
+        log << MSG::INFO << "Wrote " << m_root_tuple->entries() << " ROOT tuple entries" << endreq;
+        delete m_root_tuple;
+    }
+
     
     delete m_fm;
     return StatusCode::SUCCESS;
