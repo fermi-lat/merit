@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.64 2003/10/20 22:07:49 golpa Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.65 2003/10/21 09:37:54 burnett Exp $
 */
 // Include files
 
@@ -478,39 +478,22 @@ void meritAlg::copyFT1info(){
     // orthogonalize, since interpolation and transformations destory orthogonality (limit is 10E-8)
     Hep3Vector xhat = xsky() -  xsky().dot(zsky()) * zsky() ;
     PointingTransform toSky( zsky, xhat );
-    // make zenith (except for oblateness correction) unit vector
-    Hep3Vector zenith( exp.posX(),  exp.posY(), exp.posZ());
-    zenith = zenith.unit();
-    
 
+    // make zenith (except for oblateness correction) unit vector
+    Hep3Vector position( exp.posX(),  exp.posY(),  exp.posZ() );
+    SkyDir zenith(position.unit());
+    
     SkyDir sdir = toSky.gDir(glastDir);
 
-    //zenith_theta and earth_azimuth in degree:
-    double zenith_theta = acos(zenith.dot(sdir()));
-    Hep3Vector north(0.,0.,1.);
-    Hep3Vector planar_dir   = sdir() - (zenith.dot(sdir()))*zenith;
-    Hep3Vector planar_north = sdir() - (zenith.dot(north))*zenith;
-    Hep3Vector planar_east  = planar_north.rotate(M_PI/2.,zenith);
-    planar_dir   = planar_dir.unit();
-    planar_north = planar_north.unit();
-    planar_east  = planar_east.unit();
+    //zenith_theta and earth_azimuth
+    double zenith_theta = sdir.difference(zenith); 
+    if( fabs(zenith_theta)<1e-8) zenith_theta=0;
 
-    Hep3Vector north_to_east = planar_north.cross(planar_east);
-    double biplan = planar_north.dot(planar_dir);
-    double sine_sign = (planar_north.cross(planar_dir).unit() == north_to_east)?1.0:-1.0;
-    double earth_azimuth = planar_north.cross(planar_dir).mag();
-    if ( biplan < 0 && sine_sign > 0) //2nd quadrant
-      {
-	earth_azimuth += M_PI/2.;
-      }
-    else if (biplan < 0 && sine_sign < 0)//3rd quadrant
-      {
-	earth_azimuth += M_PI;
-      }
-    else if (biplan > 0 && sine_sign < 0)//4th quadrant
-      {
-	earth_azimuth += 3.*M_PI/2.;
-      }
+    SkyDir north_dir(90,0);
+    SkyDir east_dir( north_dir().cross(zenith()) );
+    double earth_azimuth=atan2( sdir().dot(east_dir()), sdir().dot(north_dir()) );
+    if( earth_azimuth <0) earth_azimuth += 2*M_PI; // to 0-360 deg.
+    if( fabs(earth_azimuth)<1e-8) earth_azimuth=0;
 
     // celestial coords
     m_FT1tuple->fill(0,  energy);
@@ -548,7 +531,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.64 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.65 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
