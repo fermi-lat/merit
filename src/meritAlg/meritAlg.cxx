@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.68 2003/11/25 23:11:12 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.69 2003/11/26 16:43:41 cohen Exp $
 */
 // Include files
 
@@ -443,7 +443,8 @@ void meritAlg::copyFT1Info(){
       if(m_ctree->useVertex())
 	{
 	  // Retrieve Vertex to get summary info from reco
-	  m_ft1energy    = m_tuple->tupleItem("TkrSumConEne")->value();
+	  //	  m_ft1energy    = m_tuple->tupleItem("TkrSumConEne")->value();
+	  m_ft1energy    = m_tuple->tupleItem("EvtEnergySumOpt")->value();
 	  glastDir = Hep3Vector(m_tuple->tupleItem("VtxXDir")->value(),
 				m_tuple->tupleItem("VtxYDir")->value(),
 				m_tuple->tupleItem("VtxZDir")->value());
@@ -453,7 +454,8 @@ void meritAlg::copyFT1Info(){
 	}
       else
 	{
-	  m_ft1energy    = m_tuple->tupleItem("Tkr1ConEne")->value();
+	  //	  m_ft1energy    = m_tuple->tupleItem("Tkr1ConEne")->value();
+	  m_ft1energy    = m_tuple->tupleItem("EvtEnergySumOpt")->value();
 	  glastDir = Hep3Vector(m_tuple->tupleItem("Tkr1XDir")->value(),
 				m_tuple->tupleItem("Tkr1YDir")->value(),
 				m_tuple->tupleItem("Tkr1ZDir")->value());
@@ -491,7 +493,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-  out << "Merit tuple, " << "$Revision: 1.68 $" << std::endl;
+  out << "Merit tuple, " << "$Revision: 1.69 $" << std::endl;
 
   for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
     const TupleItem& item = **tit;
