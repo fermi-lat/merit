@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed May 29 19:30:34 PDT 2002
+merit/src
+
+Modified Files:
+	mainpage.h 
+Log Message:
+m stringstream fix for gcc
+    *
+------------------------------------------------------------
 User: burnett  Tue May 28 11:48:01 PDT 2002
 merit/src/meritAlg
 
