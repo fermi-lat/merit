@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.7 2001/11/01 17:28:00 burnett Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.9 2001/12/18 23:28:29 usher Exp $
 
 
 #include "FigureOfMerit.h"
@@ -616,9 +616,9 @@ void FigureOfMerit::accept()
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-void FigureOfMerit::execute()
+bool FigureOfMerit::execute()
 {
-    (*m_cuts)();
+    return (*m_cuts)();
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

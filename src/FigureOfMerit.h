@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.h,v 1.2 2001/11/01 17:28:00 burnett Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.h,v 1.3 2001/12/18 23:28:29 usher Exp $
 //  Project: glast analysis
 //   Author: Toby Burnett
 //
@@ -31,7 +31,7 @@ public:
     void            setCuts(std::string);
     // associate a sequence of cuts, identifed by characters in the string
 
-    void            execute();
+    bool            execute();
     // analyze the current tuple row
 
     void            report(std::ostream&);

@@ -10,16 +10,13 @@
 #endif
 
 #include "FigureOfMerit.h"
+#include "app/RootTuple.h"
+#include "FigureOfMerit.h"
 #include "TObject.h"
 #include "TCanvas.h"
 #include "TPad.h"
 #include <iostream>
 #include <fstream>
-//#include <sys/types.h>
-//#include <sys/timeb.h>
-
-class FigureOfMerit;
-class RootTuple;
 
 //====================================================================================
 class meritFoM : public TObject
@@ -33,6 +30,12 @@ public:
 
     void report();
     // write results, return acceptacnce
+
+    int           numTupleEvents() {return m_tuple->numEvents();}
+    // return number of events in the ntuple
+
+    bool          cutEvent(int idx);
+    // Does event idx pass the merit selection cuts?
 
     int           getAnalysisListSize()      {return m_FoM->getAnalysisList()->size();}
     Analyze*      getAnalysisListItem(int i);
@@ -50,8 +53,7 @@ private:
     TPad*          m_pad;
 
     std::ostream*  outstream;
-//    timeb          t_init;
-//    timeb          t_final;
+
     ClassDef(meritFoM, 1)
 };
 #endif

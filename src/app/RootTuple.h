@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.h,v 1.1 2001/03/23 19:52:02 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.h,v 1.2 2001/03/25 00:02:51 burnett Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #ifndef ROOTTUPLE_H
 #define ROOTTUPLE_H
@@ -23,6 +23,9 @@ public:
 
     //! return false when no more events
     bool nextEvent();
+
+    //! return false if event idx does not exist
+    bool getEvent(int idx);
 
     int numEvents(){return m_numEvents;}
 private:
