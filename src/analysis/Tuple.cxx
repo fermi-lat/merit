@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.9 2003/03/10 15:58:52 burnett Exp $
+// $Id: Tuple.cxx,v 1.10 2003/03/10 22:12:54 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -118,6 +118,13 @@ Tuple::find(const std::string& nam)const
     for(;  it !=end(); ++it) {
         if( check==(*it)->name() )break;
         //if( nam==(*it)->name() )break;
+    }
+    if( it== end()){    // try alias
+        std::map<std::string, std::string>::const_iterator sit=m_alias_list.find(nam);
+        if( sit != m_alias_list.end() ) {
+            const std::string& alias= sit->second;
+            it = find( alias );
+        }
     }
     return it;
 }

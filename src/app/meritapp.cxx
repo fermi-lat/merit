@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.13 2003/05/06 05:08:22 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.14 2003/05/11 04:45:13 burnett Exp $
 
 // Main for merit
 
@@ -18,8 +18,9 @@
 #include <sstream>
 
 #include <assert.h>
+#define CLASSIF
 
-const char* _MERIT_VERSION = "$Revision: 1.13 $";
+const char* _MERIT_VERSION = "$Revision: 1.14 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -124,7 +125,7 @@ int main(int argc, char* argv[])
         (*outstream) << "Tuple title: \""<< tuple->title() << "\"\n" ;
 #ifdef CLASSIF
         // create the ct: pass in the tuple.
-        ClassificationTree* pct;
+        ClassificationTree* pct=0;
         try {
            pct = new ClassificationTree(*tuple);
         }catch ( std::exception &e ) {
@@ -140,7 +141,7 @@ int main(int argc, char* argv[])
 
         while ( tuple->nextEvent() ) { 
 #ifdef CLASSIF
-            pct->execute();   // fill in the classification (testing here)
+          if(pct!=0) pct->execute();   // fill in the classification (testing here)
 #endif
             fm.execute(); // run the rest.
         }
