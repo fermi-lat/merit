@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Sat Mar  8 14:00:19 PST 2003
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx Tuple.h 
+Log Message:
+
+convert to use AnalysisNtuple. Dump lotsa code.
+    *
+------------------------------------------------------------
+User: burnett  Sat Mar  8 14:00:19 PST 2003
 merit/src
 
 Modified Files:
