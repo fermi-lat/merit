@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.1 2002/05/26 03:35:10 burnett Exp $
+// $Id: Tuple.cxx,v 1.2 2002/05/30 02:30:34 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -6,7 +6,9 @@
 #include <cassert>
 #include <cmath>
 #include <cfloat>
+#ifndef DEFECT_NO_STRINGSTREAM
 #include <sstream>
+#endif
 
 
 static inline void WARNING(const char* text){ std::cerr << text;}
