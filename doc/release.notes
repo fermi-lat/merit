@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.26 2003/06/12 19:43:07 burnett Exp $
+ * $Id: release.notes,v 1.27 2003/06/13 16:03:17 burnett Exp $
  *
+ *  v6r6p1  THB  04-aug-03 add run number to the tuple 
  *  v6r6    THB  13-jun-03 make tuple TTree name settable by job options ("RootTreeName") 
  *  v6r5p1  THB  12-jun-03 bug fix that crashed destructor
  *  v6r5    THB  30-may-03 Classification integrated--4 new variables, logic to set them
