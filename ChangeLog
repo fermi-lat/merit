@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Dec 20 15:20:43 PST 2004
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+tagging v6r19 after mods to alllow disabling of IM variable creation, use
+    *
+------------------------------------------------------------
 User: burnett  Mon Dec 20 15:17:04 PST 2004
 merit/src/meritAlg
 
