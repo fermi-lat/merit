@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Fri Sep 13 16:14:39 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+
+unpack MCEvent. new tag
+    *
+------------------------------------------------------------
+User: burnett  Fri Sep 13 16:14:39 PDT 2002
 merit/doc
 
 Modified Files:
