@@ -2,7 +2,7 @@
   @brief Implementation of FigureOfMerit, many Analyze subclasses 
 
 
-  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.20 2003/10/20 01:36:35 burnett Exp $
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.21 2003/11/25 15:57:47 cohen Exp $
 */
 
 #include "FigureOfMerit.h"
@@ -42,7 +42,7 @@ private:
 //=============================================================================
 class FOMelapsed : public Analyze {
 public:
-    FOMelapsed(const Tuple&t ): Analyze(t, "EvtTime", "Elapsed time (sec):"), m_total(0),m_last(0) {};
+    FOMelapsed(const Tuple&t ): Analyze(t, "elpased_time", "Elapsed time (sec):"), m_total(0),m_last(0) {};
     void FOMelapsed::report(std::ostream& out)
     {
         using namespace std;
