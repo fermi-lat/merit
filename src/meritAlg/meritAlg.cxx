@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.36 2003/05/08 15:46:39 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.37 2003/05/09 22:32:52 burnett Exp $
 */
 // Include files
 
@@ -27,6 +27,8 @@
 #include "FigureOfMerit.h"
 #include "analysis/Tuple.h"
 #include "ClassificationTree.h"
+
+#include "facilities/Util.h" // for expandEnvVar    
 
 #include "GuiSvc/IGuiSvc.h"
 #include "gui/DisplayControl.h"
@@ -96,7 +98,7 @@ Algorithm(name, pSvcLocator), m_tuple(0), m_root_tuple(0) {
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
-    declareProperty("IM_filename", m_IM_filename="/common/IM_files/PSF_Analysis_12.imw");
+    declareProperty("IM_filename", m_IM_filename="xml/PSF_Analysis.xml");
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::setupTools() {
@@ -179,12 +181,14 @@ StatusCode meritAlg::initialize() {
     }
     // the tuple is made: create the classification object 
     try { 
-        ClassificationTree ctree(*m_tuple, m_IM_filename);
+        const char * pkgpath = ::getenv("CLASSIFICATION");
+        std::string path = (pkgpath? std::string(pkgpath) : std::string("/")) + m_IM_filename.value(); 
+   //     facilities::Util::expandEnvVar(&path);
+        ClassificationTree ctree(*m_tuple, path);
     //TODO: finish setup.
-    }catch ( classification::Tree::Exception e){
-        log << MSG::ERROR << "Classification tree error, ";
-            e.printOn(log.stream());
-                log << endreq;
+    }catch ( std::exception& e){
+        log << MSG::ERROR << "Classification tree error, "
+            << e.what() << typeid( e ).name( ) <<endreq;
     }catch (...)  {
         log << MSG::ERROR << "Unexpected exception creating classification trees" << endreq;
     }
@@ -218,7 +222,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.36 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.37 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
