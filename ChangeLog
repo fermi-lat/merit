@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed May 28 14:55:47 PDT 2003
+merit/src
+
+Modified Files:
+	EnergyAnalysis.cxx 
+Log Message:
+use best energy estimate
+    *
+------------------------------------------------------------
 User: burnett  Wed May 28 14:55:16 PDT 2003
 merit/src/meritAlg
 
