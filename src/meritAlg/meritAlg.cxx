@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.44 2003/08/04 21:03:25 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.45 2003/08/15 00:08:53 burnett Exp $
 */
 // Include files
 
@@ -36,6 +36,7 @@
 
 #include "MeritRootTuple.h"
 
+#include "OnboardFilter/FilterStatus.h"
 
 #include <sstream>
 #include <algorithm>
@@ -78,6 +79,7 @@ private:
     // places to put stuff found in the TDS
     double m_run, m_event, m_mc_src_id;
     double m_time;
+	double m_statusHi, m_statusLo;
 
     int m_generated;
 
@@ -175,7 +177,8 @@ StatusCode meritAlg::initialize() {
     new TupleItem("Event_ID",       &m_event);
     new TupleItem("MC_src_Id",      &m_mc_src_id);
     new TupleItem("elapsed_time",   &m_time);
-
+    new TupleItem("FilterStatus_HI",&m_statusHi);
+	new TupleItem("FilterStatus_LO",*m_statusLo);
     if( setupTools().isFailure()) return StatusCode::FAILURE;
 
     // the tuple is made: create the classification object 
@@ -227,7 +230,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.44 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.45 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -250,6 +253,10 @@ StatusCode meritAlg::execute() {
     m_event = mcheader->getSequence();
     m_time = header->time();
     m_event = header->event();
+
+	SmartDataPtr<OnboardFilterTds::FilterStatus> filterStatus(eventSvc(), "/Event/Filter/FilterStatus");
+	m_statusHi=filterStatus->getHigh();
+	m_statusLo=filterStatus->getLow();
 
     if(m_root_tuple)m_root_tuple->fill();
 
