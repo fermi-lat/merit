@@ -1,7 +1,7 @@
 // Cut.cxx: implementation of the Cut class.
 //
 // Original author: T. Burnett tburnett@u.washington.edu
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/Cut.cxx,v 1.1.1.1 1999/12/20 22:29:12 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/Cut.cxx,v 1.2 2002/05/31 19:37:49 burnett Exp $
 //////////////////////////////////////////////////////////////////////
 
 #include "Cut.h"
@@ -71,8 +71,11 @@ void Cut::parse(const Tuple&t, std::string::const_iterator& it, std::string::con
     }
     m_cut = atof(value.c_str());
     set_tuple_item(t,name);
-    set_name(std::string(begin,it-begin));
-
+#if defined(__GNUC__) && ( __GNUC__ >= 3 ) // think the followingis right: need to test it
+    set_name(std::string(begin,--it));
+#else // this should be ok??? 
+    set_name(std::string(begin,it-begin));  
+#endif
 }
 
 bool Cut::apply()
