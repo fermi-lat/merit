@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.13 2003/05/25 17:22:02 burnett Exp $
+// $Id: Tuple.cxx,v 1.14 2003/11/25 15:57:47 cohen Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -285,10 +285,9 @@ Tuple::tupleItem(const std::string& name)const
     
     
     // here if not found
-    //    std::stringstream  errmsg;
-    //    errmsg << "Sorry, did not find '" << name << "' in the tuple\n";
-    //    std::cerr << errmsg.str() << std::endl;
-    //    throw (errmsg.str());
+    std::stringstream  errmsg;
+    errmsg << "Did not find '" << name << "' in the tuple\n";
+    throw (errmsg.str());
     return *it;
 }
 
