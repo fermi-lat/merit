@@ -23,8 +23,8 @@ PSFanalysis::PSFanalysis()
 , m_emin(0.1), m_emax(100.)
 {}
 
-PSFanalysis::PSFanalysis(const Tuple& t, double emin, double emax)
-: Analyze(t, "McDirErr" , "PSF analysis" )
+PSFanalysis::PSFanalysis(const Tuple& t, double emin, double emax, std::string varName)
+: Analyze(t, varName, "PSF analysis" )
 , RebinHist("PSF", 0, 3.0, 0.1 )
 , m_sigma(-1)
 , m_energy(t, "McEnergy", "energy")
