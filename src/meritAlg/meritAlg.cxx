@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.25 2002/10/12 22:38:20 lsrea Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.26 2002/10/14 18:52:02 lsrea Exp $
 
 // Include files
 
@@ -262,7 +262,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.25 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.26 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -536,8 +536,13 @@ StatusCode meritAlg::finalize() {
     
     MsgStream log(msgSvc(), name());
     log << MSG::INFO ;
-    
-    m_fm->report(log.stream());
+    if(log.isActive()) {
+        try {
+            m_fm->report(log.stream());
+        } catch (...){
+            log << "Failure to generate full output due to unknown exception";
+        }
+    }
     log << endreq;
     delete m_tuple;
     if(m_root_tuple !=0) {
