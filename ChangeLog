@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Sep  8 07:40:41 PDT 2003
+merit/src/app
+
+Modified Files:
+	meritapp.cxx 
+Log Message:
+fix test program by providing a tuple with the PSF cut quantities
+    *
+------------------------------------------------------------
 User: burnett  Sun Sep  7 21:21:31 PDT 2003
 merit/doc
 
