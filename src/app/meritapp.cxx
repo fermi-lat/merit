@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.1 2001/03/23 19:52:02 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.3 2001/05/24 17:07:14 burnett Exp $
 
 // Main for merit
 
@@ -18,9 +18,10 @@
 
 #include <assert.h>
 
-const char* _MERIT_VERSION = "$Revision: 1.1 $";
+const char* _MERIT_VERSION = "$Revision: 1.3 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
+
 
 
 void FATAL(const char* s){std::cerr << "\nERROR: "<< s;}
@@ -79,7 +80,7 @@ int main(int argc, char* argv[])
     // first arg is option string if preceded by dash
     if( file_name[0]=='-' && file_name.size()>1) {
         cutstr = file_name.substr(1);
-        file_name = "-";
+        file_name = "";
     }
     if( argc>++n ) {			// optional
         if ( argv[n][0] == 'p' )  {
@@ -102,6 +103,13 @@ int main(int argc, char* argv[])
             exit(1);
         }
     }
+
+	// setup output stream
+	std::ostream* outstream = &std::cerr;
+	const char * env = ::getenv("MERIT_OUTPUT_FILE");
+	if( env ){
+		outstream = new std::ofstream(env);
+	}
     std::cerr << "Merit reading from file: \"" << file_name << "\"" << std::endl;
     // charge a head with ROOT here, figure out later how to do it consistently
 
@@ -139,7 +147,7 @@ int main(int argc, char* argv[])
 
 
 #endif
-    std::cerr << "Tuple title: \""<< tuple->title() << "\"\n" ;
+    (*outstream) << "Tuple title: \""<< tuple->title() << "\"\n" ;
 
     FigureOfMerit fm(*tuple, cutstr);
 
@@ -147,7 +155,7 @@ int main(int argc, char* argv[])
 
     while ( tuple->nextEvent() ) fm.execute();
     ::ftime(&t_final);
-    fm.report(std::cerr);
+    fm.report(*outstream);
 	
     std::cerr << "\nElapsed time: "<< t_final.time-t_init.time << " sec" << std::endl;
     return 0;
