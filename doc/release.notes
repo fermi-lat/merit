@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.28 2003/08/04 21:06:06 burnett Exp $
+ * $Id: release.notes,v 1.29 2003/08/15 00:08:53 burnett Exp $
  *
+ *  v6r7    THB  16-aug-03 add OnboardFilter info 
  *  v6r6p2  THB  13-aug-03 change tree name back to MeritTuple 
  *  v6r6p1  THB  04-aug-03 add run number to the tuple 
  *  v6r6    THB  13-jun-03 make tuple TTree name settable by job options ("RootTreeName") 
