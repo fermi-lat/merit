@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.7 2001/10/22 18:34:32 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.8 2002/09/02 03:06:39 burnett Exp $
 
 // Main for merit
 
@@ -18,7 +18,7 @@
 
 #include <assert.h>
 
-const char* _MERIT_VERSION = "$Revision: 1.7 $";
+const char* _MERIT_VERSION = "$Revision: 1.8 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -39,9 +39,6 @@ static const char* helptext=
 "\n\n\tCut keys are as follows:"
 "\n\t\tGnnnn, : Set number generated to nnnnn, overriding gen(nnn) in tuple title"
 "\n\t\t1 : level 1 trigger: Track or LoCal or HiCal "
-"\n\t\tV : level 1 VETO throttle "
-"\n\t\t2 : level 2 trigger: track, no doca veto except if cal "
-"\n\t\t3 : level 3 trigger"
 "\n\t\tF : TKR FRONT Section only"
 "\n\t\tB : TKR BACK Section only"
 "\n\t\tn : number of tracks (N_tracks > 0)"
