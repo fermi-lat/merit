@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.20 2003/08/29 14:11:56 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.21 2003/09/08 04:19:28 burnett Exp $
 
 // Main for merit
 
@@ -17,8 +17,8 @@
 #include <typeinfo>
 
 
-const char* _MERIT_VERSION = "$Revision: 1.20 $";
-static std::string  cutstr("nA");
+const char* _MERIT_VERSION = "$Revision: 1.21 $";
+static std::string  cutstr("ntA"); 
 static std::string  file_name("");
 
 
