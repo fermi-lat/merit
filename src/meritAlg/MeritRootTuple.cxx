@@ -1,3 +1,10 @@
+/** @file MeritRootTuple.cxx
+    @brief Implementation of the class MeritRootTuple
+
+  $Header:$
+
+  */
+
 #include "MeritRootTuple.h"
 
 #include "analysis/Tuple.h"
@@ -13,14 +20,13 @@ MeritRootTuple::MeritRootTuple(Tuple* tuple, std::string filename)
 {
 
     m_tf = new TFile(filename.c_str(),"RECREATE");
-    float t=0;
 
     m_tree = new TTree("MeritTuple", m_tuple->title().c_str());
     m_floats.resize(m_tuple->size());
     std::vector<float>::iterator fit = m_floats.begin();
     for(Tuple::iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit, ++fit ){
         TupleItem& item = **tit;
-        float * d =  *&fit;
+        float * d =  &*fit; // to pass in the address to root (which only expects a void*)
         m_tree->Branch(item.name().c_str(), d, item.name().c_str());
     }
 }

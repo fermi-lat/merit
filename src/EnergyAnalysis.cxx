@@ -8,16 +8,16 @@
 using namespace std;
 
 EnergyAnalysis::EnergyAnalysis(const Tuple& t)
-: Analyze(t, "REC_CsI_Corr_Energy", "Energy analysis")
+: Analyze(t, "TkrEnergyCorr", "Energy analysis")
 , Histogram("Normalized Energy", 0.5, 1.5, 0.01)
 , m_tuple(&t)
-, m_MC_energy(t,"MC_Energy", "MC energy")
+, m_McEnergy(t,"McEnergy", "MC energy")
 {};
 
 bool    EnergyAnalysis::apply()
 {
-    m_MC_energy(); //run apply
-    double emeas = item(), egen= m_MC_energy.item();
+    m_McEnergy(); //run apply
+    double emeas = item(), egen= m_McEnergy.item();
     if(emeas>0 && egen>0) fill(emeas/egen); 
     return true;
 }
@@ -31,5 +31,5 @@ void    EnergyAnalysis::report(ostream& out)
         << setw(6) << setprecision(3) << stdDev()
         << "\n" << Analyze::make_label("events w/ no data")
         << setw(6) << (*this)[0] ;
-    //m_MC_energy.report(out);
+    //m_McEnergy.report(out);
 }

@@ -16,11 +16,11 @@ public:
 
     virtual void    report(std::ostream& out);
 
-    float mean_generated()const{return m_MC_energy.stat().mean();}
+    float mean_generated()const{return m_McEnergy.stat().mean();}
 private:
     virtual bool    apply();
     const Tuple*    m_tuple;
-    Statistic m_MC_energy; // keep track of generated energy
+    Statistic m_McEnergy; // keep track of generated energy
 };
 
 #endif

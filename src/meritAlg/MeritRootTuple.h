@@ -1,5 +1,11 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.3 2002/09/02 03:06:39 burnett Exp $
-// Original author T. Burnett 
+/** @file MeritRootTuple.h
+@brief Declaration of the class MeritRootTuple
+
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.4 2003/03/15 03:40:32 burnett Exp $
+  
+    Original author T. Burnett 
+    
+*/  
 #ifndef MERITROOTTUPLE_H
 #define MERITROOTTUPLE_H
 
@@ -10,35 +16,36 @@ class TFile;
 class TTree;
 
 /* 
- * @brief Creates a ROOT tree from the merit list
- *
- * @author T. Burnett
- *
- * $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.3 2002/09/02 03:06:39 burnett Exp $
- */
+* @brief Creates a ROOT tree from the merit list
+*
+* @author T. Burnett
+*
+* $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.4 2003/03/15 03:40:32 burnett Exp $
+*/
 
 class MeritRootTuple  {
-
+    
 public:
-    /// define the associated root tuple and a file to write it too
+    /// define the associated root tuple and a file to write it to
     MeritRootTuple::MeritRootTuple(Tuple* tuple, std::string filename);
     ~MeritRootTuple();
-
+    
     /// fill it
     void fill();
-
+    
     /// ask for number of entries
     int entries()const;
-
+    
 private:
     Tuple* m_tuple;
-
+    
     /// the ROOT stuff: a file and a tree to put into it
     TTree * m_tree;
     TFile *  m_tf;
-
-	std::vector<float> m_floats; // needed for communication with ROOT's float branches.
-
+    
+    
+    std::vector<float> m_floats; // needed for communication with ROOT's float branches.
+    
 };
 
 #endif

@@ -2,35 +2,34 @@
 // June 12, 2001 - rename variables to TKR_...  TU
 
 #include "PSFanalysis.h"
-#if 0 // should not be here
-#include "PSFRootFit.h"
-#endif
+
 #include <fstream>
 #include <cmath>
 #include <iomanip>
 #ifdef WIN32
 #include <float.h>
+static inline bool isfinite(double x){return _finite(x);}
 #endif
 using namespace std;
 
 inline static double sqr(double x){return x*x;}
 
 PSFanalysis::PSFanalysis()
-	: Analyze()
-	, RebinHist("PSF", 0, 3.0, 0.1 )
-	, m_sigma(-1)
-        , m_energy()
-        , m_first_layer()
-        , m_emin(0.1), m_emax(100.)
+: Analyze()
+, RebinHist("PSF", 0, 3.0, 0.1 )
+, m_sigma(-1)
+, m_energy()
+, m_first_layer()
+, m_emin(0.1), m_emax(100.)
 {}
 
 PSFanalysis::PSFanalysis(const Tuple& t, double emin, double emax)
-	: Analyze(t, "MC_Gamma_Err" , "PSF analysis" )
-	, RebinHist("PSF", 0, 3.0, 0.1 )
-	, m_sigma(-1)
-        , m_energy(t, "MC_Energy", "energy")
-        , m_first_layer(t, "TKR_First_XHit", "first hit layer")
-        , m_emin(emin), m_emax(emax)
+: Analyze(t, "McDirErr" , "PSF analysis" )
+, RebinHist("PSF", 0, 3.0, 0.1 )
+, m_sigma(-1)
+, m_energy(t, "McEnergy", "energy")
+, m_first_layer(t, "Tkr1_1stLayer", "first hit layer")
+, m_emin(emin), m_emax(emax)
 {}
 
 bool  PSFanalysis::apply ()
@@ -42,15 +41,11 @@ bool  PSFanalysis::apply ()
     m_loge += log(e);
 
     double  theta_squared = sqr(item());
-#ifdef WIN32 
-    if(_finite(theta_squared)) {  // Win32 call available in float.h
-#else
-        if (isfinite(theta_squared)){ // gcc call available in math.h
-#endif
+    if (isfinite(theta_squared)){ // gcc call available in math.h
 
         fill(theta_squared);
-    return true;
-        }
+        return true;
+    }
     else { return false; }
 
 }
@@ -85,13 +80,13 @@ double PSFanalysis::sigma()
         binsize *= 0.5;
         RebinHist::rebin(0, 200*binsize, binsize);
     }
-	
+
     // form estimate of sigma (effective) from sum of bin contents squared
     Histogram::const_iterator h = Histogram::begin();
     double sum1=0, sum2=0;
     for(; h != Histogram::end(); ++h) {
-	    sum1 += *h;
-	    sum2 += sqr(*h);
+        sum1 += *h;
+        sum2 += sqr(*h);
     }
     return  (m_sigma =sum1*sqrt(Histogram::step() / sum2 )/2.0 );
 }
@@ -113,22 +108,18 @@ void PSFanalysis::report(ostream& out)
     }
 
     out	<< "\n" << Analyze::make_label("eff. proj. sigma")
-	<< setw(6) << setprecision(3)
-	<< sig*180/3.14159 << " deg = "
-	<< sigma()*180*60/3.14159 << " arc-min";
+        << setw(6) << setprecision(3)
+        << sig*180/3.14159 << " deg = "
+        << sigma()*180*60/3.14159 << " arc-min";
 
     out <<  "\n" << Analyze::make_label("68% contained")
-	<< setw(6) << ang68*180/3.14159 << " deg = "
-	<< setw(4) << ang68/sig/1.51 << "*(1.51*sigma)" ;
+        << setw(6) << ang68*180/3.14159 << " deg = "
+        << setw(4) << ang68/sig/1.51 << "*(1.51*sigma)" ;
 
     out	<< "\n" << Analyze::make_label("95% contained")
-	<< setw(6) << ang95*180/3.14159 << " deg = "
+        << setw(6) << ang95*180/3.14159 << " deg = "
         << setw(4) << ang95/sig/2.447 << "*(2.45*sigma)" ;
 
-#if 0 // remove this from here: it should be a separate analysis
-    PSFRootFit temp(*this);
-    temp.report(out);
-#endif
 
 }
 void PSFanalysis::row_report(ostream&out)
@@ -142,9 +133,5 @@ void PSFanalysis::row_report(ostream&out)
             << percentile(68)*180/3.14159  << '\t'
             << percentile(95)*180/3.14159 << std::endl;
     }
-#if 0 // remove this from here: it should be a separate analysis
-    PSFRootFit temp(*this);
-    temp.report(out);
-#endif
 
 }

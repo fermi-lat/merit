@@ -1,8 +1,11 @@
 /** @file release.notes
- * @brief package merit <pre>
+ * @brief package merit
+@verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.18 2003/03/08 22:00:19 burnett Exp $
+ * $Id: release.notes,v 1.19 2003/03/10 22:12:53 burnett Exp $
  *
+
+ *  v6r2    THB  15-mar-03 name conversion; cleanup; replace test file
 
  *  v6r1p1  THB  10-mar-03 adjust to use either float or double input
  *  v6r1    THB  8-mar-03 Use AnalysisTuple for all values
@@ -24,4 +27,5 @@
  *  v5r2  31-may-02  Really use vertex.
  *  v5r1  28-may-02  use vertex for layer number.
  *  v5r0  25-may-02  convert to Gaudi 9, set up for Gleam TDS </pre>
+@endverbatim
  */
