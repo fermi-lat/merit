@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu May 15 11:00:23 PDT 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.h 
+Log Message:
+fix inteface for test program
+    *
+------------------------------------------------------------
 User: burnett  Thu May 15 09:11:46 PDT 2003
 merit/src/meritAlg
 
