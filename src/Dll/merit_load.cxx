@@ -1,32 +1,17 @@
-// $Header: $
-//====================================================================
-//  merit_load.cxx
-//--------------------------------------------------------------------
-//
-//  Package    : merit
-//
-//  Description: Implementation of <Package>_load routine.
-//               This routine is needed for forcing the linker
-//               to load all the components of the library. 
-//
-//====================================================================
+/*
+* @file merit_load.cpp
+* @brief This is needed for forcing the linker to load all components
+* of the library.
+*
+*  $Header: /nfs/slac/g/glast/ground/cvs/GlastDigi/src/Dll/GlastDigi_load.cxx,v 1.5 2002/05/23 18:17:30 heather Exp $
+*/
 
-#include "Gaudi/Interfaces/ICnvFactory.h"
-#include "Gaudi/Interfaces/ISvcFactory.h"
-#include "Gaudi/Interfaces/IAlgFactory.h"
+#include "GaudiKernel/DeclareFactoryEntries.h"
 
+DECLARE_FACTORY_ENTRIES(merit) {
+    DECLARE_ALGORITHM( meritAlg );
 
-#define DLL_DECL_SERVICE(x)    extern const ISvcFactory& x##Factory; x##Factory.addRef();
-#define DLL_DECL_CONVERTER(x)  extern const ICnvFactory& x##Factory; x##Factory.addRef();
-#define DLL_DECL_ALGORITHM(x)  extern const IAlgFactory& x##Factory; x##Factory.addRef();
-#define DLL_DECL_OBJECT(x)     extern const IFactory& x##Factory; x##Factory.addRef();
-
-//! Load all  services: 
-void merit_load() {
-    DLL_DECL_ALGORITHM( meritAlg );
 } 
 
-extern "C" void merit_loadRef()    {
-  merit_load();
-}
+
 
