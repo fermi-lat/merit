@@ -66,12 +66,12 @@ namespace {
         { ONE,   "Tiles&Hi-E",             1 }, 
         { TWO,   "NoTiles&LowE&GoodXR",    1 }, 
         { THREE, "NoTiles&1Xtals",         1 },
-        { FOUR,  "NoTiles&0Xtals",         1 },
+        { FOUR,  "NoTiles&0Xtals",         0 },
         { FIVE,  "Tiles&ACD< -170&GoodXR", 1 },
-        { SIX,   "Tiles&ACD<-170&1Xtal",   0 },
-        { SEVEN, "Tiles&ACD<-170&0Xtal",   1 }, 
+        { SIX,   "Tiles&ACD<-170&1Xtal",   1 },
+        { SEVEN, "Tiles&ACD<-170&0Xtal",   0 }, 
         { EIGHT, "Tiles&ACD<-20&Med-E",    0 },
-        { NINE,  "Tiles&ACD>-20&Low-E",    1 },
+        { NINE,  "Tiles&ACD>-20&Low-E",    0 },
       
     };
 
@@ -102,7 +102,7 @@ namespace {
 
     std::vector<IMpredictNode> imnodes;
 
-} // anonymous namespace
+}  // anonymous namespace
 
 
 
@@ -176,7 +176,7 @@ public:
         bool Acdlt150 =  AcdActiveDist < -150. ;
 	// Tkr1SSDVeto  is the number of hit layers before start of track
         bool Acdlt20  = (AcdActiveDist < -20.0 && AcdRibbonActDist < -20.0) 
-                        || Tkr1SSDVeto > 1 ;
+                	  || Tkr1SSDVeto > 1 ;  //  ?
 
 
         // node "No ACD Tiles"
@@ -193,8 +193,7 @@ public:
               if ( Xtals ) { return TWO;   }
               else         { return THREE; }             
             }
-
-	  } // end !HiE
+	  }   // end !HiE
         }   // end NoTiles
 
         
@@ -210,7 +209,7 @@ public:
               if ( GoodXR )  { return FIVE; }
 
               else {
-              // node "Xtals > 0"
+                // node "Xtals > 0"
                 if ( Xtals ) { return SIX;   }
 		else         { return SEVEN; }
               } 
@@ -222,11 +221,11 @@ public:
               if ( Acdlt20 ) { return EIGHT; }
               else           { return NINE;  }
 
-            }  // end Acdlt150
+            }   // end !Acdlt150
 
           }   // end !HiE
         
-	}   // end Tiles
+	}   // end active ACD Tiles
 
         return NONE;
 
@@ -324,5 +323,6 @@ PruneTree::~PruneTree(){
 double PruneTree::operator()()
 {
    Category  cat = *m_preclassify;
-   return  (cat==NONE) ?  0 :  imnodes[cat].evaluate();
+   
+   return  (cat==NONE) ?  0.0 :  imnodes[cat].evaluate();
 }
