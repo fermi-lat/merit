@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sat May 25 20:35:11 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	GaudiTuple.cxx GaudiTuple.h meritAlg.cxx 
+Log Message:
+initial Gleam-compatible version
+    *
+------------------------------------------------------------
+User: burnett  Sat May 25 20:35:11 PDT 2002
 merit/src/analysis
 
 Added Files:
