@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Jun 12 12:35:23 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+apply Xin's fix, avoid crash in destructor
+    *
+------------------------------------------------------------
 User: burnett  Sat May 31 16:15:20 PDT 2003
 merit/doc
 
