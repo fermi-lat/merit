@@ -3,7 +3,7 @@
 */
 #include "PruneTree.h"
 #include "analysis/Tuple.h"
-#include "classification/Tree.h"
+#include "classification/Tree.h"   // package classification
 
 #include <cassert>
 /*  This is the output of classification::Tree::load() with verbosity set to 1.
@@ -32,7 +32,7 @@ Following names were needed by nodes, but not supplied in the map:
 "AcdUpperTileCnt",
 
 */
-// needed to add: AcdUpperTileCnt=AcdTileCount-AcdNoSideRow2 -AcdNoSideRow1
+// need to add: AcdUpperTileCnt=AcdTileCount-AcdNoSideRow2 -AcdNoSideRow1
 
 namespace {
 
@@ -41,44 +41,49 @@ namespace {
        NODE_COUNT, NONE
     } Category;
 
-    /** table of information about nodes to expect in the IM file.
 
+    /** table of information about nodes to expect in the IM file.
     */
     class IMnodeInfo { 
     public:
         int id;           // unique ID for local identification
-        const char* name; // the name of the Preciction node in the IM XML file
+        const char* name; // the name of the Prediction node in the IM XML file
         int index;        // index of the classification type within the list of probabilites
     };
+
     // these have to correspond to the IM file.
     IMnodeInfo imNodeInfo[] = {
-        { ONE,  "Tiles&Hi-E",  1 },
-        { TWO,  "NoTiles&LowE&GoodXR",   1 }, 
-        { THREE,"NoTiles&1Xtals",   1 },
-        { FOUR, "NoTiles&0Xtals",    1 },
-        { FIVE,  "Tiles&ACD< -170&GoodXR",     1},
-        { SIX,     "Tiles&ACD<-170&1Xtal",     0 },
-        { SEVEN,   "Tiles&ACD<-170&0Xtal" ,1}, 
-        { EIGHT,   "Tiles&ACD<-20&Med-E", 0},
-        { NINE,     "Tiles&ACD>-20&Low-E",1},
+        { ONE,   "Tiles&Hi-E",             1 }, 
+        { TWO,   "NoTiles&LowE&GoodXR",    1 }, 
+        { THREE, "NoTiles&1Xtals",         1 },
+        { FOUR,  "NoTiles&0Xtals",         1 },
+        { FIVE,  "Tiles&ACD< -170&GoodXR", 1 },
+        { SIX,   "Tiles&ACD<-170&1Xtal",   0 },
+        { SEVEN, "Tiles&ACD<-170&0Xtal",   1 }, 
+        { EIGHT, "Tiles&ACD<-20&Med-E",    0 },
+        { NINE,  "Tiles&ACD>-20&Low-E",    1 },
       
     };
 
+
     /** Manage interface to one of the prediction nodes
     */
+    //___________________________________________________________________________
+
     class IMpredictNode { 
     public:
-        IMpredictNode(const IMnodeInfo& info, const classification::Tree* tree)
+        IMpredictNode(const IMnodeInfo& info, const classification::Tree* tree )
             :  m_offset(info.index), m_tree(tree)
         {
             m_node = m_tree->getPredictTree(info.name);
-            if( m_node==0) std::cerr << "Tree " << info.name << " not found in tree" << std::endl;
+            if( m_node==0) std::cerr << "IMpredictNode: Tree " << info.name << " not found in tree" << std::endl;
             assert(m_node);
         }
 
         double evaluate() const{
             return m_tree->navigate(m_node)[m_offset];
         }
+
         int m_offset;
         const classification::Tree* m_tree;
         const classification::Tree::Node* m_node;
@@ -88,33 +93,41 @@ namespace {
 
 } //anonymous namespace
 
+
+
 // create lookup class to make translations
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class PruneTree::Lookup : public classification::Tree::ILookUpData {
 public:
     Lookup(Tuple& t):m_t(t){}
+
     const double * operator()(const std::string& name){
         TupleItem* ti = const_cast<TupleItem*>(m_t.tupleItem(name));
         if( ti==0) return 0;
         const double * f = & (ti->value());
         return f;
     }
+
     // note that float flag depends on how the tuple does it.
     bool isFloat()const{return m_t.isFloat();}
     Tuple& m_t;
 };
+
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class PruneTree::PreClassify {
 public:
     //! ctor: just associate with tree and find the branches we need
-    PreClassify(PruneTree::Lookup& lookup) 
-        : CalEnergySum (*lookup(     "CalEnergySum")) 
-        , CalXtalRatio (*lookup(        "CalXtalRatio"))
-        , CalXtalsTrunc (*lookup(     "CalXtalsTrunc")) 
-        , AcdActiveDist (*lookup(     "AcdActiveDist"))
-        , AcdTileCount (*lookup(      "AcdTileCount"))
-        , AcdNoSideRow2 (*lookup(  "AcdNoSideRow2"))
-        , AcdNoSideRow1 (*lookup(  "AcdNoSideRow1"))
+    PreClassify( PruneTree::Lookup& lookup ) 
+        : CalEnergySum  (*lookup( "CalEnergySum" )) 
+        , CalXtalRatio  (*lookup( "CalXtalRatio" ))
+        , CalXtalsTrunc (*lookup( "CalXtalsTrunc")) 
+        , AcdActiveDist (*lookup( "AcdActiveDist"))
+        , AcdTileCount  (*lookup( "AcdTileCount" ))
+        , AcdNoSideRow1 (*lookup( "AcdNoSideRow1"))
+        , AcdNoSideRow2 (*lookup( "AcdNoSideRow2"))
+	, AcdRibbonActDist (*lookup( "AcdRibbonActDist"))
+	, Tkr1SSDVeto   (*lookup( "Tkr1SSDVeto"))
     { 
         // need a new tuple item
         new TupleItem("AcdUpperTileCnt", AcdUpperTileCnt);
@@ -123,7 +136,27 @@ public:
     //! return truth value, for current TTree position
     operator Category()
     {
-        AcdUpperTileCnt=AcdTileCount-AcdNoSideRow2 -AcdNoSideRow1;
+        AcdUpperTileCnt = AcdTileCount - AcdNoSideRow2 - AcdNoSideRow1;
+
+        bool NoTiles = AcdTileCount == 0.0 ;
+	bool Tiles   = !NoTiles;
+        
+        bool lowE    = CalEnergySum < 350.;
+        bool medE    = CalEnergySum >= 350. && CalEnergySum < 3500.;
+        bool hiE     = !(lowE || medE);
+
+	// Tkr1SSDVeto  number of hit layers before start of track
+        bool Acdlt20  = (AcdActiveDist < -20.0 && AcdRibbonActDist < -20.0) || Tkr1SSDVeto > 1 ;
+        bool Acdgt20  = !Acdlt20;      //?
+        bool Acdlt150 =  AcdActiveDist < -150. ;
+
+        bool Xtals    = CalXtalsTrunc > 0.0 ;  // ?
+        bool noXtal   = !Xtals ;
+        bool GoodXR   = CalXtalRatio > 0.02 && CalXtalRatio < 0.98 ;  // ?
+
+
+       
+
         // todo: apply pre-categorization logic
         /*
         CalEnergySum > 5 & CalCsIRLn > 2
@@ -138,8 +171,10 @@ AcdActiveDist <-150
 CalXtalRatio > .02 & CalXtalRatio < .98
 AcdActiveDist < -20 &MeasEnergyType == "Med-E"
 */
+
         return NONE;
     }
+
 private:
     // references to the values read in from ROOT, or set directly, in the tuple
     const double &   CalEnergySum; 
@@ -149,6 +184,8 @@ private:
     const double &   AcdTileCount;
     const double &   AcdNoSideRow1 ;
     const double &   AcdNoSideRow2 ;
+    const double &   AcdRibbonActDist;
+    const double &   Tkr1SSDVeto;   
     // output
     double  AcdUpperTileCnt;
 };
