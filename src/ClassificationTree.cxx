@@ -127,7 +127,6 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         t.tupleItem("CalBkHalfRatio");
         t.tupleItem("CalLyr7Ratio");
         t.tupleItem("CalLyr0Ratio");
-        t.tupleItem("EvtTkrEComptonRatio");
         t.tupleItem("CalXtalRatio");
         t.tupleItem("EvtLogESum");
         t.tupleItem("EvtCalETrackDoca");
@@ -158,6 +157,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_calTotRLn =t.tupleItem("CalTotRLn");
         m_evtEnergySumOpt = t.tupleItem("EvtEnergySumOpt");
         m_evtTkrEComptonRatio = t.tupleItem("EvtTkrEComptonRatio");
+        m_evtTkrComptonRatio = t.tupleItem("EvtTkrComptonRatio");
         m_calMIPDiff = t.tupleItem("CalMIPDiff");
         m_calLRmsRatio = t.tupleItem("CalLRmsRatio");
         m_acdTileCount = t.tupleItem("AcdTileCount");
@@ -214,14 +214,14 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         }else{
             if( *m_evtEnergySumOpt>450.){ 
                 //1TRK-HI
-                if( *m_evtTkrEComptonRatio > 0.70 &&
+                if( *m_evtTkrComptonRatio > 0.70 &&
                     *m_calMIPDiff> 0.80 &&
                     *m_calLRmsRatio < 20.) m_gammaProb = imnodes[BKG_1TRK_HI].evaluate();
             }else{
                 //1TRK-LO
                 if( *m_acdTileCount==0 &&
-                    *m_evtTkrEComptonRatio > 1. &&
-                    *m_calLRmsRatio >0.5 &&
+                    *m_evtTkrComptonRatio > 1. &&
+                    *m_calLRmsRatio >5.0 &&
                     *m_firstLayer !=0 &&
                     *m_firstLayer <15 ){
                         m_gammaProb= imnodes[BKG_1TRK_LO].evaluate();
