@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.43 2003/06/13 16:31:33 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.44 2003/08/04 21:03:25 burnett Exp $
 */
 // Include files
 
@@ -14,7 +14,6 @@
 #include "GaudiKernel/INTupleSvc.h"
 #include "GaudiKernel/IToolSvc.h"
 #include "GaudiKernel/AlgTool.h"
-#include "GaudiTuple.h"
 
 
 #include "Event/MonteCarlo/McParticle.h"
@@ -102,7 +101,7 @@ Algorithm(name, pSvcLocator), m_tuple(0), m_root_tuple(0) {
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
     declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
-    declareProperty("RootTreeName", m_treename="1"); // this is GLAST default tuple name
+    declareProperty("RootTreeName", m_treename="MeritTuple"); 
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::setupTools() {
@@ -228,7 +227,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.43 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.44 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
