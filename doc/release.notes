@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.62 2004/09/13 23:24:14 burnett Exp $
+ * $Id: release.notes,v 1.63 2004/10/11 21:30:03 burnett Exp $
  *
+ *  v6r18p1 TU   16-Dec-04 This tag to get an initial GlastRelease to feed the RM
             THB  11-oct-04 Remove livetime, GemConditionWord, eventflags, since moving to AnaTup.
  *  v6r18   THB  13-sep-04 Remove redundant vars Run, Event, elapsed_time, MC_src_Id
  *  v6r17   THB  10-sep-04 Adjust to IValsTool interface change, implement floats 
