@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Oct 16 15:35:23 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+make compile on windows
+    *
+------------------------------------------------------------
 User: burnett  Thu Oct 16 15:33:29 PDT 2003
 merit/src
 
