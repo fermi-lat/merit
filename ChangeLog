@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Mon Aug 25 16:38:47 PDT 2003
+merit/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+converted to use of ntupleWriterSvc; tagging v6r8
+    *
+------------------------------------------------------------
+User: burnett  Mon Aug 25 16:38:47 PDT 2003
 merit/cmt
 
 Modified Files:
