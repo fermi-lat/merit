@@ -206,27 +206,31 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
     }
  
-    double ClassificationTree::backgroundRejection(){
+    int ClassificationTree::backgroundRejection(){
     
         // Sets m_gammaProb from one of 4 different trees, corresponding to an initial split on vertex,
         // then energy
         // return the cut on this quantity that is used by the analysis
+        int path=0; // path through the maze
         double  cut=0.5;
         m_gammaProb=0;
+
 
         // First apply the background check
         if( *m_vtxAngle>0 ) {
             if( *m_evtEnergySumOpt>350){
                 //vTX-HI
                 if( *m_evtTkrEComptonRatio > 0.60 &&
-                    *m_calMIPDiff > 60. ) m_gammaProb= imnodes[BKG_VTX_HI].evaluate();
+                    *m_calMIPDiff > 60. ){
+                        path = BKG_VTX_HI;
+                    }
                 
             }else{
                 // VTX-LO
                 if( *m_acdTileCount==0 &&
                     *m_calMIPDiff> -125 &&
                     *m_evtTkrEComptonRatio > 0.8){
-                        m_gammaProb= imnodes[BKG_VTX_LO].evaluate();
+                        path = BKG_VTX_LO;
                         cut = 0.9;
                     }
             }
@@ -235,7 +239,9 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
                 //1TRK-HI
                 if( *m_evtTkrComptonRatio > 0.70 &&
                     *m_calMIPDiff> 80. &&
-                    *m_calLRmsRatio < 20.) m_gammaProb = imnodes[BKG_1TRK_HI].evaluate();
+                    *m_calLRmsRatio < 20.){
+                        path = BKG_1TRK_HI;
+                    }
             }else{
                 //1TRK-LO
                 if( *m_acdTileCount==0 &&
@@ -243,54 +249,59 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
                     *m_calLRmsRatio >5.0 &&
                     *m_firstLayer !=0 &&
                     *m_firstLayer <15 ){
-                        m_gammaProb= imnodes[BKG_1TRK_LO].evaluate();
+                        path = BKG_1TRK_LO;
                         cut = 0.9;
                     }
             }
         }
-        return cut;
+        return path;
 
     }
     void ClassificationTree::execute()
     {
 
-        // apply cuts on cal energy:
+        // initialize IM output variables
+        m_coreProb=m_psfErrPred=0;
+        m_vtxProb=m_gammaProb=0;
+
+        // select cal energy type:
         //ifelse((CalEnergySum< 100. | CalTotRLn < 2), ifelse((CalTotRLn < 2 | CalEnergySum <  5), "NoCal", "LowCal"),"HighCal")
+        int cal_type=NOCAL;
 
-        if( *m_calEnergySum> 100. && *m_calTotRLn > 2. ) { 
-            m_goodCalProb= imnodes[CALHIGH].evaluate();
-        }else if ( *m_calEnergySum >5 && *m_calTotRLn >2.) {
-            m_goodCalProb= imnodes[CALLOW].evaluate();
-        }else {
-            m_goodCalProb= imnodes[NOCAL].evaluate();
+        if(        *m_calEnergySum >100. && *m_calTotRLn > 2.){ cal_type=CALHIGH;
+        }else if ( *m_calEnergySum >  5. && *m_calTotRLn > 2.){ cal_type=CALLOW;
         } 
-        if( m_goodCalProb<0.5) { 
-            m_coreProb=m_psfErrPred=0;
-            return;
-        }
+        // evalue appropriate tree for good cal prob
+        m_goodCalProb= imnodes[cal_type].evaluate();
 
+        // rest only if cal prob ok
+        if( m_goodCalProb<0.5 )   return;
+ 
+        // select vertex-vs-1 track, corresponding tree for core, psf
+        int core_type=0, psf_type=0;
         if( *m_firstLayer < 12 ) {
             m_vtxProb = imnodes[VTX_THIN].evaluate(); 
-            if( *m_vtxAngle>0 && m_vtxProb >0.5) {
-                m_coreProb =   imnodes[VTX_THIN_TAIL].evaluate();
-                m_psfErrPred = imnodes[VTX_THIN_BEST].evaluate();
+            if( *m_vtxAngle>0 && m_vtxProb >0.5) { 
+                    core_type=VTX_THIN_TAIL;     psf_type= VTX_THIN_BEST;
             }else{
-                m_coreProb =   imnodes[ONE_TRK_THIN_TAIL].evaluate();
-                m_psfErrPred = imnodes[ONE_TRK_THIN_BEST].evaluate();
+                    core_type=ONE_TRK_THIN_TAIL; psf_type= ONE_TRK_THIN_BEST;
             }
         }else {
             m_vtxProb = imnodes[VTX_THICK].evaluate();
             if(  *m_vtxAngle>0 &&  m_vtxProb >0.5) {
-                m_coreProb =   imnodes[VTX_THICK_TAIL].evaluate();
-                m_psfErrPred = imnodes[VTX_THICK_BEST].evaluate();
+                core_type=VTX_THICK_TAIL;         psf_type= VTX_THICK_BEST;
             }else{
-                m_coreProb =   imnodes[ONE_TRK_THICK_TAIL].evaluate();
-                m_psfErrPred = imnodes[ONE_TRK_THICK_BEST].evaluate();
+                core_type=ONE_TRK_THICK_TAIL;     psf_type= ONE_TRK_THICK_BEST;
             }
         }
-        // return the cut that Bill wants to apply: either 0.5 for 0.9, and set the probability to apply it to.
-        // sets m_gammaProb, corresponding to the tuple IMgammaProb.
-        double cut = backgroundRejection();
+
+        // now evalute the appropriate trees
+        m_coreProb =   imnodes[core_type].evaluate();
+        m_psfErrPred = imnodes[psf_type].evaluate();
+
+        // background type to select appropriate tree for gamma prob.
+        int bkg_type = backgroundRejection();
+        m_gammaProb= bkg_type==0? 0 : imnodes[bkg_type].evaluate();
 
     }
     ClassificationTree::~ClassificationTree()
