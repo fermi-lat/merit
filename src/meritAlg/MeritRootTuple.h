@@ -1,9 +1,10 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.2 2002/09/01 04:53:48 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.3 2002/09/02 03:06:39 burnett Exp $
 // Original author T. Burnett 
 #ifndef MERITROOTTUPLE_H
 #define MERITROOTTUPLE_H
 
 #include <string>
+#include <vector>
 class Tuple;
 class TFile;
 class TTree;
@@ -13,7 +14,7 @@ class TTree;
  *
  * @author T. Burnett
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.2 2002/09/01 04:53:48 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.3 2002/09/02 03:06:39 burnett Exp $
  */
 
 class MeritRootTuple  {
@@ -35,6 +36,8 @@ private:
     /// the ROOT stuff: a file and a tree to put into it
     TTree * m_tree;
     TFile *  m_tf;
+
+	std::vector<float> m_floats; // needed for communication with ROOT's float branches.
 
 };
 

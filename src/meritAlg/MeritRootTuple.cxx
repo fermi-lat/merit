@@ -13,16 +13,26 @@ MeritRootTuple::MeritRootTuple(Tuple* tuple, std::string filename)
 {
 
     m_tf = new TFile(filename.c_str(),"RECREATE");
+    float t=0;
 
     m_tree = new TTree("MeritTuple", m_tuple->title().c_str());
-    for(Tuple::iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
+    m_floats.resize(m_tuple->size());
+    std::vector<float>::iterator fit = m_floats.begin();
+    for(Tuple::iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit, ++fit ){
         TupleItem& item = **tit;
-        m_tree->Branch(item.name().c_str(), &item.value(), item.name().c_str());
+        float * d =  *&fit;
+        m_tree->Branch(item.name().c_str(), d, item.name().c_str());
     }
 }
 
 void MeritRootTuple::fill()
 {
+    // go through the tuple, put doubles into the array for the tree.
+    std::vector<float>::iterator fit = m_floats.begin();
+    for(Tuple::iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit, ++fit){
+        TupleItem& item = **tit;
+        *fit = static_cast<float>(item.value());
+    }
     m_tree->Fill();
 }
 
