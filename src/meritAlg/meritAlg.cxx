@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.29 2002/10/31 03:29:49 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.30 2002/12/19 14:43:46 heather Exp $
 
 // Include files
 
@@ -27,6 +27,8 @@
 
 #include "GlastSvc/Reco/IReconTool.h"
 
+#include "AnalysisNtuple/IValsTool.h"
+
 #include "FigureOfMerit.h"
 #include "analysis/Tuple.h"
 
@@ -39,11 +41,8 @@
 
 #include "MeritRootTuple.h"
 
-#ifndef DEFECT_NO_STRINGSTREAM
-# include <sstream>
-#else
-# include <strstream>
-#endif
+
+#include <sstream>
 #include <algorithm>
 #include <numeric>
 
@@ -73,7 +72,8 @@ private:
     void tileReco(const Event::AcdRecon& );
     void processMCheader(const Event::MCEvent&);
     
-    
+    void calculate(); 
+
     FigureOfMerit* m_fm;
     Tuple*   m_tuple;
     std::string m_cuts; 
@@ -84,45 +84,49 @@ private:
     IToolSvc* m_pToolSvc;
 
     // places to put stuff found in the TDS
-    float m_event, m_mc_src_id;
-    float m_mce, m_trig, m_angle_diff, m_recon_energy;
-    float m_time;
+    double m_event, m_mc_src_id;
+    double m_mce, m_trig, m_angle_diff, m_recon_energy;
+    double m_time;
 
-    float m_mc_xdir, m_mc_ydir, m_mc_zdir;
+    double m_mc_xdir, m_mc_ydir, m_mc_zdir;
 
     // from track analysis
-    float m_tracks;
-    float m_first_hit;
-    float m_tkr_gamma_xdir, m_tkr_gamma_ydir, m_tkr_gamma_zdir;
+    double m_tracks;
+    double m_first_hit;
+    double m_tkr_gamma_xdir, m_tkr_gamma_ydir, m_tkr_gamma_zdir;
 
-    float m_tkr_qual, m_tkr_t_angle, m_tkr_fit_kink;
-    float m_surplus_hit_ratio, m_tkr_skirtX, m_tkr_skirtY;
-    float m_tkr_eneslope[2]; 
+    double m_tkr_qual, m_tkr_t_angle, m_tkr_fit_kink;
+    double m_surplus_hit_ratio, m_tkr_skirtX, m_tkr_skirtY;
+    double m_tkr_eneslope[2]; 
 
     // set by cal analysis
-    float m_cal_energy_deposit;
-    float m_no_xtals;
-    float m_no_xtals_trunc;
-    float m_cal_xtal_ratio;
-    float m_cal_transv_rms;
-    float m_cal_long_rms;
-    float m_calFitErrNrm;
+    double m_cal_energy_deposit;
+    double m_no_xtals;
+    double m_no_xtals_trunc;
+    double m_cal_xtal_ratio;
+    double m_cal_transv_rms;
+    double m_cal_long_rms;
+    double m_calFitErrNrm;
 
 
-    float m_cal_elayer[8];
-    float m_cal_z;
+    double m_cal_elayer[8];
+    double m_cal_z;
 
     // set by acd analysis
-    float m_acd_doca;
-    float m_doca[5];
-    float m_acd_actdist_top;
-    float m_acd_actdist[5];
+    double m_acd_doca;
+    double m_doca[5];
+    double m_acd_actdist_top;
+    double m_acd_actdist[5];
     // index for these guys is top, side row 0, side row 1, side row 2
-    float m_acd_tileCount[4];
-    float m_acd_deposit_max[4];
+    double m_acd_tileCount[4];
+    double m_acd_deposit_max[4];
 
     int m_generated;
     Hep3Vector m_incident_dir;
+
+    /// Common interface to analysis tools
+    std::vector<IValsTool*> m_toolvec;
+
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -148,18 +152,64 @@ StatusCode meritAlg::initialize() {
     // Use the Job options service to get the Algorithm's parameters
     setProperties();
     
+
     // setup the pseudo-tuple
-#ifndef DEFECT_NO_STRINGSTREAM
     std::stringstream title;
     title <<  "TDS: gen(" << m_generated <<  ")";
     m_tuple = new Tuple(title.str());
-#else
-    std::strstream title;
-    title <<  "TDS: gen(" << m_generated <<  ")";
-    m_tuple = new Tuple(title.str());
-#endif
 
-    static float dummy = -99; // flag for defined, not implemented
+
+    
+    // set up tools
+    IToolSvc* pToolSvc = 0;
+    
+    sc = service("ToolSvc", pToolSvc, true);
+    if (!sc.isSuccess ()){
+        log << MSG::ERROR << "Can't find ToolSvc, will quit now" << endreq;
+        return StatusCode::FAILURE;
+    }
+    
+    const char * toolnames[6] = {"McValsTool", "GltValsTool", "TkrValsTool", 
+        "VtxValsTool", "CalValsTool", "AcdValsTool"};
+    
+    for( int i =0; i< sizeof(toolnames)/sizeof(void*); ++i){
+        m_toolvec.push_back(0);
+        sc = pToolSvc->retrieveTool(toolnames[i], m_toolvec.back());
+        if( sc.isFailure() ) {
+            log << MSG::ERROR << "Unable to find a  tool" << toolnames[i] << endreq;
+            return sc;
+        }
+    }
+
+    //grab Bill's tuples
+    class VisitBill : virtual public IValsTool::Visitor
+    {
+    public:
+        VisitBill( meritAlg* me) 
+            : m_merit(me){}
+        IValsTool::Visitor::eVisitorRet analysisValue(std::string varName, const double& value) const
+        {
+         //   std::cout << "Creating tupleitem  from AnalysisNtuple value " << varName << std::endl;
+            double * val = const_cast<double*>(&value);
+            new TupleItem(varName, val);
+            return IValsTool::Visitor::CONT;
+        }
+        
+    private:
+        meritAlg* m_merit;
+    };
+
+    VisitBill visitor(this);
+    for( std::vector<IValsTool*>::iterator it =m_toolvec.begin(); it != m_toolvec.end(); ++it){
+        if( (*it)->traverse(&visitor,false)==IValsTool::Visitor::ERROR) {
+            log << MSG::ERROR << *it << " traversal failed" << endreq;
+            return StatusCode::FAILURE;
+        }
+    }
+
+    
+    
+    static double dummy = -99; // flag for defined, not implemented
 
     // define tuple items
     new TupleItem("Event_ID",       &m_event);
@@ -264,15 +314,22 @@ StatusCode meritAlg::initialize() {
 
     return sc;
 }
+//------------------------------------------------------------------------------
+void meritAlg::calculate(){
 
+    for( std::vector<IValsTool*>::iterator i =m_toolvec.begin(); i != m_toolvec.end(); ++i){
+        (*i)->doCalcIfNotDone();
+    }
+
+}
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.29 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.30 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
         out << std::setw(25) << item.name() 
-            << "  " << std::setprecision(4)<< float(item) << std::endl;
+            << "  " << std::setprecision(4)<< double(item) << std::endl;
     }
 }
 
@@ -280,7 +337,8 @@ void meritAlg::printOn(std::ostream& out)const{
 StatusCode meritAlg::execute() {
     
     StatusCode  sc = StatusCode::SUCCESS;
-    
+  
+    calculate(); // setup Bill's tuple items
     SmartDataPtr<Event::EventHeader>   header(eventSvc(),    EventModel::EventHeader);
     SmartDataPtr<Event::MCEvent>     mcheader(eventSvc(),    EventModel::MC::Event);
     SmartDataPtr<Event::McParticleCol> particles(eventSvc(), EventModel::MC::McParticleCol);
@@ -384,9 +442,9 @@ void meritAlg::processTDS(const Event::EventHeader& header,
         log<< MSG::DEBUG << "From TkrMeritTool: " << surplus_hit_ratio << " "
             << tkr_skirtX << " " << tkr_skirtY << endreq;
 
-        m_surplus_hit_ratio = (float) surplus_hit_ratio;
-        m_tkr_skirtX        = (float) tkr_skirtX;
-        m_tkr_skirtY        = (float) tkr_skirtY;
+        m_surplus_hit_ratio = (double) surplus_hit_ratio;
+        m_tkr_skirtX        = (double) tkr_skirtX;
+        m_tkr_skirtY        = (double) tkr_skirtY;
 
         m_tkr_eneslope[0] =  -999.;
         m_tkr_eneslope[1] =  -999.; //TODO
@@ -394,7 +452,7 @@ void meritAlg::processTDS(const Event::EventHeader& header,
 
         // this is Bill's estimate based on CAL and multiple scattering
         double energy= track.getEnergy();
-        m_recon_energy = (float) energy;
+        m_recon_energy = (double) energy;
     }
     
 
@@ -410,7 +468,7 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     // code from the former CalNtupleAlg.cxx, slightly modified for new interface access names.
     
     double fit_ener,fitalpha,fitlambda,profchi2,eleak,start;
-    float energy_sum;
+    double energy_sum;
     
     
     const Event::CalCluster* cl = clusters.front();
@@ -418,9 +476,9 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     energy_sum = cl->getEnergySum();
     
     //stop writing NANs to the tuple
-    float zpos = -1000.0;
-    float xpos = -1000.0;
-    float ypos = -1000.0;
+    double zpos = -1000.0;
+    double xpos = -1000.0;
+    double ypos = -1000.0;
     
     zpos = (cl->getPosition()).z(); 
     xpos = (cl->getPosition()).x();
@@ -430,13 +488,13 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     
     const std::vector<Vector>& posLayer = cl->getPosLayer();
     
-    float trans_rms = cl->getRmsTrans();
-    float long_rms = cl->getRmsLong();
+    double trans_rms = cl->getRmsTrans();
+    double long_rms = cl->getRmsLong();
     Vector caldir = cl->getDirection();
-    float caltheta = -1000.0;
-    float calphi = -1000.0;
+    double caltheta = -1000.0;
+    double calphi = -1000.0;
     if(fabs(caldir.z())<1.){ caltheta=acos(caldir.z());
-    calphi=float(M_PI/2.);
+    calphi=double(M_PI/2.);
     if(caldir.x()!=0.) calphi = atan(caldir.y()/caldir.x());
     }
     fit_ener = cl->getFitEnergy();
@@ -445,10 +503,10 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     fitlambda = cl->getCsiLambda();
     start = cl->getCsiStart();
     eleak = cl->getEnergyLeak();
-    float transvOffset = cl->getTransvOffset();
+    double transvOffset = cl->getTransvOffset();
     
-    float eFactor = .26 + .35 / (cl->getEnergyCorrected());
-    float calFitErrNrm = transvOffset/eFactor;
+    double eFactor = .26 + .35 / (cl->getEnergyCorrected());
+    double calFitErrNrm = transvOffset/eFactor;
     
     
     
@@ -472,7 +530,7 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
         if(eneLog>0)no_xtals++;
         if(eneLog>0.01*energy_sum)no_xtals_trunc++;
     }
-    float cal_xtal_ratio= (no_xtals>0) ? float(no_xtals_trunc)/no_xtals : 0;
+    double cal_xtal_ratio= (no_xtals>0) ? double(no_xtals_trunc)/no_xtals : 0;
     // set tuple items
     
     m_no_xtals = no_xtals;
