@@ -1,6 +1,6 @@
 package merit
 version v6r14
-# $Id: requirements,v 1.61 2003/11/15 15:26:11 burnett Exp $
+# $Id: requirements,v 1.62 2003/11/22 15:34:54 burnett Exp $
 
 branches doc
 
@@ -51,7 +51,7 @@ macro run_classification_linkopts $(merit_linkopts)
 macro libs ""   WIN32   "$(meritDir)/merit_lib.lib
 
 #set MERIT_OUTPUT_FILE "$(MERITROOT)/cmt/merit.txt"
-set IM_FILE "$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml"
+set IM_FILE "$(MERITROOT)/xml/classification.imw"
 
 application merit_app app/meritapp.cxx app/RootTuple.cxx $(libs)
 

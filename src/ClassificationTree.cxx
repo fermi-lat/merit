@@ -36,7 +36,7 @@ namespace {
     // these have to correspond to the IM file, derived from v3r3p7 in this case
     IMnodeInfo imNodeInfo[] = {
         { CALHIGH,           "CT Cal High",  1 },
-        { CALMED,            "CT Cal Med",   1 },
+        { CALMED,            "Ct Cal Med",   1 }, // note variation in name
         { CALLOW,            "CT Cal Low",   1 },
         { NOCAL,             "CT No Cal",    1 },
         { VTX_THIN,          "CT VTX Thin",     1},
@@ -64,6 +64,7 @@ namespace {
             :  m_offset(info.index), m_tree(tree)
         {
             m_node = m_tree->getPredictTree(info.name);
+            if( m_node==0) std::cerr << "Tree " << info.name << " not found in tree" << std::endl;
             assert(m_node);
         }
 
@@ -301,7 +302,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         *m_goodCalProb= imnodes[cal_type].evaluate();
 
         // rest only if cal prob ok
-        if( *m_goodCalProb<0.5 )   return;
+        if( *m_goodCalProb<0.25 )   return;
  
         // select vertex-vs-1 track, corresponding tree for core, psf
         int core_type=0, psf_type=0;
@@ -326,8 +327,10 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         *m_psfErrPred = imnodes[psf_type].evaluate();
 
         // background type to select appropriate tree for gamma prob.
-        int bkg_type = backgroundRejection();
-        *m_gammaProb= bkg_type==0? 0 : imnodes[bkg_type].evaluate();
+        if( *m_coreProb > 0.2){  // but only for good psf.
+            int bkg_type = backgroundRejection();
+            *m_gammaProb= bkg_type==0? 0 : imnodes[bkg_type].evaluate();
+        }
 
     }
     ClassificationTree::~ClassificationTree()
