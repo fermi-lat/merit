@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Dec  9 16:34:28 PST 2003
+merit/src
+
+Added Files:
+	PruneTree.cxx PruneTree.h 
+Log Message:
+framework for implementation of multiple CT pattern. 
+    *
+------------------------------------------------------------
 User: burnett  Sun Dec  7 10:12:00 PST 2003
 merit/doc
 
