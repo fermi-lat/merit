@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 #
-# $Id: Makefile.am,v 1.1 1999/12/21 18:15:45 pfkeb Exp $
+# $Id: Makefile.am,v 1.2 1999/12/23 21:42:46 pfkeb Exp $
 #
 # Author: Paul_Kunz@slac.stanford.edu
 #
@@ -9,3 +9,5 @@
 AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = src
+
+EXTRA_DIST = config
