@@ -2,7 +2,7 @@
 @brief 
 
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.4 2003/05/15 18:00:23 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.5 2003/05/25 17:14:26 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -34,10 +34,13 @@ private:
 
     classification::Tree * m_classifier;
     const TupleItem*  m_firstLayer; /// access to the first layer in the tuple
+    const TupleItem*  m_calTotRLn; 
+    const TupleItem*  m_calEnergySum;
     double m_goodCalProb;
     double m_coreProb; 
     double m_vtxProb ;
     double m_psfErrPred; 
+    
 
     std::ostream& m_log;
 };

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.19 2003/05/28 00:13:53 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.20 2003/08/29 14:11:56 burnett Exp $
 
 // Main for merit
 
@@ -12,14 +12,12 @@
 
 #include <iostream>
 #include <fstream>
-#include <sys/types.h>
-#include <sys/timeb.h>
 #include <string>
 #include <sstream>
 #include <typeinfo>
 
 
-const char* _MERIT_VERSION = "$Revision: 1.19 $";
+const char* _MERIT_VERSION = "$Revision: 1.20 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -118,7 +116,6 @@ int main(int argc, char* argv[])
 
         (*outstream) << "Tuple title: \""<< tuple->title() << "\"\n" ;
 
-        static _timeb t_init, t_final;
         try {
             const char* imfile = ::getenv("IM_FILE");
         // create the ct: pass in the tuple.
@@ -126,13 +123,10 @@ int main(int argc, char* argv[])
             FigureOfMerit fm(*tuple, cutstr);
 
 
-            _ftime(&t_init);
-
             while ( tuple->nextEvent() ) { 
                 pct.execute();   // fill in the classification (testing here)
                 fm.execute(); // run the rest.
             }
-            _ftime(&t_final);
             fm.report(*outstream);
         }catch(std::exception& e){
             std::cerr << "Caught: " << e.what( ) << std::endl;
@@ -140,7 +134,6 @@ int main(int argc, char* argv[])
         }catch(...) {
             std::cerr << "Unknown exception from classification " << std::endl;
         }
-        std::cerr << "\nElapsed time: "<< t_final.time-t_init.time << " sec" << std::endl;
         return 0;
 }
 
