@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Nov 25 15:25:42 PST 2003
+merit/src
+
+Modified Files:
+	PSFtailCuts.cxx 
+Log Message:
+new cut values for basic tail suppression
+    *
+------------------------------------------------------------
 User: burnett  Tue Nov 25 15:11:12 PST 2003
 merit/src/meritAlg
 
