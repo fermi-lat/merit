@@ -10,6 +10,15 @@ using namespace std;
 
 inline static double sqr(double x){return x*x;}
 
+PSFanalysis::PSFanalysis()
+	: Analyze()
+	, RebinHist("PSF", 0, 3.0, 0.1 )
+	, m_sigma(-1)
+        , m_energy()
+        , m_first_layer()
+        , m_emin(0.1), m_emax(100.)
+{}
+
 PSFanalysis::PSFanalysis(const Tuple& t, double emin, double emax)
 	: Analyze(t, "MC_Gamma_Err" , "PSF analysis" )
 	, RebinHist("PSF", 0, 3.0, 0.1 )

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PSFtailCuts.cxx,v 1.2 2001/06/14 19:51:59 usher Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PSFtailCuts.cxx,v 1.3 2001/10/31 17:04:08 usher Exp $
 // PSFtailCuts.cxx: implementation of the PSFtailCuts class.
 //
 //////////////////////////////////////////////////////////////////////
@@ -29,10 +29,10 @@ class AbsValueCut : public Analyze {
 //This function calculates the energy/angle dependent cut for FitKink and Tangle
 static float kalError(float kalEne, int kplane, float cosz) 
 {
-	if (kalEne <0) return 1e6;
+    if (kalEne <0) return 1e6;
 
     //Convert from MeV to GeV for calculation
-    kalEne *= 0.001;
+    kalEne *= (float)0.001;
 
     //Calculate the cut value depending on top or bottom
     float kalFit;
@@ -42,7 +42,8 @@ static float kalError(float kalEne, int kplane, float cosz)
 
     kalFit = - (0.001*kalFit) / cosz;
 
-    return 3.5 * kalFit;
+    //return 3.5 * kalFit;
+    return kalFit;
 }
 
 

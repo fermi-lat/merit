@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.2 2001/03/25 00:02:51 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.3 2001/10/23 15:06:12 burnett Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #include "RootTuple.h"
 
@@ -65,10 +65,10 @@ RootTuple::RootTuple(std::string title, std::string file, std::string treeName)
     // Initialize Root
     if ( 0 == gROOT )   {
         static TROOT meritRoot("root","ROOT I/O");
-#ifdef WIN32
-        gSystem->Load("libTree.dll");
-#endif
     } 
+#ifdef WIN32
+    gSystem->Load("libTree.dll");
+#endif
     
     // Open the file, and get at the  TTree containing the data
     TFile* tfile =  new TFile(file.c_str(), "read");

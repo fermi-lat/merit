@@ -1,10 +1,10 @@
-// $Header: /cvs/glastsim/merit/PSFtailCuts.h,v 1.1 1999/08/27 20:14:25 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PSFtailCuts.h,v 1.1.1.1 1999/12/20 22:29:13 burnett Exp $
 // PSFtailCuts.h: interface for the PSFtailCuts class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_PSFTAILCUTS_H__D65E62E1_2A00_4F86_8067_192F4F821C66__INCLUDED_)
-#define AFX_PSFTAILCUTS_H__D65E62E1_2A00_4F86_8067_192F4F821C66__INCLUDED_
+#ifndef PSFTAILCUTS_H
+#define PSFTAILCUTS_H
 
 #if _MSC_VER > 1000
 #pragma once
@@ -19,4 +19,4 @@ public:
 
 };
 
-#endif // !defined(AFX_PSFTAILCUTS_H__D65E62E1_2A00_4F86_8067_192F4F821C66__INCLUDED_)
+#endif 
