@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.5 2003/03/10 15:58:52 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.6 2003/03/10 22:12:54 burnett Exp $
 
 #ifndef TUPLE_H
 #define TUPLE_H
@@ -31,7 +31,6 @@ public:
 
     operator double()const{     return value();    }
 
-public:
     std::string name()const{return m_name;}
     // extract the value
 
@@ -89,9 +88,10 @@ private:
    */
    void add_alias(std::string name1, std::string name2);
 
+    /// allow ROOT subclass to specify float storage.
+    virtual bool isFloat()const{return false;}
 
 
-public:
    // make a list of the names of the tupleitems
 
    friend std::istream& operator >> (std::istream&, Tuple&);

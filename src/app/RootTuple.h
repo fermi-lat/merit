@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.h,v 1.2 2001/03/25 00:02:51 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.h,v 1.3 2001/12/19 04:23:33 usher Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #ifndef ROOTTUPLE_H
 #define ROOTTUPLE_H
@@ -28,6 +28,9 @@ public:
     bool getEvent(int idx);
 
     int numEvents(){return m_numEvents;}
+
+    /// special for ROOT: pointers are to floats, not doubles
+    virtual bool isFloat()const{return true;}
 private:
     TTree * m_tree;
 
