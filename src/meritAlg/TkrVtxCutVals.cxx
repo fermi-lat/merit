@@ -82,8 +82,8 @@ void TkrVtxCutVals::calcFitKink()
 {
     Event::TkrFitPlaneConPtr hitIter = best->getHitIterBegin();
 
-    Event::TkrFitHit firstHit  = hitIter[0].getHit(Event::TkrFitHit::TYPE::SMOOTH);
-    Event::TkrFitHit secondHit = hitIter[1].getHit(Event::TkrFitHit::TYPE::SMOOTH);
+    Event::TkrFitHit firstHit  = hitIter[0].getHit(Event::TkrFitHit::SMOOTH);
+    Event::TkrFitHit secondHit = hitIter[1].getHit(Event::TkrFitHit::SMOOTH);
 
     double           xKink     = secondHit.getPar().getXSlope() - firstHit.getPar().getXSlope();
     double           yKink     = secondHit.getPar().getYSlope() - firstHit.getPar().getYSlope();
