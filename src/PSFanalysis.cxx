@@ -2,7 +2,9 @@
 // June 12, 2001 - rename variables to TKR_...  TU
 
 #include "PSFanalysis.h"
+#if 0 // should not be here
 #include "PSFRootFit.h"
+#endif
 #include <fstream>
 #include <cmath>
 #include <iomanip>
@@ -36,11 +38,7 @@ bool  PSFanalysis::apply ()
 
     m_energy();
     double e = m_energy.item()/1000.;
-    //std::cout << "energy is " << e << std::endl;
-    //std::cout << "energymin is " << m_emin << std::endl;
-    //std::cout << "energymax is " << m_emax << std::endl;
     if( m_emax > m_emin && (e < m_emin || e>m_emax)) return true;
-    //if( m_emax > m_emin && (log(e) < m_emin || log(e)>m_emax)) return true;
     m_loge += log(e);
 
     double  theta_squared = sqr(item());
@@ -81,15 +79,12 @@ double PSFanalysis::sigma()
     double mean = Histogram::mean();
     double binsize = mean/25;
     RebinHist::rebin(0, 200*binsize, binsize);
-	//out << "Sigma from mean: " << 0.5*sqrt(mean) << '\n';
 
     // make sure first bin not too full (less than 20% of total)
     while( (*this)[0] > 0.2* Histogram::total() && binsize>1e-6) {
         binsize *= 0.5;
         RebinHist::rebin(0, 200*binsize, binsize);
     }
-	//out << "\nHistogram (binsize= " << binsize << ')';
-	//for(int i=0; i<20;i++) out << m_psf_hist[i] << ", "; out << "...\n";
 	
     // form estimate of sigma (effective) from sum of bin contents squared
     Histogram::const_iterator h = Histogram::begin();
@@ -128,11 +123,12 @@ void PSFanalysis::report(ostream& out)
 
     out	<< "\n" << Analyze::make_label("95% contained")
 	<< setw(6) << ang95*180/3.14159 << " deg = "
-        << setw(4) << ang95/sig/2.447 << "*(2.45*sigma)" 
-        << std::endl;
+        << setw(4) << ang95/sig/2.447 << "*(2.45*sigma)" ;
 
+#if 0 // remove this from here: it should be a separate analysis
     PSFRootFit temp(*this);
     temp.report(out);
+#endif
 
 }
 void PSFanalysis::row_report(ostream&out)
@@ -146,6 +142,9 @@ void PSFanalysis::row_report(ostream&out)
             << percentile(68)*180/3.14159  << '\t'
             << percentile(95)*180/3.14159 << std::endl;
     }
+#if 0 // remove this from here: it should be a separate analysis
     PSFRootFit temp(*this);
     temp.report(out);
+#endif
+
 }
