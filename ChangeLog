@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sun Sep 28 20:05:19 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+taging  v6r10p1 after protection for no pointing info on TDS
+    *
+------------------------------------------------------------
+User: burnett  Sun Sep 28 20:05:19 PDT 2003
 merit/doc
 
 Modified Files:
