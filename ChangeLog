@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Sat Aug 31 14:55:20 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Added Files:
+	MeritRootTuple.cxx MeritRootTuple.h 
+Log Message:
+Added root output capability
+    *
+------------------------------------------------------------
 User: burnett  Sat Aug 31 08:50:33 PDT 2002
 merit/src/meritAlg
 
