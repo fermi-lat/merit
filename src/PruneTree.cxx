@@ -40,27 +40,27 @@ Following names were needed by nodes, but not supplied in the map:
 
 namespace {
 
-    // Convenient identifiers used for the nodes
+    // Identifiers used for the nodes
     //   Nodes before NODE_COUNT have the equivalent IMnodeInfo
-    // 
+    //   nodes after  NODE_COUNT have no  IMnodeInfo (no probability assigned?)
+   
     typedef enum{ ONE, TWO, THREE,  FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, 
        NODE_COUNT, CAT_HiE, NONE
     } Category;
 
 
-    /** table of information about nodes to expect in the IM file.
-     *      ( similar to ClassificationTree.cxx )
-     */
+    // table of information about nodes to expect in the IM file.
+    //      ( similar to ClassificationTree.cxx )
     //___________________________________________________________________________
 
     class IMnodeInfo { 
     public:
-        int id;           // unique ID for local identification
-        const char* name; // the name of the Prediction node in the IM XML file
-        int index;        // index of the classification type within the list of probabilites
+        int         id;    // unique ID for local identification
+        const char* name;  // the name of the Prediction node in the IM XML file
+        int         index; // index of the classification type within the list of probabilites
     };
 
-    // these have to correspond to the IM file
+    // these have to correspond to the IM xml file
     // the index to be checked
     IMnodeInfo imNodeInfo[] = {
         { ONE,   "Tiles&Hi-E",             1 }, 
@@ -76,14 +76,13 @@ namespace {
     };
 
 
-    /** Manage interface to one of the prediction nodes
-     *    (same as in ClassificationTree.cxx )
-     */
+    // Manage interface to one of the prediction nodes
+    //    (same as in ClassificationTree.cxx )
     //___________________________________________________________________________
 
     class IMpredictNode { 
     public:
-        IMpredictNode(const IMnodeInfo& info, const classification::Tree* tree )
+        IMpredictNode( const IMnodeInfo& info, const classification::Tree* tree )
             :  m_offset(info.index), m_tree(tree)
         {
             m_node = m_tree->getPredictTree(info.name);
@@ -92,16 +91,16 @@ namespace {
             assert(m_node);
         }
 
-        double evaluate() const{
+        double evaluate() const {
             return m_tree->navigate(m_node)[m_offset];
         }
 
         int m_offset;
-        const classification::Tree* m_tree;
-        const classification::Tree::Node* m_node;
+        const classification::Tree*        m_tree;
+        const classification::Tree::Node*  m_node;
     };
 
-  std::vector<IMpredictNode> imnodes;
+    std::vector<IMpredictNode> imnodes;
 
 } // anonymous namespace
 
@@ -127,6 +126,7 @@ public:
     Tuple& m_t;
 };
 
+
 //  Preselection to reduce background events before further analysis
 //     (similar to ClassificationTree::BackgroundCut or 
 //       Classificationtree::ClassificationTree  plus  ::execute)
@@ -134,7 +134,7 @@ public:
 
 class PruneTree::PreClassify {
 public:
-    //! ctor: associate with tree and find the branches we need
+    //! ctor: associate with ROOT tree and find the branches we need
     PreClassify( PruneTree::Lookup& lookup ) 
         : CalEnergySum  (*lookup( "CalEnergySum" )) 
         , CalXtalRatio  (*lookup( "CalXtalRatio" ))
@@ -148,7 +148,7 @@ public:
 	, CalCsIRLn     (*lookup( "CalCsIRLn"))
     { 
         // need an additional tuple item
-      new TupleItem("AcdUpperTileCnt", AcdUpperTileCnt);  // claim : is int
+      new TupleItem("AcdUpperTileCnt", AcdUpperTileCnt);  //  int ?
     }
 
     //! return truth value, for current TTree position
@@ -157,18 +157,18 @@ public:
       // Bill's IM node names are shown with quotes  "..."
  
 	// precondition for accepting the event
-        bool NoCal   = CalEnergySum > 5. && CalCsIRLn > 2.;
+        bool NoCal  = !( CalEnergySum > 5. && CalCsIRLn > 2.);
 	if ( NoCal ) {  return NONE; }
 
 
         // Prepare quantities for decisions 
         AcdUpperTileCnt = AcdTileCount - AcdNoSideRow2 - AcdNoSideRow1;
 
-        bool NoTiles = AcdTileCount == 0 ; // AcdUpperTileCnt == 0 ?
+        bool NoTiles  = AcdTileCount == 0 ; // AcdUpperTileCnt == 0 ?
 
-        bool lowE    = CalEnergySum < 350.;
-        bool medE    = CalEnergySum >= 350. && CalEnergySum < 3500.;
-        bool HiE     = !(lowE || medE);
+        bool lowE     = CalEnergySum < 350.;
+        bool medE     = CalEnergySum >= 350. && CalEnergySum < 3500.;
+        bool HiE      = !(lowE || medE);
 
         bool GoodXR   = CalXtalRatio > 0.02 && CalXtalRatio < 0.98 ;  // ?
         bool Xtals    = CalXtalsTrunc > 0.0 ;  // ?
@@ -178,14 +178,15 @@ public:
         bool Acdlt20  = (AcdActiveDist < -20.0 && AcdRibbonActDist < -20.0) 
                         || Tkr1SSDVeto > 1 ;
 
+
         // node "No ACD Tiles"
         if ( NoTiles ) {
 	  // node "HiE"
-          if ( HiE ) { return CAT_HiE ; }
+          if ( HiE )       { return CAT_HiE ; }
      
           else {
 	    // node  "CalXtalratio"
-            if ( GoodXR ) { return ONE; }   // graph uses LowE (= !HiE ?)
+            if ( GoodXR )  { return ONE; }   // graph uses LowE (= !HiE ?)
 	    
             else {
 	      // node "Xtals > 0"
@@ -251,6 +252,10 @@ public:
        AcdActiveDist <-150
        CalXtalRatio > .02 & CalXtalRatio < .98
        AcdActiveDist < -20 &MeasEnergyType == "Med-E"
+
+       add to new NTuple
+       double  IMPreSelProb;
+       double  IMPreselCat;
        */
 
     }
@@ -266,38 +271,46 @@ private:
     const double &   AcdNoSideRow2 ;
     const double &   AcdRibbonActDist;
     const double &   Tkr1SSDVeto; 
-    const double &   CalCsIRLn;  
-    // output
+    const double &   CalCsIRLn;
+  
+    // added TupleItem
     double  AcdUpperTileCnt;
-};
+
+}; // class PruneTree::PreClassify
 
 
+//  PruneTree
+//  @brief  
+//  @param  t         Tuple input file
+//  @param  xml_file  IM xml file or default $MERITROOT/xml/CTPruner_DC1.imw 
 //___________________________________________________________________________
 
-PruneTree::PruneTree( Tuple& t,  std::string xml_file)
+PruneTree::PruneTree( Tuple& t, std::string xml_file )
 {
     // create a lookup object, pass it to the preclassifier and the classification tree code
     PruneTree::Lookup looker(t) ;
     m_preclassify = new PruneTree::PreClassify(looker);
-    m_classifier = new classification::Tree(looker, std::cout, 0); // verbosity
+    m_classifier  = new classification::Tree(looker, std::cout, 0); // verbosity
 
    // accept, or generate filename 
-    std::string default_file("/xml/CTPruner_DC1.imw");
+    std::string  default_file( "/xml/CTPruner_DC1.imw" );
     if( xml_file.empty() ){
         const char *sPath = ::getenv("MERITROOT");
-        xml_file= std::string(sPath==0?  "../": sPath) + default_file;
+        xml_file = std::string(sPath==0 ?  "../" : sPath) + default_file;
     }
+
     // analyze the file
     m_classifier->load(xml_file);
 
     // get the list of root prediction tree nodes
-    imnodes.reserve(NODE_COUNT);
+    imnodes.reserve( NODE_COUNT );
     for( unsigned int i=0; i<NODE_COUNT; ++i){
-        IMpredictNode n(imNodeInfo[i],m_classifier);
-        imnodes[imNodeInfo[i].id]=n;
+        IMpredictNode n( imNodeInfo[i], m_classifier );
+        imnodes[imNodeInfo[i].id] = n;  // 
     }
 }
 
+//  Destructor 
 //___________________________________________________________________________
 
 PruneTree::~PruneTree(){
@@ -305,6 +318,7 @@ PruneTree::~PruneTree(){
     delete m_classifier;
 }
 
+//  Get the probability related to the node 
 //___________________________________________________________________________
 
 double PruneTree::operator()()
