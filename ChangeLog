@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun May 25 10:22:02 PDT 2003
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx 
+Log Message:
+allow for null title
+    *
+------------------------------------------------------------
 User: burnett  Sun May 25 10:14:26 PDT 2003
 merit/src/app
 
