@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.59 2003/10/19 14:28:31 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.60 2003/10/20 01:35:45 burnett Exp $
 */
 // Include files
 
@@ -499,7 +499,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.59 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.60 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -541,11 +541,15 @@ StatusCode meritAlg::execute() {
     }
     m_ctree->execute();
     m_fm->execute();
-    if( m_rootTupleSvc) {
+
+    // write out the ROOT tuple only for valid events
+    double track_count = m_tuple->tupleItem("TkrNumTracks")->value();
+    if( m_rootTupleSvc && track_count>0 ) {
             copyPointingInfo();
             copyFT1info();
             m_rootTupleSvc->storeRowFlag(true);
     }
+
     return sc;
 }
 //------------------------------------------------------------------------------
@@ -561,7 +565,8 @@ StatusCode meritAlg::finalize() {
         }
     }
     log << endreq;
-    log << MSG::INFO << "Number of warnings (FilterStatus not found): "<< m_warnNoFilterStatus << endreq;
+    if(m_warnNoFilterStatus>0)
+        log << MSG::INFO << "Number of warnings (FilterStatus not found): "<< m_warnNoFilterStatus << endreq;
 
     delete m_tuple;
     delete m_fm;
