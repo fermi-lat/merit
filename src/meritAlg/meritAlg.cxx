@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.66 2003/10/21 18:08:29 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.67 2003/11/25 15:57:47 cohen Exp $
 */
 // Include files
 
@@ -206,7 +206,7 @@ meritAlg::meritAlg(const std::string& name, ISvcLocator* pSvcLocator) :
   declareProperty("generated" , m_generated=10000);
   declareProperty("EventTreeName",     m_eventTreeName="MeritTuple");
   declareProperty("PointingTreeName", m_pointingTreeName="Exposure");
-  declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
+  declareProperty("IM_filename", m_IM_filename="$(MERITROOT)/xml/classification.imw");
   declareProperty("PrimaryType", m_primaryType="RECO"); // or "MC" (why not a bool?)
   declareProperty("NbOfEvtsInFile", m_nbOfEvtsInFile=100000);
 
@@ -484,7 +484,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-  out << "Merit tuple, " << "$Revision: 1.66 $" << std::endl;
+  out << "Merit tuple, " << "$Revision: 1.67 $" << std::endl;
 
   for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
     const TupleItem& item = **tit;
