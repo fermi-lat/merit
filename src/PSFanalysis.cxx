@@ -5,7 +5,9 @@
 
 #include <cmath>
 #include <iomanip>
-
+#ifdef WIN32
+#include <float.h>
+#endif
 using namespace std;
 
 inline static double sqr(double x){return x*x;}
@@ -37,9 +39,17 @@ bool  PSFanalysis::apply ()
     m_loge += log(e);
 
     double  theta_squared = sqr(item());
-    fill(theta_squared);
+#ifdef WIN32 
+    if(_finite(theta_squared)) {  // Win32 call available in float.h
+#else
+        if (isfinite(theta_squared)){ // gcc call available in math.h
+#endif
 
+        fill(theta_squared);
     return true;
+        }
+    else { return false; }
+
 }
 void PSFanalysis::clear()
 {
