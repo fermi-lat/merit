@@ -1,12 +1,9 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.h,v 1.4 2001/12/19 04:23:33 usher Exp $
-//  Project: glast analysis
-//   Author: Toby Burnett
-//
-//  Analyzes the glast tuple to determine a figure of merit that is relevant
-// for the point source discovery potential of the instrument. For a gaussian
-// point spread function it is
-//    sqrt(Aeff)/sigma
+/** @file FigureOfMerit.h
+    @brief Definition of class FigureOfMerit
 
+   $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.h,v 1.5 2002/05/26 03:35:08 burnett Exp $
+
+*/
 
 #ifndef FIGUREOFMERIT_H
 #define FIGUREOFMERIT_H
@@ -20,23 +17,32 @@
 
 
 //====================================================================================
+/** @class FigureOfMerit
+
+
+Analyzes the glast tuple to determine a figure of merit that is relevant
+ for the point source discovery potential of the instrument. For a gaussian
+ point spread function it is
+    sqrt(Aeff)/sigma
+
+*/
 class FigureOfMerit
 {
 public:
     FigureOfMerit(const Tuple& t, std::string cutstring="");
 
+    //! associate a sequence of cuts, identifed by characters in the string
     void            setCuts(std::string);
-    // associate a sequence of cuts, identifed by characters in the string
 
+    //! analyze the current tuple row
     bool            execute();
-    // analyze the current tuple row
 
+    //! write results, return acceptacnce
     void            report(std::ostream&);
-    // write results, return acceptacnce
 
     void            accept();
 
-    // process an accepted event
+    //! process an accepted event
     unsigned        accepted() const;   // { return m_accepted; }
 
     static float    area();             //{return s_area;}

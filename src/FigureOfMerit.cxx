@@ -1,5 +1,9 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.15 2002/09/02 15:41:28 burnett Exp $
+/** @file FigureOfMerit.cxx
+  @brief Implementation of FigureOfMerit, many Analyze subclasses 
 
+
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.16 2002/10/27 19:00:03 burnett Exp $
+*/
 
 #include "FigureOfMerit.h"
 #include "Cut.h"
@@ -17,7 +21,6 @@ unsigned        FigureOfMerit::accepted() const { return m_accepted; }
 float    FigureOfMerit::area(){return s_area;}
 unsigned FigureOfMerit::generated()  { return s_generated; }
 
-using namespace std;
 
 static inline double sqr(double x){return x*x;}
 //=============================================================================
@@ -42,8 +45,9 @@ public:
     FOMelapsed(const Tuple&t ): Analyze(t, "elapsed_time", "Elapsed time (sec):"), m_total(0),m_last(0) {};
     void FOMelapsed::report(std::ostream& out)
     {
-	out << endl << make_label(name());
-	out << setw(6) << m_total;
+        using namespace std;
+        out << std::endl << make_label(name());
+        out << setw(6) << m_total;
     }
     double time()const{return m_total;}
 
@@ -65,7 +69,8 @@ public:
     FOMtrigrate(const Tuple&t ): FOMelapsed(t) {};
     void FOMtrigrate::report(std::ostream& out)
     {
-	out << endl << make_label("Rate:");
+        using namespace std;
+        out << endl << make_label("Rate:");
 	out << setw(6) << setprecision(3);
         float rate = (time() ? count()/time() : 0);
         if( rate<1000. )  out  << rate << " Hz";
@@ -81,6 +86,7 @@ public:
     FOMdeadtime(const Tuple&t ): Summation(t, "Dead_Time", "Dead Time:"){};
     void FOMdeadtime::report(std::ostream& out)
     {
+        using namespace std;
 	out << endl << make_label(name());
 	out << setw(6) << total();
     }
@@ -91,6 +97,7 @@ public:
     FOMROtime(const Tuple&t ): Summation(t, "Max_RO_Time", "Readout Time (max):"){};
     void FOMROtime::report(std::ostream& out)
     {
+        using namespace std;
 	out << endl << make_label(name());
 	out << setw(6) << average();
     }
@@ -102,6 +109,7 @@ public:
     FOMevtsize(const Tuple&t ): Summation(t, "Total_Evt_Size", "Event Size (total):"){};
     void FOMevtsize::report(std::ostream& out)
     {
+        using namespace std;
 	out << endl << make_label(name());
 	out << setw(6) << average() << " bits";
     }
@@ -115,7 +123,9 @@ public:
         m_cal(t, "Cal_No_Xtals", "CAL Hits (40 b)")
     {}
     void EventSize::report(std::ostream& out)
-    {   
+    {
+        using namespace std;
+
         float size 
             = 19* m_acd.stat().mean()
             + 20* m_ssd.stat().mean()
@@ -143,6 +153,8 @@ public:
     FOMnsistrips(const Tuple&t ): Summation(t, "TKR_Cnv_Lyr_Hits", "Tracker hits (avg):"){};
     void FOMnsistrips::report(std::ostream& out)
     {
+        using namespace std;
+
 	out << endl << make_label(name());
 	out << setw(6) << average() << " hits";
     }
@@ -155,6 +167,8 @@ public:
     FOMncsixtals(const Tuple&t ): Summation(t, "Cal_No_Xtals", "CsI logs hit (avg):"){};
     void FOMncsixtals::report(std::ostream& out)
     {
+        using namespace std;
+
 	out << endl << make_label(name());
 	out << setw(6) << average() << " logs";
     }
@@ -166,6 +180,7 @@ public:
     FOMnacdtiles(const Tuple&t ): Summation(t, "ACD_TileCount", "ACD tiles hit (avg):"){};
     void FOMnacdtiles::report(std::ostream& out)
     {
+        using namespace std;
 	out << endl << make_label(name());
 	out << setw(6) << average() << " tiles";
     }
@@ -280,14 +295,15 @@ unsigned FigureOfMerit::s_generated = 100000;
 double FigureOfMerit::s_area = 60000.;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-void	FigureOfMerit::setCuts ( string istr )
+void	FigureOfMerit::setCuts ( std::string istr )
 {
+    using std::string;
     delete m_cuts;
-    m_cuts = new AnalysisList( string("Analysis cuts: ")+istr );
+    m_cuts = new AnalysisList( std::string("Analysis cuts: ")+istr );
     string::const_iterator	it = istr.begin();
 
     m_cuts->push_back( new Analyze("Found in tuple") );  // an event count for starting (# in tuple)
-    m_cuts->push_back( new Statistic(*s_tuple, "MC_Energy", "Generated energy"));
+    m_cuts->push_back( new Statistic(*s_tuple, "McEnergy", "Generated energy"));
     
     while (it != istr.end()) {
         switch (*it++) {
@@ -296,7 +312,7 @@ void	FigureOfMerit::setCuts ( string istr )
         {
             s_generated= ::atoi(&*it);
             while( it !=istr.end() && (*it++)!=',');
-            cerr << "Overriding generated number to " << s_generated << endl;
+            std::cerr << "Overriding generated number to " << s_generated << std::endl;
             break;
         }
         case '1':	    // 1(one) = level I trigger
@@ -313,7 +329,7 @@ void	FigureOfMerit::setCuts ( string istr )
             break;
 
         case 'n':	    // n = ntracks
-            m_cuts->push_back( new Cut(*s_tuple, "TKR_No_Tracks>0" ) );
+            m_cuts->push_back( new Cut(*s_tuple, "TkrNumTracks>0" ) );
             break;
         case 'c':	    // c = Cosmic cuts
             m_cuts->push_back( new CosmicCuts(*s_tuple) );
@@ -362,7 +378,7 @@ void	FigureOfMerit::setCuts ( string istr )
             m_cuts->push_back(new Statistic(*s_tuple, it, istr.end() )); 
             break;
         default: 
-            cerr << "Key '" << *(it-1) << "' ignored" << endl;
+            std::cerr << "Key '" << *(it-1) << "' ignored" << std::endl;
             break;
         }   // switch
     }	// while
@@ -373,35 +389,40 @@ FigureOfMerit::FigureOfMerit(const Tuple& t, std::string cut_string)
 : m_cuts(0)
 , m_accepted(0)
 {
+    using std::string;
     if (!s_tuple)	{   // initialize static member functions
-	s_tuple = &t;
+        s_tuple = &t;
 
-	// analyze title for parameters
-	string title(t.title());
-	string::size_type pos = title.find("area =");
-	if( pos != string::npos ) {
-	    string a(title, pos+6, title.length() );
-	    s_area = atof(a.data());
-	}
+        // analyze title for parameters
+        std::string title(t.title());
+        std::string::size_type pos = title.find("area =");
+        if( pos != string::npos ) {
+            string a(title, pos+6, title.length() );
+            s_area = atof(a.data());
+        }
         else {
-            cerr << "Area not found in title: assuming "
-                << s_area <<" cm^2" << endl;
+            std::cerr << "Area not found in title: assuming "
+                << s_area <<" cm^2" << std::endl;
         }
 
-	// look for number generated in title: either generated:1000 or gen(1000)
-	pos = title.find("generated");
-	if( pos != string::npos ) {
-	    string a(title, pos+10, 10);
-	    s_generated = atoi(a.data());
-	}
-	else if ( (pos = title.find("gen(")) != string::npos) {
+        // look for number generated in title: either generated:1000 or gen(1000)
+        pos = title.find("generated");
+        if( pos != string::npos ) {
+            string a(title, pos+10, 10);
+            s_generated = atoi(a.data());
+        }
+        else if ( (pos = title.find("gen(")) != string::npos) {
             string a(title, pos+4, 10);
-	    s_generated = atoi(a.data());
-	}
-	else	cerr << "generated events not found in title" << endl;
+            s_generated = atoi(a.data());
+        }
+        else	std::cerr << "generated events not found in title" << std::endl;
     }	// if (!s_instance)
 
+    //need this to add these aliases
+    Tuple& tt = const_cast<Tuple&>(t);
+
     if( !cut_string.empty()) setCuts(cut_string);
+
 }
 
 
@@ -422,6 +443,7 @@ bool FigureOfMerit::execute()
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void FigureOfMerit::report(std::ostream & out)
 {
+    using namespace std;
     out	<< "\n"<< Analyze::make_label("Generated events") << setw(6) << generated() ;
 
     Analyze::separator(out,'=');

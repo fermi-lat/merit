@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.32 2003/03/08 22:00:19 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.33 2003/03/15 03:40:32 burnett Exp $
 */
 // Include files
 
@@ -161,21 +161,6 @@ StatusCode meritAlg::initialize() {
             return StatusCode::FAILURE;
         }
     }
-
-    // define some aliases to start, for the transition
-    //                 Atwood             old
-    m_tuple->add_alias("McEnergy",        "MC_Energy");
-    m_tuple->add_alias("McDirErr",        "MC_Gamma_Err");
-    m_tuple->add_alias("TkrEnergyCorr",   "REC_CsI_Corr_Energy");
-    m_tuple->add_alias("TkrNumTracks",    "TKR_No_Tracks");
-    m_tuple->add_alias("GltWord",         "trig_bits");
-
-    m_tuple->add_alias("Tkr1_1stLayer",    "TKR_First_XHit");
-
-    m_tuple->add_alias("VtxXDir",         "TKR_Gamma_xdir");
-    m_tuple->add_alias("VtxYDir",         "TKR_Gamma_ydir");
-    m_tuple->add_alias("VtxZDir",         "TKR_Gamma_zdir");
-
     static double dummy = -99; // flag for defined, not implemented
 
      //now make the parallel ROOT tuple
@@ -220,7 +205,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.32 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.33 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;

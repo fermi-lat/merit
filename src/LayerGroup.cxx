@@ -1,6 +1,6 @@
 // LayerGroup.cxx: implementation of the LayerGroup class.
 //
-// $Id: LayerGroup.cxx,v 1.1.1.1 1999/12/20 22:29:13 burnett Exp $
+// $Id: LayerGroup.cxx,v 1.2 2001/06/14 19:51:59 usher Exp $
 //////////////////////////////////////////////////////////////////////
 
 #include "LayerGroup.h"
@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////
 
 LayerGroup::LayerGroup(const Tuple& t, int min_layer, int max_layer)
-:  Analyze(t, "TKR_First_XHit", "Events used")
+:  Analyze(t, "Tkr1_1stLayer", "Events used")
 ,  m_psf(t,0,0)
 ,  m_energy(t)
 ,  m_minlayer(min_layer), m_maxlayer(max_layer)

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.10 2002/10/27 19:00:04 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.11 2002/10/27 19:28:40 burnett Exp $
 
 // Main for merit
 
@@ -14,11 +14,11 @@
 #include <sys/types.h>
 #include <sys/timeb.h>
 #include <string>
-#include <strstream>
+#include <sstream>
 
 #include <assert.h>
 
-const char* _MERIT_VERSION = "$Revision: 1.10 $";
+const char* _MERIT_VERSION = "$Revision: 1.11 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
     // now assign input stream, either the file name or std input
         // Determine the # of events stored in ntuple
 
-    std::strstream title; 
+    std::stringstream title; 
     title << "gen(" << tuple->numEvents() << ")" << '\0';
     tuple->setTitle(title.str());
 

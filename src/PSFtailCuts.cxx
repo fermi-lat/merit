@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PSFtailCuts.cxx,v 1.3 2001/10/31 17:04:08 usher Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PSFtailCuts.cxx,v 1.4 2001/12/18 23:28:29 usher Exp $
 // PSFtailCuts.cxx: implementation of the PSFtailCuts class.
 //
 //////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ class FitKinkCut : public Analyze
 
     FitKinkCut(const Tuple& t) : Analyze(t, "TKR_Fit_Kink", "Tracker Fit Kink"),
                                  m_CalEne  (t.tupleItem("Cal_Energy_Deposit")),
-                                 m_1stPlane(t.tupleItem("TKR_First_XHit")),
+                                 m_1stPlane(t.tupleItem("Tkr1_1stLayer")),
                                  m_cosTheta(t.tupleItem("TKR_Gamma_zdir"))
     { }
 
@@ -78,7 +78,7 @@ class TAngleCut : public Analyze
 
     TAngleCut(const Tuple& t) : Analyze(t, "TKR_t_angle", "Tracker t0-t1 angle"),
                                 m_CalEne  (t.tupleItem("Cal_Energy_Deposit")),
-                                m_1stPlane(t.tupleItem("TKR_First_XHit")),
+                                m_1stPlane(t.tupleItem("Tkr1_1stLayer")),
                                 m_cosTheta(t.tupleItem("TKR_Gamma_zdir"))
     { }
 

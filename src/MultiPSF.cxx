@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/MultiPSF.cxx,v 1.2 2001/10/22 18:34:32 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/MultiPSF.cxx,v 1.3 2002/12/21 21:44:57 srobinsn Exp $
 
 #include "MultiPSF.h"
 #include "FigureOfMerit.h"
@@ -11,7 +11,7 @@ static  int n_ebins=6;
 static double sqr(double x){return x*x;}
 
 MultiPSF::MultiPSF(const Tuple& t, char code)
-:Analyze(t,"MC_zdir","accepted for multi-PSF")
+:Analyze(t,"McZdir","accepted for multi-PSF")
 , m_bin_size(0.) // default bins size
 {
     static double factor = sqrt(10.);
