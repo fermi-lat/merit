@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_REVISION($Revision: 1.1 $)
+AC_REVISION($Revision: 1.2 $)
 
 AC_INIT(src/AnalysisList.cxx)
 AC_CONFIG_AUX_DIR(config)
@@ -17,12 +17,13 @@ dnl Check for location of installed GLAST libraries
 AC_ARG_WITH(glast, --with-glast=DIR (path to GLAST libraries),
 	glast_prefix=$withval, glast_prefix="/usr/local/glast")
 AC_SUBST(glast_prefix)
-AC_MSG_RESULT( GLAST installation found at: $glast_prefix)
+AC_MSG_RESULT( GLAST installation at $glast_prefix assumed)
 
 dnl Check that it is really there
 AC_CHECK_PROG(MERIT, merit, merit, no, $glast_prefix/bin)
 if test "$MERIT" = no; then
-   AC_MSG_ERROR(GLAST installation not found in $glast_prefx)
+   AC_MSG_WARN([GLAST installation not found in $glast_prefix
+])
 fi
 
 AC_OUTPUT(Makefile src/Makefile)
