@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Wed May 30 15:09:28 PDT 2001
+merit/src/app meritapp.cxx
+
+Modified Files:
+	meritapp.cxx 
+Log Message:
+
+fix argument parsing bug
+    *
+------------------------------------------------------------
 User: burnett  Thu May 24 10:07:14 PDT 2001
 merit/src/app meritapp.cxx
 
