@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.3 2002/05/30 02:40:04 burnett Exp $
+// $Id: Tuple.cxx,v 1.4 2002/05/31 19:37:49 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -8,6 +8,8 @@
 #include <cfloat>
 #ifndef DEFECT_NO_STRINGSTREAM
 #include <sstream>
+#else
+#include <strstream>
 #endif
 
 
@@ -187,7 +189,7 @@ std::istream& operator >> (std::istream& in, Tuple& t)
 }
 
 TupleItem::TupleItem(const std::string& iname, float x)
-: m_name(iname), m_pdatum(&datum), datum(x)
+: m_name(iname), datum(x), m_pdatum(&datum)
 {
 
     if( Tuple::s_currentTuple==0 )
@@ -233,7 +235,11 @@ Tuple::tupleItem(const std::string& name)const
 {
     Tuple::const_iterator it = find(name);
     if( it != end() ) return *it;
+#ifndef DEFECT_NO_STRINGSTREAM
     std::stringstream  errmsg;
+#else
+    std::strstream errmsg;
+#endif
     errmsg << "Sorry, did not find '" << name << "' in the tuple\n";
     std::cerr << errmsg.str() << std::endl;
     throw (errmsg.str());
