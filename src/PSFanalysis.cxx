@@ -2,7 +2,8 @@
 // June 12, 2001 - rename variables to TKR_...  TU
 
 #include "PSFanalysis.h"
-
+#include "PSFRootFit.h"
+#include <fstream>
 #include <cmath>
 #include <iomanip>
 #ifdef WIN32
@@ -34,8 +35,12 @@ bool  PSFanalysis::apply ()
 {
 
     m_energy();
-    double e = m_energy.item();
+    double e = m_energy.item()/1000.;
+    //std::cout << "energy is " << e << std::endl;
+    //std::cout << "energymin is " << m_emin << std::endl;
+    //std::cout << "energymax is " << m_emax << std::endl;
     if( m_emax > m_emin && (e < m_emin || e>m_emax)) return true;
+    //if( m_emax > m_emin && (log(e) < m_emin || log(e)>m_emax)) return true;
     m_loge += log(e);
 
     double  theta_squared = sqr(item());
@@ -123,7 +128,11 @@ void PSFanalysis::report(ostream& out)
 
     out	<< "\n" << Analyze::make_label("95% contained")
 	<< setw(6) << ang95*180/3.14159 << " deg = "
-	<< setw(4) << ang95/sig/2.447 << "*(2.45*sigma)" ;
+        << setw(4) << ang95/sig/2.447 << "*(2.45*sigma)" 
+        << std::endl;
+
+    PSFRootFit temp(*this);
+    temp.report(out);
 
 }
 void PSFanalysis::row_report(ostream&out)
@@ -135,6 +144,8 @@ void PSFanalysis::row_report(ostream&out)
             << exp(m_loge.mean()) << '\t' 
             << sigma()*180/3.14159    << '\t'
             << percentile(68)*180/3.14159  << '\t'
-            << percentile(95)*180/3.14159;
+            << percentile(95)*180/3.14159 << std::endl;
     }
+    PSFRootFit temp(*this);
+    temp.report(out);
 }
