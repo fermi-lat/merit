@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sun May 25 10:14:26 PDT 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx ClassificationTree.h 
+Log Message:
+full interface to Bill's IM trees.
+    *
+------------------------------------------------------------
+User: burnett  Sun May 25 10:14:26 PDT 2003
 merit/cmt
 
 Modified Files:
