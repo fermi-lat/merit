@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.32 2003/08/25 23:38:47 burnett Exp $
+ * $Id: release.notes,v 1.33 2003/09/08 04:21:31 burnett Exp $
  *
+ *  v6r9p1  THB  08-oct-03 fix test program to run PSF cuts
  *  v6r9    THB  07-oct-03 new CT's for PSF analysis
  *  v6r8    THB  25-aug-03 implement use of ntupleWriterSvc
  *  v6r7p1  THB  17-aug-03 protect against TDS info not present
