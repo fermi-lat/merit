@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.39 2003/05/15 16:11:46 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.40 2003/05/28 21:55:16 burnett Exp $
 */
 // Include files
 
@@ -177,11 +177,6 @@ StatusCode meritAlg::initialize() {
 
     if( setupTools().isFailure()) return StatusCode::FAILURE;
 
-     //now make the parallel ROOT tuple
-    if(!m_root_filename.value().empty() ){
-        log << MSG::INFO << "Opening " << m_root_filename << " to write ROOT tuple" << endreq;
-        m_root_tuple=new MeritRootTuple(m_tuple, m_root_filename);
-    }
     // the tuple is made: create the classification object 
     try { 
         const char * pkgpath = ::getenv("CLASSIFICATIONROOT");
@@ -194,6 +189,12 @@ StatusCode meritAlg::initialize() {
               << e.what() <<endreq;
     }catch (...)  {
         log << MSG::ERROR << "Unexpected exception creating classification trees" << endreq;
+    }
+
+     //now make the parallel ROOT tuple
+    if(!m_root_filename.value().empty() ){
+        log << MSG::INFO << "Opening " << m_root_filename << " to write ROOT tuple" << endreq;
+        m_root_tuple=new MeritRootTuple(m_tuple, m_root_filename);
     }
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
@@ -225,7 +226,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.39 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.40 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
