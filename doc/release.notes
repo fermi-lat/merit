@@ -2,9 +2,11 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.38 2003/10/03 00:21:12 burnett Exp $
+ * $Id: release.notes,v 1.39 2003/10/04 07:28:59 burnett Exp $
  *
- *  v6r11   THB  03-oct-03 need explicit use astro with CMT v1r14
+ *  v6r11p2 THB  16-oct-03 Fix background classification tree cuts 
+ *          Johann         FT1 elaboration   
+ *  v6r11p1 THB  03-oct-03 need explicit use astro with CMT v1r14
  *  v6r11   THB  02-oct-03 FT1 start
  *  v6r10p1 THB  28-sep-03 allow for no pointing info
  *  v6r10   THB  28-sep-03 implement output of exposure data; add new background rejection tuple item
