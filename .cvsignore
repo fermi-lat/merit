@@ -10,3 +10,4 @@ Makefile
 Makefile.in
 stamp-h*
 Win32
+Win32Debug
