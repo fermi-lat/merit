@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.46 2003/08/15 22:23:09 golpa Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.47 2003/08/16 18:35:42 golpa Exp $
 */
 // Include files
 
@@ -230,7 +230,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.46 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.47 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -254,9 +254,9 @@ StatusCode meritAlg::execute() {
     m_time = header->time();
     m_event = header->event();
 
-	SmartDataPtr<OnboardFilterTds::FilterStatus> filterStatus(eventSvc(), "/Event/Filter/FilterStatus");
-	m_statusHi=filterStatus->getHigh();
-	m_statusLo=filterStatus->getLow();
+    SmartDataPtr<OnboardFilterTds::FilterStatus> filterStatus(eventSvc(), "/Event/Filter/FilterStatus");
+    m_statusHi=filterStatus->getHigh();
+    m_statusLo=filterStatus->getLow();
 
     if(m_root_tuple)m_root_tuple->fill();
 
