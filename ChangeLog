@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu May  8 08:46:39 PDT 2003
+merit/src
+
+Modified Files:
+	LayerGroup.cxx PSFanalysis.cxx PSFtailCuts.cxx 
+Log Message:
+Change names.
+    *
+------------------------------------------------------------
 User: burnett  Mon May  5 22:08:22 PDT 2003
 merit/src/meritAlg
 
