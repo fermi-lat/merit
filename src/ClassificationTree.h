@@ -2,7 +2,7 @@
 @brief 
 
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.10 2003/10/27 13:51:21 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.11 2003/11/22 15:34:54 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -29,6 +29,10 @@ public:
     void execute();  
 
     ~ClassificationTree();
+
+    //! true if the vertex measurment of the gamma direction is better than one-track
+    //! must be called after the execute method.
+    bool useVertex()const;
 
 private:
     int backgroundRejection();
