@@ -1,11 +1,11 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PSFtailCuts.cxx,v 1.10 2003/11/15 15:25:03 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PSFtailCuts.cxx,v 1.11 2003/11/25 23:25:42 burnett Exp $
 // PSFtailCuts.cxx: implementation of the PSFtailCuts class.
 //
 //////////////////////////////////////////////////////////////////////
 
 #include "PSFtailCuts.h"
 #include "Cut.h"
-#include <strstream>
+#include <sstream>
 #include <cmath>
 //=============================================================================
 class AbsValueCut : public Analyze {
@@ -14,9 +14,9 @@ class AbsValueCut : public Analyze {
         : Analyze(t,name)
         , m_value(value)
     {
-        std::strstream label;
-        label << "abs(" << name << ")<" << value << '\0';
-        set_name(std::string(label.str()));
+        std::stringstream label;
+        label << "abs(" << name << ")<" << value;
+        set_name(label.str());
     }
 
     virtual bool apply() {
