@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Sat May 10 21:45:13 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+
+replace test tuple with new names. classification stuff still under development.
+    *
+------------------------------------------------------------
+User: burnett  Sat May 10 21:45:13 PDT 2003
 merit/src/app
 
 Modified Files:
