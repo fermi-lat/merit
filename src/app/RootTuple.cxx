@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.4 2001/12/18 23:28:30 usher Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.5 2001/12/19 04:23:33 usher Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #include "RootTuple.h"
 
@@ -112,9 +112,13 @@ const TupleItem* RootTuple::tupleItem(const std::string& name)const
 
     TBranch* b = m_tree->GetBranch(name.c_str());
     if( b==0 ) {
-         std::cerr << "Sorry, did not find '" << name << "' in the tuple\n";
+#if 1 // new behavior
+        return 0;
+#else
+         std::cerr << "\nSorry, did not find '" << name << "' in the tuple\n";
          exit(-1);
          return *it;
+#endif
     }
     TLeafF* leaf = (TLeafF*)(*b->GetListOfLeaves())[0];
     const char * fname = leaf->GetName();

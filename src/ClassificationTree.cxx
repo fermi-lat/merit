@@ -43,7 +43,22 @@ namespace {
             "RT VTX Thick Core (0)",
             "RT 1`Tkr Thick Core (0)",
             "CT 1Tkr Thick Tail (0)"};
-      
+            std::pair<std::string,std::string> alias_pairs[]={
+                std::make_pair(    "CalEdgeAngle",    "EvtCalEdgeAngle"),
+                std::make_pair(    "Energy.Sum.Opt",  "EvtEnergyOpt"),
+                std::make_pair(    "TKR.ComptonRatio","EvtTkrComptonRatio"),
+                std::make_pair(    "Tkr1.1stGaps",    "Tkr1FirstGaps"),
+                std::make_pair(    "Tkr1E1stChisq",   "EvtTkr1EFirstChisq"),
+                std::make_pair(    "Tkr1EChisq",      "EvtTkr1EChisq"),
+                std::make_pair(    "Tkr1EFrac",       "EvtTkr1EFrac"),
+                std::make_pair(    "Tkr1EQual",       "EvtTkr1EQual"),
+                std::make_pair(    "Tkr2E1stChisq",   "EvtTkr2EFirstChisq"),
+                std::make_pair(    "Tkr2EChisq",      "EvtTkr2EChisq"),
+                std::make_pair(    "Tkr2EQual",       "EvtTkr2EQual"),
+                std::make_pair(    "TwrEdgeAngle",    "EvtTkrEdgeAngle"),
+                std::make_pair(    "VtxEAngle",       "EvtVtxEAngle")
+            };
+        
    enum{ CAL_ENERGY, 
        VTX_THICK, VTX_THICK_TAIL, VTX_THICK_BEST, 
        ONE_TRK_THICK_TAIL, ONE_TRACK_THICK_BEST, 
@@ -55,7 +70,6 @@ namespace {
 }
 
     ClassificationTree::ClassificationTree( Tuple& t, std::string xml_file)
-        : m_classifier( new classification::Tree(2))
     {
 
         if( xml_file.empty() ){
@@ -63,14 +77,34 @@ namespace {
             xml_file= (sPath==0)?  "../xml/PSF_Analysis.xml":  std::string(sPath) + "/xml/PSF_Analysis.xml";
         }
 
-        // translate the Tuple map
-        classification::Tree::VariableMap vmap;
-        for( Tuple::iterator tit = t.begin(); tit != t.end(); ++tit){
-            TupleItem & var = **tit;
-            vmap[var.name()] = &var.value();
+        // create lookup class to make translations
+        class Lookup : public classification::Tree::ILookUpData {
+        public:
+            Lookup(Tuple& t):m_t(t){}
+            const double * operator()(const std::string& name){
+                TupleItem* ti = const_cast<TupleItem*>(m_t.tupleItem(name));
+                if( ti==0) return 0;
+                const double * f = & (ti->value());
+                return f;
+            }
+            Tuple& m_t;
+        };
+        Lookup looker(t);
+
+        //add aliases to the tuple
+        int npairs = sizeof(alias_pairs)/sizeof(std::pair<std::string, std::string>);
+        for( int i=0; i< npairs; ++i) {
+            // create a tuple item first
+            std::string tname = alias_pairs[i].second;
+            const TupleItem* ti = t.tupleItem(tname);
+
+            t.add_alias(tname, alias_pairs[i].first);
         }
 
-        m_classifier->load(xml_file, vmap);
+        m_classifier = new classification::Tree(looker, 2);
+        // translate the Tuple map
+  
+        m_classifier->load(xml_file);
 
         // now connect to output
         //
