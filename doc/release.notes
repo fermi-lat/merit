@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.43 2003/11/15 15:26:11 burnett Exp $
+ * $Id: release.notes,v 1.44 2003/11/26 02:16:43 burnett Exp $
  *
+ *  v6r14p1 THB  26-nov-03 fix one of the classification tree parameters
  *  v6r14   THB  25-nov-03 Update rest of trees with post-Rome Atwood analysis
                            root trees merged, names changed
                            new gui print options
