@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.9 2001/12/18 23:28:29 usher Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.10 2001/12/19 04:23:33 usher Exp $
 
 
 #include "FigureOfMerit.h"
@@ -38,7 +38,7 @@ private:
 //=============================================================================
 class FOMelapsed : public Analyze {
 public:
-    FOMelapsed(const Tuple&t ): Analyze(t, "Triage_Time", "Elapsed time (sec):"), m_total(0),m_last(0) {};
+    FOMelapsed(const Tuple&t ): Analyze(t, "Elapsed_time", "Elapsed time (sec):"), m_total(0),m_last(0) {};
     void FOMelapsed::report(std::ostream& out)
     {
 	out << endl << make_label(name());
