@@ -1,9 +1,9 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/GaudiTuple.cxx,v 1.1 2001/03/23 19:52:02 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/GaudiTuple.cxx,v 1.2 2001/03/24 02:01:30 tlindner Exp $
 // Original author: T. Burnett
 
 #include "GaudiTuple.h"
-#include "Gaudi/Interfaces/INTuple.h"
-#include "Gaudi/NTupleSvc/NTuple.h"
+#include "GaudiKernel/INTuple.h"
+#include "GaudiKernel/NTuple.h"
 
 GaudiTuple::GaudiTuple(const std::string& title, NTuplePtr* nt)
 : Tuple(title)

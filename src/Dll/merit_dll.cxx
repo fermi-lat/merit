@@ -1,36 +1,8 @@
-// $Header: $
-//====================================================================
-//  merit_dll.cpp
-//--------------------------------------------------------------------
-//
-//  Package    : merit
-//
-//  Description: Implementation of DllMain routine.
-//               The DLL initialisation must be done seperately for 
-//               each DLL. 
-//
-//
-//====================================================================
+/** @file GlastDigi_dll.cpp
 
-// DllMain entry point
-#include "Gaudi/System/DllMain.icpp"
-#include <iostream>
-void GaudiDll::initialize(void*) 
-{
-}
+  $Header: /nfs/slac/g/glast/ground/cvs/GlastDigi/src/Dll/GlastDigi_dll.cxx,v 1.1 2002/03/20 19:47:00 heather Exp $
+*/
 
-void GaudiDll::finalize(void*) 
-{
-}
-extern void merit_load();
-#include "Gaudi/Kernel/FactoryTable.h"
-
-extern "C" FactoryTable::EntryList* getFactoryEntries() {
-  static bool first = true;
-  if ( first ) {  // Don't call for UNIX
-    merit_load();
-    first = false;
-  }
-  return FactoryTable::instance()->getEntries();
-} 
+#include "GaudiKernel/LoadFactoryEntries.h"
+LOAD_FACTORY_ENTRIES(merit)
 

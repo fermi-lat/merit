@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.h,v 1.3 2001/12/18 23:28:29 usher Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.h,v 1.4 2001/12/19 04:23:33 usher Exp $
 //  Project: glast analysis
 //   Author: Toby Burnett
 //
@@ -11,9 +11,6 @@
 #ifndef FIGUREOFMERIT_H
 #define FIGUREOFMERIT_H
 
-#ifdef __GNUG__
-#pragma interface
-#endif
 
 #include "LayerGroup.h"
 #include "PSFanalysis.h"

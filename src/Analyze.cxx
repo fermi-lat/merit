@@ -10,7 +10,10 @@ bool    Analyze::s_showperc = false;    // show percentages in readout flag
 //=============================================================================
 
 Analyze::Analyze(const Tuple& t, const string& itemname, const string& name)
-: m_count(0),m_tupleItem(t.tupleItem(itemname)), m_name(name), m_seen(0) {}
+: m_count(0), m_name(name), m_seen(0) 
+{
+   set_tuple_item(t,itemname);
+}
 
 Analyze::Analyze(const TupleItem& item, const string& name)
 : m_count(0), m_tupleItem(&item), m_name(name), m_seen(0) {}

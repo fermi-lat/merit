@@ -2,7 +2,7 @@
 #ifndef GGTUPLE_H
 #define GGTUPLE_H
 #include "analysis/Tuple.h"
-#include "Gaudi/NTupleSvc/NTuple.h"
+#include "GaudiKernel/NTuple.h"
 
 
 #include <string>
