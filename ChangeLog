@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Mon Aug 25 14:54:05 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+convert to use RootTupleSvc.
+    *
+------------------------------------------------------------
+User: burnett  Mon Aug 25 14:54:05 PDT 2003
 merit/cmt
 
 Modified Files:
