@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Tue Dec 18 15:31:26 PST 2001
+merit/mgr
+
+Modified Files:
+	requirements 
+Log Message:
+Updating requirements for making a shareable accessible by root, and a root test program
+    *
+------------------------------------------------------------
 User: usher  Tue Dec 18 15:28:30 PST 2001
 merit/src/root/rootApp
 
