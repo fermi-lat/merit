@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Aug 24 11:48:32 PDT 2004
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+add gem summary word
+    *
+------------------------------------------------------------
+User: burnett  Tue Aug 24 11:48:32 PDT 2004
 merit/cmt
 
 Modified Files:
