@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.57 2003/10/15 00:14:55 hansl Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.58 2003/10/16 22:35:23 burnett Exp $
 */
 // Include files
 
@@ -369,12 +369,12 @@ void meritAlg::copyFT1info(){
 	  SmartDataPtr<Event::TkrVertexCol>(eventSvc(), EventModel::TkrRecon::TkrVertexCol);
 	if(!pVtxCol)
 	  {
-	    log << MSG::ERROR << "Vertex Col not found in TDS" << endreq;
+	    log << MSG::DEBUG << "Vertex Col not found in TDS" << endreq;
 	    return;
 	  }
 	if(pVtxCol->size()==0) 
 	  {
-	    log << MSG::ERROR << "Vertex Col found in TDS BUT empty" << endreq;
+	    log << MSG::DEBUG << "Vertex Col found in TDS BUT empty" << endreq;
 	    return;
 	  }
 	//Assuming the best vertex comes always first.....    
@@ -480,7 +480,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.57 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.58 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
