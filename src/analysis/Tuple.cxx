@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.7 2003/03/04 05:49:00 burnett Exp $
+// $Id: Tuple.cxx,v 1.8 2003/03/08 22:00:19 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -224,6 +224,13 @@ TupleItem::TupleItem(const std::string& iname, double x)
         FATAL((fatal+iname+"\" ").c_str());
     }
     Tuple::s_currentTuple->push_back(this);
+}
+    
+TupleItem::TupleItem(const std::string& name, float* x)
+: m_name(name)
+{
+    std::cerr << "Float not implemented yet" << std::endl;
+    throw("Tuples with float pointer not implemented");
 }
 
 TupleItem::TupleItem(const std::string& iname, double* px)

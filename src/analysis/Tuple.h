@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.3 2003/03/04 05:49:00 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.4 2003/03/08 22:00:19 burnett Exp $
 
 #ifndef TUPLE_H
 #define TUPLE_H
@@ -18,6 +18,9 @@ public:
 
     //! alternate constructor uses pointer to other buffer
     TupleItem(const std::string& name, double* x);
+
+    //! alternate constructor uses pointer to other buffer
+    TupleItem(const std::string& name, float* x);
 
     void operator=(double x){
       datum=x;
