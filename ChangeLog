@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Dec 16 08:31:18 PST 2004
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+Remove unnecessary references to Tracker TDS classes
+    *
+------------------------------------------------------------
 User: burnett  Mon Oct 11 14:30:03 PDT 2004
 merit/doc
 
