@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.12 2003/03/15 17:59:34 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.13 2003/05/06 05:08:22 burnett Exp $
 
 // Main for merit
 
@@ -19,7 +19,7 @@
 
 #include <assert.h>
 
-const char* _MERIT_VERSION = "$Revision: 1.12 $";
+const char* _MERIT_VERSION = "$Revision: 1.13 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -122,20 +122,33 @@ int main(int argc, char* argv[])
 
 
         (*outstream) << "Tuple title: \""<< tuple->title() << "\"\n" ;
-
+#ifdef CLASSIF
         // create the ct: pass in the tuple.
-        ClassificationTree ct(*tuple);
+        ClassificationTree* pct;
+        try {
+           pct = new ClassificationTree(*tuple);
+        }catch ( std::exception &e ) {
+            std::cerr << "Caught: " << e.what( ) << std::endl;
+            std::cerr << "Type: " << typeid( e ).name( ) << std::endl;
+        }catch(...) {
+            std::cerr << "Unknown exception from classification " << std::endl;
+        }
+#endif
         FigureOfMerit fm(*tuple, cutstr);
 
         ::ftime(&t_init);
 
         while ( tuple->nextEvent() ) { 
-            ct.execute();   // fill in the classification (testing here)
+#ifdef CLASSIF
+            pct->execute();   // fill in the classification (testing here)
+#endif
             fm.execute(); // run the rest.
         }
         ::ftime(&t_final);
         fm.report(*outstream);
-
+#ifdef CLASSIF
+        delete pct;
+#endif
         std::cerr << "\nElapsed time: "<< t_final.time-t_init.time << " sec" << std::endl;
         return 0;
 }

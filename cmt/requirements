@@ -1,6 +1,6 @@
 package merit
 version v6r3p1
-# $Id: requirements,v 1.30 2003/05/09 00:13:08 burnett Exp $
+# $Id: requirements,v 1.31 2003/05/09 20:01:43 burnett Exp $
 
 branches doc
 
@@ -15,6 +15,7 @@ use GlastSvc *
 use Event *
 use GuiSvc v3*
 use classification *
+use facilities *
 
 # read/ write ROOT trees (any old ROOT will do)
 use RootPolicy *
