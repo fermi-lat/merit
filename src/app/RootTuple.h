@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.h,v 1.4 2003/05/25 17:12:53 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.h,v 1.5 2003/11/22 15:34:55 burnett Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #ifndef ROOTTUPLE_H
 #define ROOTTUPLE_H
