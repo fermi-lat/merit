@@ -42,7 +42,20 @@ MeritPlots::~MeritPlots()
 
 void MeritPlots::run()
 {
-  if (merit) merit->execute();
+  //if (merit) merit->execute();
+  if (merit)
+  {
+    int numEvents = merit->numTupleEvents();
+    int numPassed = 0;
+    int idx       = 0;
+
+    while(idx < numEvents)
+    {
+      if (merit->cutEvent(idx++)) numPassed++;
+    }
+
+    printf("** Number events: %i, Number passed: %i\n",numEvents,numPassed);
+  }
 
   return;
 }

@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.3 2001/10/23 15:06:12 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.4 2001/12/18 23:28:30 usher Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #include "RootTuple.h"
 
@@ -144,6 +144,17 @@ const TupleItem* RootTuple::tupleItem(const std::string& name)const
 bool RootTuple::nextEvent(){
     if(m_event<m_numEvents) {
         m_tree->GetEvent(m_event++);
+        return true;
+    }
+    return false;
+}
+
+    
+bool RootTuple::getEvent(int idx)
+{
+    if (idx >= 0 && idx < m_numEvents)
+    {
+        m_tree->GetEvent(idx);
         return true;
     }
     return false;
