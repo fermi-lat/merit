@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Wed May 29 19:30:34 PDT 2002
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx 
+Log Message:
+m stringstream fix for gcc
+    *
+------------------------------------------------------------
+User: burnett  Wed May 29 19:30:34 PDT 2002
 merit/src
 
 Modified Files:
