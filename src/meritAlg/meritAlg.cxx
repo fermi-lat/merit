@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.75 2004/08/24 18:48:32 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.76 2004/08/27 01:16:59 heather Exp $
 */
 // Include files
 
@@ -285,17 +285,17 @@ StatusCode meritAlg::initialize() {
     title << "TDS: gen(" << m_generated << ")";
     m_tuple = new Tuple(title.str());
 
-    addItem( "EvtRun",  &m_run );
-    addItem( "EvtId",   &m_event );
-    addItem( "EvtTime", &m_time );
-    addItem( "EvtLiveTime", &m_livetime);
+    addItem( "Run",  &m_run );
+    addItem( "Event_ID",   &m_event );
+    addItem( "elasped_time", &m_time );
+  // add when approved by Science Analysis group  addItem( "EvtLiveTime", &m_livetime);
 
-    addItem( "McSrcId", &m_mc_src_id );
+    addItem( "MC_src_Id", &m_mc_src_id );
 
-    addItem( "GltFilterStatusHI",   &m_statusHi );
-    addItem( "GltFilterStatusLO",   &m_statusLo );
-    addItem( "GltFilterAlgStatus",  &m_filterAlgStatus );
-    addItem( "GltFilterAngSep",     &m_separation );
+    addItem( "FilterStatus_HI",   &m_statusHi );
+    addItem( "FilterStatus_LO",   &m_statusLo );
+    addItem( "FilterAlgStatus",  &m_filterAlgStatus );
+    addItem( "FilterAngSep",     &m_separation );
 
     //FT1 INFO:
     addItem( "FT1EventId",          &m_ft1eventid);
@@ -499,7 +499,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.75 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.76 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -563,7 +563,7 @@ StatusCode meritAlg::execute() {
     }
  
     m_gemCondition = gem==0? -1 : gem->conditionSummary();
-    m_eventFlags = eventSummary==0 ? 0 : eventSummary->eventFlags();
+    // does not yet compile m_eventFlags = eventSummary==0 ? 0 : eventSummary->eventFlags();
 
     m_ctree->execute();
     m_fm->execute();
