@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Oct 21 02:38:14 PDT 2003
+merit/src/meritAlg
+
+Removed Files:
+	GaudiTuple.cxx GaudiTuple.h 
+Log Message:
+obsolete
+    *
+------------------------------------------------------------
 User: burnett  Tue Oct 21 02:37:54 PDT 2003
 merit/src/meritAlg
 
