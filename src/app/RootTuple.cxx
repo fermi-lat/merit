@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.5 2001/12/19 04:23:33 usher Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.6 2003/05/15 04:49:01 burnett Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #include "RootTuple.h"
 
@@ -76,9 +76,10 @@ RootTuple::RootTuple(std::string title, std::string file, std::string treeName)
         std::cerr << "file \""<< file << "\" not found." << std::endl;
         exit(1);
     }
+    // first try the requested
     m_tree =  (TTree*)tfile->Get(treeName.c_str());
-    if( m_tree==0)
-        m_tree = getTree(tfile);
+    // if doesn't work, try the old standby
+    if( m_tree==0)  m_tree = (TTree*)tfile->Get("1");
    if( m_tree ==0 ) {
         std::cerr << "tree \""<<treeName<< "\" not found." << std::endl;
         tfile->ls();
@@ -122,7 +123,13 @@ const TupleItem* RootTuple::tupleItem(const std::string& name)const
     }
     TLeafF* leaf = (TLeafF*)(*b->GetListOfLeaves())[0];
     const char * fname = leaf->GetName();
-    float * pf = (float*)leaf->GetValuePointer();
+    if( leaf->GetLenType()==4) {
+        float * pf = (float*)leaf->GetValuePointer();
+        return new TupleItem(name,pf);
+    }else{
+        double* pf = (double*)leaf->GetValuePointer();
+        return new TupleItem(name,pf);
+    }
 
     /*
     // setup the ntuple to access just this list of events
@@ -142,7 +149,6 @@ const TupleItem* RootTuple::tupleItem(const std::string& name)const
         myNtuple->GetEvent(i);
     }
     */
-    return new TupleItem(name,pf);
 }    
     
 bool RootTuple::nextEvent(){
