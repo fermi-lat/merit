@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Sun Oct 27 11:00:04 PST 2002
+merit/src
+
+Modified Files:
+	Cut.h FigureOfMerit.cxx Statistic.cxx 
+Log Message:
+
+gcc 3.x mods/corrections.
+    *
+------------------------------------------------------------
 User: burnett  Mon Oct 14 22:25:30 PDT 2002
 merit/src/meritAlg
 
