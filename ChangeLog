@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Sat May 25 20:35:11 PDT 2002
+merit/src/analysis
+
+Added Files:
+	Histogram.cxx Histogram.h RebinHist.cxx RebinHist.h Tuple.cxx 
+	Tuple.h TupleTitle.cxx TupleTitle.h smplstat.cxx smplstat.h 
+Log Message:
+initial Gleam-compatible version
+    *
+------------------------------------------------------------
 User: burnett  Sat May 25 20:35:09 PDT 2002
 merit/src/Dll
 
