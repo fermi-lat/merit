@@ -1,7 +1,7 @@
 /** @file MeritRootTuple.cxx
     @brief Implementation of the class MeritRootTuple
 
-  $Header:$
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.cxx,v 1.4 2003/03/15 17:59:34 burnett Exp $
 
   */
 
@@ -15,13 +15,13 @@
 
 
 
-MeritRootTuple::MeritRootTuple(Tuple* tuple, std::string filename)
+MeritRootTuple::MeritRootTuple(Tuple* tuple, std::string filename, std::string treename)
 : m_tuple(tuple)
 {
 
     m_tf = new TFile(filename.c_str(),"RECREATE");
 
-    m_tree = new TTree("MeritTuple", m_tuple->title().c_str());
+    m_tree = new TTree(treename.c_str(), m_tuple->title().c_str());
     m_floats.resize(m_tuple->size());
     std::vector<float>::iterator fit = m_floats.begin();
     for(Tuple::iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit, ++fit ){
