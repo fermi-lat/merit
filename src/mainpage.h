@@ -1,12 +1,20 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.5 2002/05/31 17:48:02 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.6 2003/03/08 22:00:19 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
-  <br>
-  Implements an algorithm, meritAlg, that does a complete PSF and Aeff analysis.
-  <br>
 
-  \section Keys
+<hr>
+  \section meritAlg  meritAlg
+
+  Implements an algorithm, meritAlg, that does a PSF and Aeff analysis.
+
+  <h3> Properties for meritAlg </h3> 
+    @param  meritAlg.cuts ["LnA"]
+    @param  meritAlg.generated [10000]
+    @param  meritAlg.RootFilename  [""]
+
+  <h3> Keys Used in FigureOfMerit::setCuts </h3>
+  
   <pre>
 Cut keys are as follows:"
 Gnnnn, : Set number generated to nnnnn, overriding gen(nnn) in tuple title"
@@ -34,8 +42,8 @@ Mx: Multi-PSF for bin x, x=0,1,2,3,4: do PSF analysis for 6 dE/E bins from "
 
   </pre>
 
-Sample output, the first sensible Gleam-related results, from Gleam v2r1p5. 
-<hr>
+<h3> Sample output from meritAlg for Gleam v2r1p5 </h3>
+
 <pre>
         Generated events :  10000
 =======================================================
@@ -75,17 +83,67 @@ Analysis cuts: nA
             Combined FOM :   2416 cm
 
 </pre>
+<hr>
+\section fastFilter
+ <h3>Usage </h3>
+      @verbatim
+      fastFilter.exe   [input_merit.root]   [output.root]
+         input-merit.root    default   src/test/merit100.root
+         output.root         default   <input_merit.root>_filt.root       
+      @endverbatim
+      Default path to input and output Root files and the path to the IM xml
+      file are set in the requirements. 
 
-  @section Properties Properties
-  @param  meritAlg.cuts ["LnA"]
-  @param  meritAlg.generated [10000]
-   @param meritAlg.RootFilename  [""]
-
+ <h3> Purpose: </h3>
+      Read the input merit Root file and generate a new output Root tuple
+      with selected events only. Additional branches are added, which contain
+      the event category and gamma probability. The selection is tuned to reduce 
+      the background (typically by a factor of 5) and keep the gamma signal. 
+      The selection uses the IM xml file xml/CTPruner_DC1.imw (from Bill Atwood). 
+      <p>
+ <h3> Method </h3>
+   <ul>
+      <li>The exclusive leaves of the classification tree (CT), file CTPruner_DC1.imw,
+      are implemented in 
+      PruneTree::PreClassify. This subclass immitates the decision chain of the CT. 
+      The result is per event the leave category, which in turn is used to evaluate the
+      gamma probability of the event via the classification::Tree. 
+      <li>
+      PruneTree creates an instance of PruneTree::PreClassify and  
+      classification::Tree. 
+      <li>
+      The interface to the branches of the Root Tree is established  via RootTuple, a
+      vector of TupleItem, each holding a pair of name and value. Additional 
+      TupleItems are added, which store per event the resulting CT category and 
+      gamma probability. PruneTree::Lookup is a helper class, which provides access 
+      to the TupleItem value by name. 
+      <li>
+      fastFilter.cxx (main) defines the input and output root files and the 
+      IM xml file. It creates the interface RootTuple. It then loops over the events 
+      of the input Root tuple, extracts the event probability and fills the new
+      Root tuple depending on this probability (value now hard coded). 
+      <li> Additional documentation:
+           <ul><li> 
+           <a href=http://www.slac.stanford.edu/~hansl/soft/glastSw/fastFilter/CTPruner.jpg>
+           IM Classification Tree </a> 
+           <li>Plot of 
+           <a href=http://www.slac.stanford.edu/~hansl/soft/glastSw/fastFilter/cat-prob-merit100.ps>
+           Leave category versus probability </a> for test file merit100.root. 
+           </ul>
+      <li> It would be easy to reduce in addition the number of branches written to
+      the output tuple, to further reduce the sice of the output files.
+      </ul></p>
 
   <hr>
-  \section notes release notes
-  \include release.notes
-  \section requirements requirements
-  \include requirements
+  @section notes release notes
+  release.notes
+  <hr>
+  @section requirements requirements
+  @verbinclude requirements
+  <hr>
+    @todo Separate the different applications into subpackages
+    @todo Define base class for the common parts of PruneTree and ClassificationTree.
+    @todo Awaiting feedback from Bill on some parts of the decision tree implemented
+    in PruneTree::PreClassify. 
 
 */
