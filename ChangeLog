@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: hansl  Tue Oct 14 17:14:56 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+limit/count no of warnings for missing FilterStatus; cure compile warnings
+    *
+------------------------------------------------------------
 User: cohen  Tue Oct 14 13:45:46 PDT 2003
 merit/src/meritAlg
 
