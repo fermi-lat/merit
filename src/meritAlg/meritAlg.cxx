@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.27 2002/10/15 05:25:30 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.28 2002/10/27 19:00:04 burnett Exp $
 
 // Include files
 
@@ -263,7 +263,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.27 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.28 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -325,7 +325,6 @@ void meritAlg::processTDS(const Event::EventHeader& header,
     
     m_time = header.time();
     m_event = header.event();
-    m_mc_src_id = -1; // need MC header for this?
  
     m_tracks = tracks.size();
     m_trig = header.trigger();
