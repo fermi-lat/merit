@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sun Sep 28 17:12:18 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+fix up classification, pointing output
+    *
+------------------------------------------------------------
+User: burnett  Sun Sep 28 17:12:18 PDT 2003
 merit/src
 
 Modified Files:
