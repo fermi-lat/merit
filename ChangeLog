@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: cohen  Mon Oct 20 12:48:51 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+use Classification tree to determine which direction to record
+    *
+------------------------------------------------------------
+User: cohen  Mon Oct 20 12:48:51 PDT 2003
 merit
 
 Modified Files:
