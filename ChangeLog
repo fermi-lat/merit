@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Sep  1 07:37:58 PDT 2002
+merit/src/analysis
+
+Modified Files:
+	Tuple.h 
+Log Message:
+add access function to TupleEntry
+    *
+------------------------------------------------------------
 User: burnett  Sat Aug 31 22:45:19 PDT 2002
 merit/src/meritAlg
 
