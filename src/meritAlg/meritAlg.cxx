@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.54 2003/10/03 00:21:12 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.55 2003/10/13 06:21:33 cohen Exp $
 */
 // Include files
 
@@ -114,12 +114,12 @@ private:
     /// classification
     ClassificationTree* m_ctree;
 
-    /// the various tree names
-    StringProperty m_eventTreeName;
-    StringProperty m_pointingTreeName;
-    StringProperty m_FT1TreeName;
+  /// the various tree names
+  StringProperty m_eventTreeName;
+  StringProperty m_pointingTreeName;
+  StringProperty m_FT1TreeName;
   StringProperty m_primaryType;
-
+  long           m_nbOfEvtsInFile;
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -140,6 +140,8 @@ Algorithm(name, pSvcLocator), m_tuple(0)
     declareProperty("FT1TreeName", m_FT1TreeName="FT1");
     declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
     declareProperty("PrimaryType", m_primaryType="RECO");
+    declareProperty("NbOfEvtsInFile", m_nbOfEvtsInFile=100000);
+
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::setupTools() {
@@ -389,7 +391,8 @@ void meritAlg::copyFT1info(){
 	log << MSG::ERROR << "EventHeader not found in TDS" << endreq;
 	return;
       }
-    long event_id = pEvent->event();
+    long run_id = pEvent->run();
+    long event_id = run_id * m_nbOfEvtsInFile + pEvent->event();
 
     //Now we get the coordinates: frol the ExposureCol
     Event::ExposureCol* elist = 0;
@@ -473,7 +476,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.54 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.55 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
