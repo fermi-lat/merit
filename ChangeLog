@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Dec 10 07:25:04 PST 2003
+merit/src
+
+Modified Files:
+	PruneTree.cxx PruneTree.h 
+Log Message:
+Add documentation, define it to be a function object that returns the probablitly.
+    *
+------------------------------------------------------------
 User: burnett  Tue Dec  9 20:41:49 PST 2003
 merit/xml
 
