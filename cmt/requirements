@@ -1,6 +1,6 @@
 package merit
-version v5r12p3
-# $Id: requirements,v 1.22 2002/12/21 21:44:56 srobinsn Exp $
+version v5r13p1
+# $Id: requirements,v 1.23 2002/12/23 00:57:00 srobinsn Exp $
 
 branches doc
 
@@ -22,13 +22,15 @@ macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 
 
 #static library
+macro analysis_h "" WIN32 " analysis/*.h"
+macro meritAlg_h "" WIN32 " meritAlg/*.h"
 
-library merit_lib -no_share *.cxx analysis/*.cxx ${merit_headers}
+library merit_lib -no_share ${merit_headers} *.cxx\
+  ${analysis_h} analysis/*.cxx 
 
 #component library with meritAlg
-macro_append merit_headers "" WIN32 " analysis/*.h"
 
-library merit   meritAlg/*.cxx Dll/*.cxx $(libs) 
+library merit   ${meritAlg_h} meritAlg/*.cxx Dll/*.cxx $(libs) 
 
 macro merit_linkopts      "-L $(meritDir) -lmerit_lib"   WIN32 ""
 macro merit_app_linkopts  $(merit_linkopts)
