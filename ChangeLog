@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Tue Oct 23 08:06:12 PDT 2001
+merit/mgr requirements
+
+Modified Files:
+	requirements 
+Log Message:
+
+remove redundant copies of header files;
+add code to RootTuple to search for the TTree.
+    *
+------------------------------------------------------------
 User: burnett  Tue Oct 23 08:06:11 PDT 2001
 merit/merit AnalysisList.h Analyze.h BackgroundCuts.h Cut.h EnergyAnalysis.h FigureOfMerit.h LayerGroup.h Level1.h MultiPSF.h PSFanalysis.h PSFtailCuts.h RebinHist.h Resolution.h Statistic.h
 
