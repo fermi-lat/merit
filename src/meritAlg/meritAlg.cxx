@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.11 2002/06/06 16:39:03 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.12 2002/06/16 23:51:24 burnett Exp $
 
 // Include files
 
@@ -58,14 +58,28 @@ private:
     std::string m_cuts; 
     
     // places to put stuff found in the TDS
-    float m_mce, m_trig, m_first_hit, m_angle_diff, m_recon_energy;
-    float m_tracks,
-        m_time;
+    float m_mce, m_trig, m_angle_diff, m_recon_energy;
+    float m_time;
+
+    float m_mc_zdir;
+
+    // from track analysis
+    float m_tracks;
+    float m_first_hit;
+    float m_tkr_gamma_zdir;
 
     // set by cal analysis
-    float  m_no_xtals;
+    float m_cal_energy_deposit;
+    float m_no_xtals;
     float m_no_xtals_trunc;
     float m_cal_xtal_ratio;
+    float m_cal_transv_rms;
+    float m_cal_long_rms;
+    float m_calFitErrNrm;
+
+
+    float m_cal_elayer[8];
+    float m_cal_z;
 
     // set by acd analysis
     float m_acd_doca;
@@ -114,16 +128,31 @@ StatusCode meritAlg::initialize() {
     // define tuple items
     new TupleItem("MC_Energy",      &m_mce);
     new TupleItem("MC_Gamma_Err",   &m_angle_diff);
+    new TupleItem("MC_zdir",        &m_mc_zdir);
     new TupleItem("elapsed_time",   &m_time);
 
     new TupleItem("trig_bits",      &m_trig);
     new TupleItem("TKR_No_Tracks",  &m_tracks);
     new TupleItem("TKR_First_XHit", &m_first_hit);
+    new TupleItem("TKR_Gamma_zdir", &m_tkr_gamma_zdir);
 
     new TupleItem("REC_CsI_Corr_Energy", &m_recon_energy);
+
+    new TupleItem("Cal_Energy_Deposit", &m_cal_energy_deposit);
     new TupleItem("Cal_No_Xtals",     &m_no_xtals);
     new TupleItem("Cal_No_Xtals_Trunc",&m_no_xtals_trunc);
-    new TupleItem("Cal_Xtal_Ratio",    &m_cal_xtal_ratio);
+    new TupleItem("Cal_Xtal_Ratio",   &m_cal_xtal_ratio);
+    new TupleItem("CAL_long_rms",     &m_cal_long_rms);
+    new TupleItem("CAL_transv_rms",   &m_cal_transv_rms);
+    new TupleItem("CAL_Fit_errNrm",   &m_calFitErrNrm);
+
+    const std::string name_eLayer = "Cal_eLayer";
+    const char* digit[8]={"0","1","2","3","4","5","6","7"};
+    for (int layer=0; layer<8; layer++){
+        
+        new TupleItem(std::string("Cal_eLayer")+digit[layer],m_cal_elayer[layer]);
+    }
+    new TupleItem("CAL_Z",           &m_cal_z);
 
     new TupleItem("ACD_DOCA",        &m_acd_doca);
     new TupleItem("ACD_TopDOCA",     &m_doca[0]);
@@ -176,6 +205,7 @@ void meritAlg::particleReco(const Event::McParticleCol& particles)
        const Event::McParticle& primary= **particles.begin();
        m_mce = (primary.initialFourMomentum().e() - primary.initialFourMomentum().mag())*1e-3;
        m_incident_dir = Hep3Vector(primary.initialFourMomentum()).unit();
+       m_mc_zdir = m_incident_dir.z();
     }
     
 }
@@ -203,7 +233,8 @@ void meritAlg::processTDS(const Event::EventHeader& header,
         Point p = track.getPosition();
         Vector dir = track.getDirection();
         
-        
+        m_tkr_gamma_zdir = dir.z();
+
         // get difference from incident mc direction: allow either convention on direction of 
         // output.
         m_angle_diff = acos( fabs( m_incident_dir * dir) );
@@ -238,16 +269,16 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
         float xpos = -1000.0;
         float ypos = -1000.0;
         
-        zpos = (cl->getPosition()).z();
+        zpos = (cl->getPosition()).z(); 
         xpos = (cl->getPosition()).x();
         ypos = (cl->getPosition()).y();
         
         const std::vector<double>& eneLayer = cl->getEneLayer();
+
         const std::vector<Vector>& posLayer = cl->getPosLayer();
         
         float trans_rms = cl->getRmsTrans();
         float long_rms = cl->getRmsLong();
-        
         Vector caldir = cl->getDirection();
         float caltheta = -1000.0;
         float calphi = -1000.0;
@@ -265,6 +296,8 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
         
         float eFactor = .26 + .35 / (cl->getEnergyCorrected());
         float calFitErrNrm = transvOffset/eFactor;
+
+        
         
 /*
         sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Transv_Offset", transvOffset);
@@ -290,6 +323,13 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
         sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_theta", caltheta);
         sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_phi", calphi);
  */       
+    // set tuple items for this cluster. (What if more????)
+        m_cal_z=zpos;
+        std::copy(eneLayer.begin(), eneLayer.end(), m_cal_elayer);
+        m_calFitErrNrm = calFitErrNrm;
+        m_cal_transv_rms = trans_rms;
+        m_cal_long_rms = long_rms;
+
     }
     
     
@@ -311,6 +351,7 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     
     */
     // set tuple items
+    
     m_no_xtals = no_xtals;
     m_no_xtals_trunc = no_xtals_trunc;
     m_cal_xtal_ratio = cal_xtal_ratio;
