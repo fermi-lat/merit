@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header:$
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.26 2003/12/07 16:43:57 burnett Exp $
 
 */
 #include "ClassificationTree.h"
@@ -26,8 +26,9 @@ namespace {
     };
 
     /** table of information about nodes to expect in the IM file.
+      */
+    //___________________________________________________________________________
 
-    */
     class IMnodeInfo { 
     public:
         int id;           // unique ID for local identification
@@ -56,9 +57,11 @@ namespace {
         { BKG_1TRK_LO,       "CT 1TRK-LO", 0}
     };
 
-    /** Manage interface to one of the prediction nodes
 
-    */
+    /** Manage interface to one of the prediction nodes
+     */
+    //___________________________________________________________________________
+
     class IMpredictNode { 
     public:
         IMpredictNode(const IMnodeInfo& info, const classification::Tree* tree)
@@ -85,25 +88,32 @@ namespace {
             };
 #endif
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // create lookup class to make translations
+
+// create lookup class to make translations
+//___________________________________________________________________________
+
 class Lookup : public classification::Tree::ILookUpData {
 public:
     Lookup(Tuple& t):m_t(t){}
+
     const double * operator()(const std::string& name){
         TupleItem* ti = const_cast<TupleItem*>(m_t.tupleItem(name));
         if( ti==0) return 0;
         const double * f = & (ti->value());
         return f;
     }
+
     // note that float flag depends on how the tuple does it.
     bool isFloat()const{return m_t.isFloat();}
     Tuple& m_t;
 };
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//   simple function that either finds an existing, or creates a new TupleItem
+//___________________________________________________________________________
+
 double * getTupleItemPointer(Tuple& t, std::string name)
 {
-    // simple little function that either finds an existing, or creates a new TupleItem
+    // 
       TupleItem* ti;
       try
 	{
@@ -115,8 +125,10 @@ double * getTupleItemPointer(Tuple& t, std::string name)
       if( ti==0) ti = new TupleItem(name);
     return &(ti->value());
 }
-}// anonymous namespace
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+}  // anonymous namespace
+
+
+
 /** @class BackgroundCut
     @brief set up and apply post-Rome cuts to the data in merit Tuple
     @author Toby Burnett
@@ -129,22 +141,24 @@ double * getTupleItemPointer(Tuple& t, std::string name)
         if( bkg ) { // this is background...
         }
 @endverbatim
-
 */
+//___________________________________________________________________________
+
 class ClassificationTree::BackgroundCut {
 public:
     //! ctor: just associate with tree and find the branches we need
     BackgroundCut(Tuple& t) 
-        : VtxAngle (*getTupleItemPointer(t,                  "VtxAngle")) 
-        , EvtEnergySumOpt (*getTupleItemPointer(t,      "EvtEnergySumOpt"))
-        , EvtTkrComptonRatio (*getTupleItemPointer(t,"EvtTkrComptonRatio")) 
-        , Tkr1ToTFirst (*getTupleItemPointer(t,             "Tkr1ToTFirst"))
-        , Tkr1ToTAve (*getTupleItemPointer(t,             "Tkr1ToTAve"))
-        , AcdTotalEnergy (*getTupleItemPointer(t,        "AcdTotalEnergy"))  
-        , AcdRibbonActDist (*getTupleItemPointer(t,    "AcdRibbonActDist")) 
-        , AcdTileCount (*getTupleItemPointer(t,          "AcdTileCount"))
-        , FilterStatus_HI (*getTupleItemPointer(t,         "FilterStatus_HI"))
+        : VtxAngle          (*getTupleItemPointer(t,"VtxAngle")) 
+        , EvtEnergySumOpt   (*getTupleItemPointer(t,"EvtEnergySumOpt"))
+        , EvtTkrComptonRatio(*getTupleItemPointer(t,"EvtTkrComptonRatio")) 
+        , Tkr1ToTFirst      (*getTupleItemPointer(t,"Tkr1ToTFirst"))
+        , Tkr1ToTAve        (*getTupleItemPointer(t,"Tkr1ToTAve"))
+        , AcdTotalEnergy    (*getTupleItemPointer(t,"AcdTotalEnergy"))  
+        , AcdRibbonActDist  (*getTupleItemPointer(t,"AcdRibbonActDist")) 
+        , AcdTileCount      (*getTupleItemPointer(t,"AcdTileCount"))
+        , FilterStatus_HI   (*getTupleItemPointer(t,"FilterStatus_HI"))
         {  }
+
 
     //! return truth value, for current TTree position
     operator bool()
@@ -195,7 +209,9 @@ private:
 };
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//_________________________________________________________________________
+
 ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string xml_file)
 : m_log(log)
 , m_background(*new BackgroundCut(t))
@@ -208,6 +224,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         }
 
         Lookup looker(t);
+
 #if 0  // uncomment this if needed
         //add aliases to the tuple
         int npairs = sizeof(alias_pairs)/sizeof(std::pair< std::string, std::string>);
@@ -218,7 +235,8 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         }
 #endif
 
-        // special tuple items we want on the output: make sure they are included in the list
+        // special tuple items we want on the output: 
+        // make sure they are included in the list
         t.tupleItem("AcdActiveDist");
         t.tupleItem("CalEnergySum");
         t.tupleItem("TkrRadLength");
@@ -252,16 +270,16 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         t.tupleItem("Tkr1KalEne");
 
         // these are used for preliminary cuts to select the tree to use
-        m_firstLayer = t.tupleItem("Tkr1FirstLayer");
-        m_calEnergySum = t.tupleItem("CalEnergySum");
-        m_calTotRLn =t.tupleItem("CalTotRLn");
-        m_evtEnergySumOpt = t.tupleItem("EvtEnergySumOpt");
+        m_firstLayer          = t.tupleItem("Tkr1FirstLayer");
+        m_calEnergySum        = t.tupleItem("CalEnergySum");
+        m_calTotRLn           = t.tupleItem("CalTotRLn");
+        m_evtEnergySumOpt     = t.tupleItem("EvtEnergySumOpt");
         m_evtTkrEComptonRatio = t.tupleItem("EvtTkrEComptonRatio");
-        m_evtTkrComptonRatio = t.tupleItem("EvtTkrComptonRatio");
-        m_calMIPDiff = t.tupleItem("CalMIPDiff");
-        m_calLRmsRatio = t.tupleItem("CalLRmsRatio");
-        m_acdTileCount = t.tupleItem("AcdTileCount");
-        m_vtxAngle = t.tupleItem("VtxAngle");
+        m_evtTkrComptonRatio  = t.tupleItem("EvtTkrComptonRatio");
+        m_calMIPDiff          = t.tupleItem("CalMIPDiff");
+        m_calLRmsRatio        = t.tupleItem("CalLRmsRatio");
+        m_acdTileCount        = t.tupleItem("AcdTileCount");
+        m_vtxAngle            = t.tupleItem("VtxAngle");
 
         // New items to create or override
         m_goodCalProb = getTupleItemPointer(t,"IMgoodCalProb");
@@ -270,12 +288,13 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_psfErrPred =  getTupleItemPointer(t,"IMpsfErrPred");
         m_gammaProb=    getTupleItemPointer(t,"IMgammaProb");
 
-        // since at least one of the background rejection trees needs to know about the core prob
+        // since at least one of the background rejection trees needs to 
+        // know about the core prob
         t.add_alias( "IMcoreProb", "Pr(CORE)");
 
         m_classifier = new classification::Tree(looker, log, 0); // verbosity
-        // translate the Tuple map
-  
+
+        // translate the Tuple map  
         m_classifier->load(xml_file);
 
         // get the list of root prediction tree nodes
@@ -284,20 +303,23 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
             IMpredictNode n(imNodeInfo[i],m_classifier);
            imnodes[imNodeInfo[i].id]=n;
         }
-
     }
- 
+
+    //_________________________________________________________________________ 
+
     bool ClassificationTree::useVertex()const
     {
         return *m_vtxAngle>0 && *m_vtxProb >0.5;
     }
 
+    //_________________________________________________________________________
+
     void ClassificationTree::execute()
     {
 
         // initialize IM output variables
-        *m_coreProb=*m_psfErrPred=0;
-        *m_vtxProb=*m_gammaProb=0;
+        *m_coreProb = *m_psfErrPred=0;
+        *m_vtxProb  = *m_gammaProb=0;
 
         // select cal energy type:
         //ifelse((CalEnergySum< 100. | CalTotRLn < 2), ifelse((CalTotRLn < 2 | CalEnergySum <  5), "NoCal", "LowCal"),"HighCal")
@@ -308,17 +330,18 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
               "MedCal")
            ,"HighCal")
  */
-        int cal_type=NOCAL;
 
+        int cal_type=NOCAL;
         if(        *m_calEnergySum >3500. && *m_calTotRLn > 2.){ cal_type=CALHIGH;
         }else if ( *m_calEnergySum > 350. && *m_calTotRLn > 2.){ cal_type=CALMED;
         }else if ( *m_calEnergySum >   5. && *m_calTotRLn > 2.){ cal_type=CALLOW;
         } 
         // evalue appropriate tree for good cal prob
-        *m_goodCalProb= imnodes[cal_type].evaluate();
+        *m_goodCalProb = imnodes[cal_type].evaluate();
 
         // evaluate the rest only if cal prob ok
         if( *m_goodCalProb<0.25 || cal_type==NOCAL )   return;
+
  
         // select vertex-vs-1 track, corresponding tree for core, psf
         int core_type=0, psf_type=0;
@@ -339,13 +362,16 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         }
 
         // now evalute the appropriate trees
-        *m_coreProb =   imnodes[core_type].evaluate();
+        *m_coreProb   = imnodes[core_type].evaluate();
         *m_psfErrPred = imnodes[psf_type].evaluate();
 
         // gamma prob: for now just the preliminary cuts
-        *m_gammaProb= m_background?  0 : 1;
+        *m_gammaProb  = m_background?  0 : 1;
 
     }
+
+    //_________________________________________________________________________
+
     ClassificationTree::~ClassificationTree()
     {
         delete m_classifier;
