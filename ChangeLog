@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: hansl  Mon Dec 15 09:23:55 PST 2003
+merit/src
+
+Modified Files:
+	PruneTree.cxx 
+Log Message:
+use Bill s index for probability
+    *
+------------------------------------------------------------
 User: hansl  Fri Dec 12 16:48:11 PST 2003
 merit/src
 
