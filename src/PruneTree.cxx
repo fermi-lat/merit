@@ -129,7 +129,7 @@ private:
 class PruneTree::PreClassify {
 public:
     // Constructor: 
-    //   associate TupleItems with the branches of the (input) ROOT tree and
+    //   associate TupleItems to the branches of the ROOT tree and
     //   add additional TupleItems 
     //_______________________________________________________________________
 

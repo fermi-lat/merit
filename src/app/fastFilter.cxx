@@ -1,5 +1,5 @@
 /** @file  fastFilter.cxx 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.4 2003/12/19 00:35:23 hansl Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.5 2004/01/06 18:44:00 hansl Exp $
 */
 
 #include "app/RootTuple.h"
@@ -15,21 +15,23 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.4 2003/12
 
 
 
-/**   Application: fastFilter: 
- *   - read merit input, apply loose filter selection and 
- *    - add filter category + probability to ntuple
- *    - write out new ntuple with filtered events and 
- *      gamma category and probability added 
+/** Application: fastFilter
+ *                                                     
+ *   - Read merit input, apply loose filter selection.                           
+ *   - Add filter category + probability to Tuple.                               
+ *   - Write out new ROOT Ntuple with filtered events add the branches 
+ *     gamma category and probability.                                           
+ * 
+ *  Usage: fastFilter  [input_file] [output_file]                                
  *
- *  usage: fastFilter  [input_file] [output_file]
+ *   - input_file  : if not provided, use env var MERIT_INPUT_FILE               
+ *   - output_file : if not provided, and MERIT_OUTPUT_FILE is not defined, 
+ *                   append "_filt" to the input_file name                       
  *
- *   input_file : if not provided, use env var MERIT_INPUT_FILE 
- *   output_file: if not provided, and MERIT_OUTPUT_FILE is not defined, 
- *                append "_filt" to the input_file name
- *
- *   imfile     : IM xml file defined by env var IM_FILE_FILTER,
- *                if not defined, use default $MERITROOT/xml/CTPruner_DC1.imw
- *  gammaProbCut : cut on probability that event is gamma candidate
+ *   - imfile      : IM xml file defined by env var IM_FILE_FILTER, 
+ *                   if not defined, use default $MERITROOT/xml/CTPruner_DC1.imw 
+ *   - gammaProbCut: cut on probability of event being a gamma candidate, 
+ *                   at present set in the code.        
  * 
  *  Environment variables are defined in the requirements
  * _____________________________________________________________________________
