@@ -1,7 +1,7 @@
 /** @file MeritRootTuple.h
 @brief Declaration of the class MeritRootTuple
 
-  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.4 2003/03/15 03:40:32 burnett Exp $
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.5 2003/03/15 17:59:34 burnett Exp $
   
     Original author T. Burnett 
     
@@ -20,14 +20,14 @@ class TTree;
 *
 * @author T. Burnett
 *
-* $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.4 2003/03/15 03:40:32 burnett Exp $
+* $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/MeritRootTuple.h,v 1.5 2003/03/15 17:59:34 burnett Exp $
 */
 
 class MeritRootTuple  {
     
 public:
     /// define the associated root tuple and a file to write it to
-    MeritRootTuple::MeritRootTuple(Tuple* tuple, std::string filename);
+    MeritRootTuple::MeritRootTuple(Tuple* tuple, std::string filename, std::string treename="MeritTuple");
     ~MeritRootTuple();
     
     /// fill it

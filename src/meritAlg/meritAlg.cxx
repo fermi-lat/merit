@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.40 2003/05/28 21:55:16 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.41 2003/06/12 19:35:22 burnett Exp $
 */
 // Include files
 
@@ -71,7 +71,7 @@ private:
     std::string m_cuts; 
     StringProperty m_root_filename;
     StringProperty m_IM_filename;
-    
+    StringProperty m_treename;    
     MeritRootTuple* m_root_tuple;
 
     IToolSvc* m_pToolSvc;
@@ -102,6 +102,7 @@ Algorithm(name, pSvcLocator), m_tuple(0), m_root_tuple(0) {
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
     declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
+    declareProperty("RootTreeName", m_treename="MeritTuple");
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::setupTools() {
@@ -194,7 +195,7 @@ StatusCode meritAlg::initialize() {
      //now make the parallel ROOT tuple
     if(!m_root_filename.value().empty() ){
         log << MSG::INFO << "Opening " << m_root_filename << " to write ROOT tuple" << endreq;
-        m_root_tuple=new MeritRootTuple(m_tuple, m_root_filename);
+        m_root_tuple=new MeritRootTuple(m_tuple, m_root_filename, m_treename);
     }
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
@@ -226,7 +227,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.40 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.41 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;

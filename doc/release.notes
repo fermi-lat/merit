@@ -2,9 +2,10 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.25 2003/05/31 23:15:20 burnett Exp $
+ * $Id: release.notes,v 1.26 2003/06/12 19:43:07 burnett Exp $
  *
- *  v6r5p1  THB  15-jun-03 bug fix that crashed destructor
+ *  v6r6    THB  13-jun-03 make tuple TTree name settable by job options ("RootTreeName") 
+ *  v6r5p1  THB  12-jun-03 bug fix that crashed destructor
  *  v6r5    THB  30-may-03 Classification integrated--4 new variables, logic to set them
  *  v6r4    THB  15-may-03 Sets up classification (not run yet)
  *  v6r3p2  THB  10-may-03 fix test program with new names
