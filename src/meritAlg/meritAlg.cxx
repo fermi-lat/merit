@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.63 2003/10/20 19:57:29 golpa Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.64 2003/10/20 22:07:49 golpa Exp $
 */
 // Include files
 
@@ -518,15 +518,15 @@ void meritAlg::copyFT1info(){
     m_FT1tuple->fill(2,  sdir.dec() );
 
     // instrument coords
-    m_FT1tuple->fill(3,  glastDir.theta() );
+    m_FT1tuple->fill(3,  glastDir.theta()*180/M_PI );
 
     double phi_deg = glastDir.phi(); 
     if( phi_deg<0 ) phi_deg += 2*M_PI;
-    m_FT1tuple->fill(4,  phi_deg);
+    m_FT1tuple->fill(4,  phi_deg*180/M_PI);
 
     // zenith-based coords
-    m_FT1tuple->fill(5, zenith_theta);
-    m_FT1tuple->fill(6, earth_azimuth);
+    m_FT1tuple->fill(5, zenith_theta*180/M_PI);
+    m_FT1tuple->fill(6, earth_azimuth*180/M_PI);
 
     // time
     m_FT1tuple->fill(7,  exp.intrvalstart() );
@@ -548,7 +548,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.63 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.64 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -591,12 +591,15 @@ StatusCode meritAlg::execute() {
     m_ctree->execute();
     m_fm->execute();
 
-    // write out the ROOT tuple only for valid events
+    // always write the event tuple
+          m_rootTupleSvc->storeRowFlag(this->m_eventTreeName.value(), true);
+    // write out the FT1 and pointing  tuples only for reconstructed
     double track_count = m_tuple->tupleItem("TkrNumTracks")->value();
     if( m_rootTupleSvc && track_count>0 ) {
             copyPointingInfo();
             copyFT1info();
-            m_rootTupleSvc->storeRowFlag(true);
+            m_rootTupleSvc->storeRowFlag(this->m_FT1TreeName, true);
+            m_rootTupleSvc->storeRowFlag(this->m_pointingTreeName, true);
     }
 
     return sc;
