@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Thu Dec 19 06:43:46 PST 2002
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+add x and y dir cosines for MC and TKR recon
+    *
+------------------------------------------------------------
 User: burnett  Mon Nov 25 08:08:47 PST 2002
 merit/doc
 
