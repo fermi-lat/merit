@@ -102,8 +102,15 @@ public:
 double * getTupleItemPointer(Tuple& t, std::string name)
 {
     // simple little function that either finds an existing, or creates a new TupleItem
-    TupleItem* ti = const_cast<TupleItem*>(t.tupleItem(name));
-    if( ti==0) ti = new TupleItem(name);
+      TupleItem* ti;
+      try
+	{
+	  ti = const_cast<TupleItem*>(t.tupleItem(name));
+	} catch(...)
+	  {
+	    ti = new TupleItem(name);
+	  }
+      if( ti==0) ti = new TupleItem(name);
     return &(ti->value());
 }
 
