@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.7 2002/05/31 19:37:50 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.8 2002/06/01 15:33:25 burnett Exp $
 
 // Include files
 
@@ -21,7 +21,7 @@
 #include "FigureOfMerit.h"
 #include "analysis/Tuple.h"
 
-#ifndef DEFECT_NO_STRINGSTEAM
+#ifndef DEFECT_NO_STRINGSTREAM
 # include <sstream>
 #else
 # include <strstream>
