@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.37 2003/05/09 22:32:52 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.38 2003/05/11 04:45:13 burnett Exp $
 */
 // Include files
 
@@ -85,6 +85,9 @@ private:
     /// Common interface to analysis tools
     std::vector<IValsTool*> m_toolvec;
 
+    /// classification
+    ClassificationTree* m_ctree;
+
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -98,7 +101,7 @@ Algorithm(name, pSvcLocator), m_tuple(0), m_root_tuple(0) {
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
-    declareProperty("IM_filename", m_IM_filename="xml/PSF_Analysis.xml");
+    declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::setupTools() {
@@ -181,13 +184,13 @@ StatusCode meritAlg::initialize() {
     }
     // the tuple is made: create the classification object 
     try { 
-        const char * pkgpath = ::getenv("CLASSIFICATION");
-        std::string path = (pkgpath? std::string(pkgpath) : std::string("/")) + m_IM_filename.value(); 
-   //     facilities::Util::expandEnvVar(&path);
-        ClassificationTree ctree(*m_tuple, path);
+        const char * pkgpath = ::getenv("CLASSIFICATIONROOT");
+        std::string path =  m_IM_filename.value(); 
+        facilities::Util::expandEnvVar(&path);
+        m_ctree = new  ClassificationTree(*m_tuple, log.stream(), path);
     //TODO: finish setup.
     }catch ( std::exception& e){
-        log << MSG::ERROR << "Classification tree error, "
+        log << MSG::ERROR << "Classification tree eryror, "
             << e.what() << typeid( e ).name( ) <<endreq;
     }catch (...)  {
         log << MSG::ERROR << "Unexpected exception creating classification trees" << endreq;
@@ -222,7 +225,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.37 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.38 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -247,7 +250,7 @@ StatusCode meritAlg::execute() {
 
     if(m_root_tuple)m_root_tuple->fill();
 
-    // TODO: process classification trees.
+    m_ctree->execute();
     m_fm->execute();
     
     return sc;

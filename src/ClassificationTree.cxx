@@ -69,7 +69,8 @@ namespace {
 
 }
 
-    ClassificationTree::ClassificationTree( Tuple& t, std::string xml_file)
+ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string xml_file)
+: m_log(log)
     {
 
         if( xml_file.empty() ){
@@ -101,7 +102,7 @@ namespace {
             t.add_alias(tname, alias_pairs[i].first);
         }
 
-        m_classifier = new classification::Tree(looker, 2);
+        m_classifier = new classification::Tree(looker, log, 2);
         // translate the Tuple map
   
         m_classifier->load(xml_file);
