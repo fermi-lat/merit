@@ -7,7 +7,7 @@ use GlastSvc v8*
 use Event v8*
 use GuiSvc v3*
 
-# to write out a ROOT tuple (any old ROOT will do)
+# read/ write ROOT trees (any old ROOT will do)
 use ROOT *
 
 apply_pattern packageShr
@@ -26,14 +26,17 @@ macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 library merit_lib -no_share *.cxx analysis/*.cxx ${merit_headers}
 
 #component library with meritAlg
-macro_append merit_headers "" WIN32 " analysis/*.h" 
+macro_append merit_headers "" WIN32 " analysis/*.h"
 
-library merit   meritAlg/*.cxx Dll/*.cxx $(libs) meritAlg/*.h
+library merit   meritAlg/*.cxx Dll/*.cxx $(libs) 
 
+macro merit_linkopts      "-L $(meritDir) -lmerit-lib"   WIN32 ""
+macro merit_app_linkopts  "-L $(meritDir) -lmerit-lib"   WIN32 ""
+macro test_merit_linkopts "-L $(meritDir) -lmerit-lib"   WIN32 ""
 
 macro libs ""   WIN32   "$(meritDir)/merit_lib.lib
 
-application merit_app app/*.cxx app/*.h $(libs)
+application merit_app app/*.cxx $(libs)
 
 public
 set MERIT_INPUT_FILE "$(MERITROOT)/src/test/merit100.root"
