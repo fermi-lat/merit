@@ -9,5 +9,5 @@ config.*
 configure
 libtool
 Makefile
-stamp-h
-*.in
+Makefile.in
+stamp-h*
