@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.41 2003/10/21 14:04:54 burnett Exp $
+ * $Id: release.notes,v 1.42 2003/10/21 18:20:37 burnett Exp $
  *
+ *  v6r13   THB  15-nov-03 New classification trees
  *  v6r12p1 THB  21-oct-03 Fix background classification tree cuts (again)
                            simplify calculation of earth -based angles for FT1.
 

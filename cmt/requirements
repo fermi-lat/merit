@@ -1,12 +1,12 @@
 package merit
-version v6r12p1
-# $Id: requirements,v 1.59 2003/10/21 14:04:54 burnett Exp $
+version v6r13
+# $Id: requirements,v 1.60 2003/10/21 18:20:37 burnett Exp $
 
 branches doc
 
 use GlastPolicy v*
 use ntupleWriterSvc v*
-use classification *
+use classification v2*
 use astro *
 
 apply_pattern packageShr
