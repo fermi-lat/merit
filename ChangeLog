@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: cohen  Tue Oct 14 13:45:46 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+using run_id to build the FT1 event_id value
+    *
+------------------------------------------------------------
+User: cohen  Tue Oct 14 13:45:46 PDT 2003
 merit
 
 Modified Files:
