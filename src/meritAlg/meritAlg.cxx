@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.17 2002/08/31 15:50:33 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.18 2002/08/31 21:55:20 burnett Exp $
 
 // Include files
 
@@ -164,6 +164,7 @@ StatusCode meritAlg::initialize() {
     new TupleItem("TKR_Gamma_zdir", &m_tkr_gamma_zdir);
     new TupleItem("TKR_qual",       &m_tkr_qual);
     new TupleItem("TKR_t_angle",    &m_tkr_t_angle);
+    new TupleItem("TKR_Fit_Kink",   &m_tkr_fit_kink);
     new TupleItem("TKR_xeneXSlope", &m_tkr_eneslope[0]);
     new TupleItem("TKR_xeneYSlope", &m_tkr_eneslope[1]);
 
@@ -243,7 +244,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.17 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.18 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
