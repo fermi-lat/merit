@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.7 2003/11/15 15:25:03 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.8 2003/11/22 15:34:55 burnett Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #include "RootTuple.h"
 
@@ -118,9 +118,11 @@ void RootTuple::loadBranches()
         if( leaf->GetLenType()==4) {
             float * pf = (float*)leaf->GetValuePointer();
             new TupleItem(name,pf);
+            m_float = true;
         }else{
             double* pf = (double*)leaf->GetValuePointer();
             new TupleItem(name,pf);
+            m_float = false;
         }
     }
 }

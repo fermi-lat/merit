@@ -84,7 +84,7 @@ namespace {
                 std::make_pair(   string( "VtxEAngle"),        string( "EvtVtxEAngle"))
             };
 #endif
-
+#if 0
 // create lookup class to make translations
 class Lookup : public classification::Tree::ILookUpData {
 public:
@@ -99,7 +99,7 @@ public:
     bool isFloat()const{return m_t.isFloat();}
     Tuple& m_t;
 };
-
+#endif
 double * getTupleItemPointer(Tuple& t, std::string name)
 {
     // simple little function that either finds an existing, or creates a new TupleItem
@@ -301,8 +301,8 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         // evalue appropriate tree for good cal prob
         *m_goodCalProb= imnodes[cal_type].evaluate();
 
-        // rest only if cal prob ok
-        if( *m_goodCalProb<0.25 )   return;
+        // evaluate the rest only if cal prob ok
+        if( *m_goodCalProb<0.25 || cal_type==NOCAL )   return;
  
         // select vertex-vs-1 track, corresponding tree for core, psf
         int core_type=0, psf_type=0;

@@ -1,5 +1,5 @@
 /** @file main.cxx 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,v 1.1 2003/11/22 15:34:55 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,v 1.2 2003/11/25 21:22:47 burnett Exp $
 */
 
 #include "app/RootTuple.h"
@@ -16,7 +16,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,
 
 /**
 
-format: runCT [input_file] [output_file]
+format: run_classification [input_file] [output_file]
 
 input_file: if not present look at env var MERIT_INPUT_FILE
 output_file: if not present, and MERIT_OUTPUT_FILE is not defined, just append "_new" to the file name.
