@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Fri May  9 15:32:52 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+use the exception thrown by the Tree class.
+    *
+------------------------------------------------------------
+User: burnett  Fri May  9 15:32:52 PDT 2003
 merit/src
 
 Modified Files:
