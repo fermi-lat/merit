@@ -20,7 +20,8 @@ TkrVtxCutVals::TkrVtxCutVals(const Event::TkrVertex* vtx) : vertex(vtx)
 
     SmartRefVector<Event::TkrFitTrack>::const_iterator trackIter = vertex->getTrackIterBegin();
 
-    for(int idx = 0; idx < numTracks; idx++)
+    int idx;
+    for(idx = 0; idx < numTracks; idx++)
     {
         const Event::TkrFitTrack* track = *trackIter++;
 
