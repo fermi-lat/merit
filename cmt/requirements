@@ -1,6 +1,6 @@
 package merit
-version v6r14p8
-# $Id: requirements,v 1.70 2003/12/19 23:56:23 hansl Exp $
+version v6r14p9
+# $Id: requirements,v 1.71 2004/02/06 12:49:00 burnett Exp $
 
 branches doc
 
@@ -17,7 +17,7 @@ use AnalysisNtuple v*
 use GlastSvc *
 use Event *
 use GuiSvc v3*
-use OnboardFilter *
+use OnboardFilter v1*
 
 use facilities *
 
