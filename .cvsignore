@@ -2,6 +2,7 @@ i686
 msdev
 Linux
 aclocal.m4
+config
 config.*
 configure
 libtool
