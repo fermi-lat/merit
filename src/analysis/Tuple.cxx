@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.10 2003/03/10 22:12:54 burnett Exp $
+// $Id: Tuple.cxx,v 1.11 2003/05/15 04:49:01 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -7,6 +7,7 @@
 #include <cmath>
 #include <cfloat>
 #include <sstream>
+#include <iomanip>
 
 static inline void WARNING(const char* text){ std::cerr << text;}
 static inline void FATAL(const char* text) {
@@ -158,7 +159,7 @@ std::ostream& operator << (std::ostream& out, const Tuple& t)
         WARNING("Attempt to write empty tuple!");
         
     }else {
-        
+        out << std::setprecision(6);
         for( Tuple::const_iterator it=t.begin(); it !=t.end(); ++it)
             out << double(**it) << '\t';
     }
@@ -255,6 +256,8 @@ std::ostream& operator<< (std::ostream& out, const TupleItem& t)
 
 void Tuple::add_alias(std::string name1, std::string name2)
 {
+    // create, or find, the tuple item
+    const TupleItem * ti = tupleItem(name1);
     if( find( name1) == end() ){
         std::stringstream  errmsg;
         errmsg << "Tuple::add_alias: did not find '" << name1 << "' in the tuple\n";
