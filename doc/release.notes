@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.64 2004/12/16 19:15:20 usher Exp $
+ * $Id: release.notes,v 1.65 2004/12/20 23:20:43 burnett Exp $
  *
+ *  v6r20   THB  21-mar-05 Remove pointing and history code: now done in FluxSvc
  *  v6r19   THB  20-Dec-04 Allow mode which disables decision tree variables.
  *  v6r18p1 TU   16-Dec-04 This tag to get an initial GlastRelease to feed the RM
             THB  11-oct-04 Remove livetime, GemConditionWord, eventflags, since moving to AnaTup.

@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.84 2004/12/16 16:31:18 usher Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.85 2004/12/20 23:17:04 burnett Exp $
 */
 // Include files
 
@@ -44,7 +44,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.84 200
 #include <numeric>
 #include <cassert>
 
-static std::string  default_cuts("LntA");
+static std::string  default_cuts("LnA");
 
 namespace gui 
 {
@@ -140,10 +140,7 @@ private:
         std::vector< float> m_values;
     };
     //-----------------------------------------------
-    /// TTree objects to manage the pointing and FT1 tuples
-    TTree* m_pointingTuple;
-    void setupPointingInfo();
-    void copyPointingInfo();
+    /// TTree objects to manage the  FT1 tuple
     void copyFT1Info();
 
     ///Helper functions to get RA, DEC, ZENITH_THETA and EARTH_AZIMUTH 
@@ -162,7 +159,6 @@ private:
     float m_run, m_event, m_mc_src_id;
 
     double m_time;
-    float m_livetime;
     double m_statusHi, m_statusLo,m_separation;
     double m_filterAlgStatus;
 
@@ -294,12 +290,24 @@ StatusCode meritAlg::initialize() {
     title << "TDS: gen(" << m_generated << ")";
     m_tuple = new Tuple(title.str());
 
+
     addItem( "FilterStatus_HI",   &m_statusHi );
     addItem( "FilterStatus_LO",   &m_statusLo );
 
     addItem( "FilterAlgStatus",  &m_filterAlgStatus );
     addItem( "FilterAngSep",     &m_separation );
 
+    /** @page ft1_info Event summary for generation of the FT1 record
+    see <a href="http://glast.gsfc.nasa.gov/ssc/dev/fits_def/definitionFT1.html>FT1 definition</a>
+
+    - FT1EventId  RunNo*(number of events in file) + EventNo  
+    - FT1Energy   (MeV) estimate for energy  
+    - FT1Theta,FT1Phi  (deg) reconstructed direction with respect to instrument coordinate system      
+    - FT1Ra,FT1Dec  (deg) reconstructed direction in equatorial coordinates       
+    - FT1ZenithTheta,FT1EarthAzimuth (deg) reconstucted direction with respect to local zenith system
+    - FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ (m) conversion point of event, whether single track or vertex, 999 if no tracks
+
+        */
     //FT1 INFO:
     addItem( "FT1EventId",          &m_ft1eventid);
     addItem( "FT1Energy",           &m_ft1energy);
@@ -313,6 +321,7 @@ StatusCode meritAlg::initialize() {
     addItem( "FT1ConvPointY",       &m_ft1convpointy);
     addItem( "FT1ConvPointZ",       &m_ft1convpointz);
 
+  
     // add some of the AnalysisNTuple items
     if( setupTools().isFailure()) return StatusCode::FAILURE;
 
@@ -348,9 +357,7 @@ StatusCode meritAlg::initialize() {
                 m_rootTupleSvc->addItem(m_eventTreeName.value(), item.name(), &item.value());
             }
         }
-        // and also the pointing branch
-        setupPointingInfo();
-    }
+     }
 
 
     // setup tuple output via the print service
@@ -378,51 +385,28 @@ StatusCode meritAlg::initialize() {
     printer->addPrinter("FT1 tree", new gui::PrinterByPrefix_T<meritAlg>(this,"FT1"));
     printer->addPrinter("Pt tree", new gui::PrinterByPrefix_T<meritAlg>(this,"Pt"));
     printer->addPrinter("Filter tree", new gui::PrinterByPrefix_T<meritAlg>(this,"Filt"));
-    // also for the exposure tree
-    printer->addPrinter("Exposure tree", new gui::Printer_T<meritAlg::TTree>(m_pointingTuple));
 
     return sc;
 }
+
 //------------------------------------------------------------------------------
-void meritAlg::setupPointingInfo(){
-
-    std::string treeName= m_pointingTreeName.value();
-    if( treeName.empty()) return;
-
-    std::vector<const char* > names;
-    const char * point_info_name[] = {"PtTime","PtLat","PtLon","PtAlt","PtPosx","PtPosy","PtPosz","PtRax","PtDecx","PtRaz","PtDecz"};
-    //const char * point_info_name[] = {"elapsed_time","lat","lon","alt","posx","posy","posz","rax","decx","raz","decz"};
-    for( int i = 0; i< (int)(sizeof(point_info_name)/sizeof(void*)); ++i){ 
-        names.push_back(point_info_name[i]); }
-
-    m_pointingTuple = new TTree( m_rootTupleSvc,  std::string(m_pointingTreeName),  names);
-}
-//------------------------------------------------------------------------------
-void meritAlg::copyPointingInfo(){
-
-    Event::ExposureCol* elist = 0;
-    eventSvc()->retrieveObject("/Event/MC/ExposureCol",(DataObject *&)elist);
-    if( elist==0) return; // should not happen, but make sure ok.
-    //Event::ExposureCol::iterator curEntry = (*elist).begin();
-    const Event::Exposure& exp = **(*elist).begin();
-    int n= 0;
-    m_pointingTuple->fill(n++,exp.intrvalstart());
-    m_pointingTuple->fill(n++,exp.lat());
-    m_pointingTuple->fill(n++,exp.lon());
-    m_pointingTuple->fill(n++,exp.alt());
-    m_pointingTuple->fill(n++,exp.posX());
-    m_pointingTuple->fill(n++,exp.posY());
-    m_pointingTuple->fill(n++,exp.posZ());
-    m_pointingTuple->fill(n++,exp.RAX());
-    m_pointingTuple->fill(n++,exp.DECX());
-    m_pointingTuple->fill(n++,exp.RAZ());
-    m_pointingTuple->fill(n++,exp.DECZ());
-}//------------------------------------------------------------------------------
 
 void meritAlg::copyFT1Info(){
 
 
     MsgStream log(msgSvc(), name());
+
+    /** @page ft1_info Event summary for generation of the FT1 record
+    see <a href="http://glast.gsfc.nasa.gov/ssc/dev/fits_def/definitionFT1.html>FT1 definition</a>
+
+    - FT1EventId  RunNo*(number of events in file) + EventNo  
+    - FT1Energy   (MeV) estimate for energy  
+    - FT1Theta,FT1Phi  (deg) reconstructed direction with respect to instrument coordinate system      
+    - FT1Ra,FT1Dec  (deg) reconstructed direction in equatorial coordinates       
+    - FT1ZenithTheta,FT1EarthAzimuth (deg) reconstucted direction with respect to local zenith system
+    - FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ (m) conversion point of event, whether single track or vertex, 999 if no tracks
+
+    */
 
     //eventId and Time are always defined
     m_ft1eventid = m_run * m_nbOfEvtsInFile + m_event;
@@ -503,7 +487,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.84 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.85 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -540,7 +524,6 @@ StatusCode meritAlg::execute() {
     if( mcheader )    m_mc_src_id = mcheader->getSourceId();
     m_time = header->time();
     m_event = header->event();
-    m_livetime = header->livetime();
 
     SmartDataPtr<OnboardFilterTds::FilterStatus> filterStatus(eventSvc(), "/Event/Filter/FilterStatus");
     if( filterStatus ){
@@ -566,19 +549,12 @@ StatusCode meritAlg::execute() {
     if( m_ctree!=0) m_ctree->execute();
     m_fm->execute();
 
+    // write out the FT1 stuff
+    copyFT1Info();
+
+    
     // always write the event tuple
     m_rootTupleSvc->storeRowFlag(this->m_eventTreeName.value(), true);
-    // write out the FT1 and pointing  tuples only for reconstructed
-    copyFT1Info();
-#if 0 // for Julie: so she gets all events as friends.
-    double track_count = m_tuple->tupleItem("TkrNumTracks")->value();
-    if( m_rootTupleSvc && track_count>0 ) {
-#endif
-        copyPointingInfo();
-        m_rootTupleSvc->storeRowFlag(this->m_pointingTreeName, true);
-#if 0 //see above
-    }
-#endif
 
     return sc;
 }
