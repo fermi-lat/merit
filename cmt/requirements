@@ -1,5 +1,5 @@
 package merit
-version v5r4
+version v5r6
 
 use GlastSvc v8*
 use Event v8*

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.10 2002/06/03 03:01:13 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.11 2002/06/06 16:39:03 burnett Exp $
 
 // Include files
 
@@ -18,6 +18,7 @@
 #include "Event/Recon/TkrRecon/TkrVertex.h"
 #include "Event/Recon/CalRecon/CalCluster.h"
 #include "Event/Recon/CalRecon/CalXtalRecData.h"
+#include "Event/Recon/AcdRecon.h"
 
 #include "FigureOfMerit.h"
 #include "analysis/Tuple.h"
@@ -48,6 +49,8 @@ private:
     void particleReco( const Event::McParticleCol& particles);
 
     void clusterReco(const Event::CalClusterCol& clusters, const Event::CalXtalRecCol&);
+
+    void tileReco(const Event::AcdRecon& );
     
     
     FigureOfMerit* m_fm;
@@ -63,6 +66,12 @@ private:
     float  m_no_xtals;
     float m_no_xtals_trunc;
     float m_cal_xtal_ratio;
+
+    // set by acd analysis
+    float m_acd_doca;
+    float m_doca[5];
+    float m_acd_actdist;
+    float m_acd_tileCount;
 
     int m_generated;
     Hep3Vector m_incident_dir;
@@ -99,24 +108,37 @@ StatusCode meritAlg::initialize() {
     title <<  "TDS: gen(" << m_generated <<  ")";
     m_tuple = new Tuple(title.str());
 #endif
+
+    static float dummy = -99; // flag for defined, not implemented
+
     // define tuple items
     new TupleItem("MC_Energy",      &m_mce);
-    new TupleItem("trig_bits",      &m_trig);
-    new TupleItem("TKR_No_Tracks",  &m_tracks);
-    new TupleItem("TKR_First_XHit", &m_first_hit);
     new TupleItem("MC_Gamma_Err",   &m_angle_diff);
     new TupleItem("elapsed_time",   &m_time);
 
-    new TupleItem("REC_CsI_Corr_Energy", &m_recon_energy);
-    new TupleItem("Cal_No_Xtals",     m_no_xtals);
-    new TupleItem("Cal_No_Xtals_Trunc",m_no_xtals_trunc);
-    new TupleItem("Cal_Xtal_Ratio",    m_cal_xtal_ratio);
+    new TupleItem("trig_bits",      &m_trig);
+    new TupleItem("TKR_No_Tracks",  &m_tracks);
+    new TupleItem("TKR_First_XHit", &m_first_hit);
 
-    
-    
+    new TupleItem("REC_CsI_Corr_Energy", &m_recon_energy);
+    new TupleItem("Cal_No_Xtals",     &m_no_xtals);
+    new TupleItem("Cal_No_Xtals_Trunc",&m_no_xtals_trunc);
+    new TupleItem("Cal_Xtal_Ratio",    &m_cal_xtal_ratio);
+
+    new TupleItem("ACD_DOCA",        &m_acd_doca);
+    new TupleItem("ACD_TopDOCA",     &m_doca[0]);
+    new TupleItem("ACD_S0DOCA",      &m_doca[1]);
+    new TupleItem("ACD_S1DOCA",      &m_doca[2]);
+    new TupleItem("ACD_S2DOCA",      &m_doca[3]);
+    new TupleItem("ACD_Act_Dist",    &m_acd_actdist);
+    new TupleItem("ACD_TileCount",   &m_acd_tileCount);
+    new TupleItem("ACD_No_SideRow2", &dummy);
+    new TupleItem("ACD_No_SideRow3", &dummy);
+
+
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
     
-    // setup defaults if no primary info
+    // setup defaults in case no primary info
     m_incident_dir=Hep3Vector(0,0,-1);
     m_mce = 0.1f;
     return sc;
@@ -133,11 +155,14 @@ StatusCode meritAlg::execute() {
     SmartDataPtr<Event::TkrVertexCol>  tracks(eventSvc(),    EventModel::TkrRecon::TkrVertexCol);
     SmartDataPtr<Event::CalClusterCol> clusters(eventSvc(),  EventModel::CalRecon::CalClusterCol);
     SmartDataPtr<Event::CalXtalRecCol> xtalrecs(eventSvc(),  EventModel::CalRecon::CalXtalRecCol);
+    SmartDataPtr<Event::AcdRecon> acdrec(eventSvc(),         EventModel::AcdRecon::Event);
     
     if( particles!=0 )particleReco(particles);
 
     processTDS( header,  tracks);
     clusterReco(clusters, xtalrecs);
+
+    tileReco(acdrec);
     
     m_fm->execute();
     
@@ -167,6 +192,7 @@ void meritAlg::processTDS(const Event::EventHeader& header,
     
  
     m_tracks = tracks.size();
+    m_trig = header.trigger();
     
     if(m_tracks==0) {
         m_angle_diff = 1.0;
@@ -292,7 +318,19 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     m_recon_energy = clusters.getCluster(0)->getEnergySum()*1e-3; // convert to GeV
     
 }
+//------------------------------------------------------------------------------
+void meritAlg::tileReco(const Event::AcdRecon& acd)
+{
+    //TODO: set appropriate stuff
+    m_acd_doca = acd.getDoca();
+    m_acd_actdist = acd.getActiveDist();
+    m_acd_tileCount = acd.getTileCount();
+    const std::vector<double> & doca = acd.getRowDocaCol();
+    int nd = doca.size();
+    std::copy(doca.begin(), doca.end(), m_doca);
 
+
+}
 //------------------------------------------------------------------------------
 StatusCode meritAlg::finalize() {
     
