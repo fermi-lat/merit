@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: usher  Tue Dec 18 20:23:33 PST 2001
+merit/src/app
+
+Modified Files:
+	RootTuple.cxx RootTuple.h 
+Log Message:
+Updating to allow event by event processing from a root macro
+
+    *
+------------------------------------------------------------
+User: usher  Tue Dec 18 20:23:33 PST 2001
 merit/src
 
 Modified Files:
