@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.17 2003/05/25 17:14:26 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.18 2003/05/26 04:50:19 burnett Exp $
 
 // Main for merit
 
@@ -19,7 +19,7 @@
 #include <typeinfo>
 
 
-const char* _MERIT_VERSION = "$Revision: 1.17 $";
+const char* _MERIT_VERSION = "$Revision: 1.18 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -39,12 +39,13 @@ static const char* helptext=
 "\n\t\tF : TKR FRONT Section only"
 "\n\t\tB : TKR BACK Section only"
 "\n\t\tn : number of tracks (N_tracks > 0)"
+"\n\t\tt : PSF tail rejection cuts"
 "\n\t\tc : cosmic rejection cuts (old set)"
 "\n\t    \"(...)\" : cut expression, like Chisq<50 ( chars ()<>  must be enclosed in quotes)"
 "\n\t\tX : Xname, -- statistics on name"
-"\n\t\tA : Analysis of PSF, etc."                                                    \
+"\n\t\tA : Analysis of PSF, etc." 
 "\n\t\tW : write the (ascii) event to standard output (useful for filtering tuples!)"
-"\n\t\tL : elapsed time: last time found in variable 'Triage_Time'"
+"\n\t\tL : elapsed (simulated) time: last time found in variable 'elapsed_time'"
 "\n\t\tR : Rate: number of events/elapsed time"
 "\n\t\ts : size: report on event size (assuming various bits/hit)"
 "\n\t\tMx: Multi-PSF for bin x, x=0,1,2,3,4: do PSF analysis for 6 dE/E bins from "
@@ -116,37 +117,27 @@ int main(int argc, char* argv[])
         title << "gen(" << tuple->numEvents() << ")";
         tuple->setTitle(title.str());
 
-
         (*outstream) << "Tuple title: \""<< tuple->title() << "\"\n" ;
-        // create the ct: pass in the tuple.
-        ClassificationTree* pct=0;
         try {
             const char* imfile = ::getenv("IM_FILE");
-            pct = new ClassificationTree(*tuple, std::cout, imfile? std::string(imfile) : "");
-        }catch ( std::exception &e ) {
+        // create the ct: pass in the tuple.
+            ClassificationTree pct(*tuple, std::cout, imfile? std::string(imfile) : "");
+            FigureOfMerit fm(*tuple, cutstr);
+
+            ::ftime(&t_init);
+
+            while ( tuple->nextEvent() ) { 
+                pct.execute();   // fill in the classification (testing here)
+                fm.execute(); // run the rest.
+            }
+            ::ftime(&t_final);
+            fm.report(*outstream);
+        }catch(std::exception& e){
             std::cerr << "Caught: " << e.what( ) << std::endl;
             std::cerr << "Type: " << typeid( e ).name( ) << std::endl;
         }catch(...) {
             std::cerr << "Unknown exception from classification " << std::endl;
         }
-        FigureOfMerit fm(*tuple, cutstr);
-
-        ::ftime(&t_init);
-
-        while ( tuple->nextEvent() ) { 
-            try {
-                if(pct!=0) pct->execute();   // fill in the classification (testing here)
-            }catch(std::exception& e){
-                std::cerr << "Caught: " << e.what( ) << std::endl;
-                std::cerr << "Type: " << typeid( e ).name( ) << std::endl;
-            }catch(...) {
-                std::cerr << "Unknown exception from classification " << std::endl;
-            }
-            fm.execute(); // run the rest.
-        }
-        ::ftime(&t_final);
-        fm.report(*outstream);
-        delete pct;
         std::cerr << "\nElapsed time: "<< t_final.time-t_init.time << " sec" << std::endl;
         return 0;
 }

@@ -2,7 +2,7 @@
   @brief Implementation of FigureOfMerit, many Analyze subclasses 
 
 
-  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.17 2003/03/15 17:59:33 burnett Exp $
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.18 2003/05/26 03:09:21 burnett Exp $
 */
 
 #include "FigureOfMerit.h"
@@ -80,28 +80,6 @@ public:
 private:
 };
 
-//=============================================================================
-class FOMdeadtime : public Summation {
-public:
-    FOMdeadtime(const Tuple&t ): Summation(t, "Dead_Time", "Dead Time:"){};
-    void FOMdeadtime::report(std::ostream& out)
-    {
-        using namespace std;
-	out << endl << make_label(name());
-	out << setw(6) << total();
-    }
-};
-//=============================================================================
-class FOMROtime : public Summation {
-public:
-    FOMROtime(const Tuple&t ): Summation(t, "Max_RO_Time", "Readout Time (max):"){};
-    void FOMROtime::report(std::ostream& out)
-    {
-        using namespace std;
-	out << endl << make_label(name());
-	out << setw(6) << average();
-    }
-};
 
 //=============================================================================
 class FOMevtsize : public Summation {
@@ -243,38 +221,6 @@ public:
         AnalysisList::report(out);
     }
 };
-//=============================================================================
-// Analyze the level 3 cuts
-class Level3 : public AnalysisList {	
-public: 
-
-    Level3(const Tuple& t): AnalysisList(" Level 3")
-    {
-        push_back( new Cut(t, "Cal_No_Xtals>0") );
-        push_back( new Cut(t, "TKR_No_Tracks>0") );
-        push_back( new Cut(t, "ACD_DOCA>25") );
-        //push_back( new Cut(t, "CsI_Fit_errNrm>10"));
-    };
-    void report(std::ostream& out)
-    {
-        separator(out);
-        AnalysisList::report(out);
-    }
-
-};
-//=============================================================================
-// Analyze the Atwood cuts
-class CosmicCuts : public AnalysisList {
-public:
-    CosmicCuts(const Tuple&t, bool noline=false)
-        : AnalysisList("  ---Cosmic cuts---", noline)
-    {
-        push_back( new Cut(t, "REC_Surplus_Hit_Ratio", Cut::GT, 2.05) );
-        push_back( new Cut(t, "ACD_DOCA",      Cut::GT, 30) );
-        push_back( new Cut(t, "Cal_Fit_errNrm", Cut::LT, 5) );
-        push_back( new Cut(t, "Cal_Xtal_Ratio",  Cut::GT, 0.25) );
-    }
-};
 
 
 //=============================================================================
@@ -331,19 +277,13 @@ void	FigureOfMerit::setCuts ( std::string istr )
         case 'n':	    // n = ntracks
             m_cuts->push_back( new Cut(*s_tuple, "TkrNumTracks>0" ) );
             break;
-        case 'c':	    // c = Cosmic cuts
-            m_cuts->push_back( new CosmicCuts(*s_tuple) );
-            break;
-        case 's':
+        case 's':      // event size
             m_cuts->push_back( new EventSize(*s_tuple) );
-            break;
-        case 't':
-            m_cuts->push_back( new FOMROtime(*s_tuple) );
             break;
         case 'M': //M0, M1, ...
             m_cuts->push_back( new MultiPSF(*s_tuple, *(it++)) );
             break;
-        case 'j': // Jose style resolution cuts (again)
+        case 't': // tail cuts
             m_cuts->push_back( new PSFtailCuts(*s_tuple) );
             break;            
         case 'P': /* P = PSF analysis   */  
@@ -364,10 +304,7 @@ void	FigureOfMerit::setCuts ( std::string istr )
         case 'f': // f = file
             m_cuts->push_back( new WriteTuple(*s_tuple, *(new std::ofstream("merit.tup")) ));
             break;
-        case 'D': /* D = dead time */	 
-            m_cuts->push_back( new FOMdeadtime(*s_tuple) ); 
-            break;
-        case 'L': /* L = elapsed time */ 
+         case 'L': /* L = elapsed time */ 
             m_cuts->push_back( new FOMelapsed(*s_tuple) );  
             break;
         case 'R': /* R = trigger rate */ 
