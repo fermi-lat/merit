@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Sun Oct 27 11:00:04 PST 2002
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+
+gcc 3.x mods/corrections.
+    *
+------------------------------------------------------------
+User: burnett  Sun Oct 27 11:00:04 PST 2002
 merit/src/app
 
 Modified Files:
