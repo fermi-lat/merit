@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: burnett  Sat Nov 22 07:34:55 PST 2003
+merit/src/app
+
+Modified Files:
+	RootTuple.cxx RootTuple.h 
+Added Files:
+	run_classification_main.cxx write_text_main.cxx 
+Log Message:
+two new apps to process tuple files
+    *
+------------------------------------------------------------
+User: burnett  Sat Nov 22 07:34:55 PST 2003
 merit/src/analysis
 
 Modified Files:
