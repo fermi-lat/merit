@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: srobinsn  Sat Dec 21 13:44:56 PST 2002
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+lowercase issue fixed in multiPSF, PSFRootFit added to fit PSF using root, larger tuple file added with new (MeV) energy scale, PSFAnalysis uses new energy scale.
+
+    *
+------------------------------------------------------------
 User: usher  Thu Dec 19 15:00:28 PST 2002
 merit/src/meritAlg
 
