@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.15 2003/05/15 04:49:01 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.16 2003/05/16 23:44:24 burnett Exp $
 
 // Main for merit
 
@@ -19,16 +19,10 @@
 #include <typeinfo>
 
 
-#define CLASSIF
-
-const char* _MERIT_VERSION = "$Revision: 1.15 $";
+const char* _MERIT_VERSION = "$Revision: 1.16 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
-
-
-void FATAL(const char* s){std::cerr << "\nERROR: "<< s;}
-void WARNING(const char* s){std::cerr << "\nWARNING: " << s;}
 
 static timeb t_init, t_final;
 static const char* helptext=
@@ -124,33 +118,35 @@ int main(int argc, char* argv[])
 
 
         (*outstream) << "Tuple title: \""<< tuple->title() << "\"\n" ;
-#ifdef CLASSIF
         // create the ct: pass in the tuple.
         ClassificationTree* pct=0;
         try {
-           pct = new ClassificationTree(*tuple);
+            const char* imfile = ::getenv("IM_FILE");
+            pct = new ClassificationTree(*tuple, std::cout, imfile? std::string(imfile) : "");
         }catch ( std::exception &e ) {
             std::cerr << "Caught: " << e.what( ) << std::endl;
             std::cerr << "Type: " << typeid( e ).name( ) << std::endl;
         }catch(...) {
             std::cerr << "Unknown exception from classification " << std::endl;
         }
-#endif
         FigureOfMerit fm(*tuple, cutstr);
 
         ::ftime(&t_init);
 
         while ( tuple->nextEvent() ) { 
-#ifdef CLASSIF
-          if(pct!=0) pct->execute();   // fill in the classification (testing here)
-#endif
+            try {
+                if(pct!=0) pct->execute();   // fill in the classification (testing here)
+            }catch(std::exception& e){
+                std::cerr << "Caught: " << e.what( ) << std::endl;
+                std::cerr << "Type: " << typeid( e ).name( ) << std::endl;
+            }catch(...) {
+                std::cerr << "Unknown exception from classification " << std::endl;
+            }
             fm.execute(); // run the rest.
         }
         ::ftime(&t_final);
         fm.report(*outstream);
-#ifdef CLASSIF
         delete pct;
-#endif
         std::cerr << "\nElapsed time: "<< t_final.time-t_init.time << " sec" << std::endl;
         return 0;
 }
