@@ -2,7 +2,7 @@
 @brief 
 
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.7 2003/09/09 19:21:19 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.8 2003/09/28 18:54:43 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -39,6 +39,7 @@ private:
     const TupleItem*  m_calEnergySum;
     const TupleItem*  m_acdTileCount;
     const TupleItem*  m_evtTkrEComptonRatio;
+    const TupleItem*  m_evtTkrComptonRatio;
     const TupleItem*  m_calMIPDiff;
     const TupleItem*  m_evtEnergySumOpt;
     const TupleItem*  m_calLRmsRatio;
