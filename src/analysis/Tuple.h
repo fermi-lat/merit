@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.6 2003/03/10 22:12:54 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.7 2003/05/25 17:12:53 burnett Exp $
 
 #ifndef TUPLE_H
 #define TUPLE_H
@@ -39,7 +39,9 @@ public:
     // print "name=value" for the tupleitem
     friend std::istream& operator >> (std::istream&,  Tuple& );
 
-   private:
+    bool isFloat() const {return m_isFloat;}
+
+private:
 
     //double& operator()();
     std::string m_name;

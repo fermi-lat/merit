@@ -2,7 +2,7 @@
 @brief 
 
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.9 2003/10/16 22:33:29 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.10 2003/10/27 13:51:21 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -45,12 +45,12 @@ private:
     const TupleItem*  m_calLRmsRatio;
     const TupleItem*  m_vtxAngle;
 
-
-    double m_goodCalProb;
-    double m_coreProb; 
-    double m_vtxProb ;
-    double m_psfErrPred; 
-    double m_gammaProb ;
+    // output quantities: pointers to corresponding tuple items
+    double* m_goodCalProb;
+    double* m_coreProb; 
+    double* m_vtxProb ;
+    double* m_psfErrPred; 
+    double* m_gammaProb ;
     
 
     std::ostream& m_log;

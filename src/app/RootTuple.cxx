@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.6 2003/05/15 04:49:01 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.7 2003/11/15 15:25:03 burnett Exp $
 // Original author T. Burnett (w/ help from H. Kelley)
 #include "RootTuple.h"
 
@@ -71,18 +71,18 @@ RootTuple::RootTuple(std::string title, std::string file, std::string treeName)
 #endif
     
     // Open the file, and get at the  TTree containing the data
-    TFile* tfile =  new TFile(file.c_str(), "read");
-    if( tfile==0 ) {
+    m_file =  new TFile(file.c_str(), "read");
+    if( m_file==0 ) {
         std::cerr << "file \""<< file << "\" not found." << std::endl;
         exit(1);
     }
     // first try the requested
-    m_tree =  (TTree*)tfile->Get(treeName.c_str());
+    m_tree =  (TTree*)m_file->Get(treeName.c_str());
     // if doesn't work, try the old standby
-    if( m_tree==0)  m_tree = (TTree*)tfile->Get("1");
+    if( m_tree==0)  m_tree = (TTree*)m_file->Get("1");
    if( m_tree ==0 ) {
         std::cerr << "tree \""<<treeName<< "\" not found." << std::endl;
-        tfile->ls();
+        m_file->ls();
         exit(1);
     }
 
@@ -103,6 +103,26 @@ RootTuple::RootTuple(std::string title, std::string file, std::string treeName)
 #endif
 
 
+}
+void RootTuple::loadBranches()
+{
+    // load all the branches into our tuple
+    TObjArray* ta = m_tree->GetListOfBranches();
+
+    // now iterate.
+    int entries = ta->GetEntries();
+    for( int i = 0; i<entries; ++i) { // should try a TIter
+        TBranch * b = (TBranch*)(*ta)[i];
+        TLeafF* leaf = (TLeafF*)(*b->GetListOfLeaves())[0];
+        const char * name = leaf->GetName();
+        if( leaf->GetLenType()==4) {
+            float * pf = (float*)leaf->GetValuePointer();
+            new TupleItem(name,pf);
+        }else{
+            double* pf = (double*)leaf->GetValuePointer();
+            new TupleItem(name,pf);
+        }
+    }
 }
 
 const TupleItem* RootTuple::tupleItem(const std::string& name)const
@@ -154,6 +174,7 @@ const TupleItem* RootTuple::tupleItem(const std::string& name)const
 bool RootTuple::nextEvent(){
     if(m_event<m_numEvents) {
         m_tree->GetEvent(m_event++);
+        m_file->cd();
         return true;
     }
     return false;
