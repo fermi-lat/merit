@@ -31,6 +31,7 @@ E1stChisq", "Tkr2EChisq", "Tkr2EQual", "TkrHDCount", "TkrNumTracks", "TwrEdgeAng
 
 */
 namespace {
+  using std::string;
     const char *nodenames[]={
             "CT CAL Energy (0)",
             "CT VTX Thin (0)",
@@ -43,20 +44,20 @@ namespace {
             "RT VTX Thick Core (0)",
             "RT 1`Tkr Thick Core (0)",
             "CT 1Tkr Thick Tail (0)"};
-            std::pair<std::string,std::string> alias_pairs[]={
-                std::make_pair(    "CalEdgeAngle",    "EvtCalEdgeAngle"),
-                std::make_pair(    "Energy.Sum.Opt",  "EvtEnergyOpt"),
-                std::make_pair(    "TKR.ComptonRatio","EvtTkrComptonRatio"),
-                std::make_pair(    "Tkr1.1stGaps",    "Tkr1FirstGaps"),
-                std::make_pair(    "Tkr1E1stChisq",   "EvtTkr1EFirstChisq"),
-                std::make_pair(    "Tkr1EChisq",      "EvtTkr1EChisq"),
-                std::make_pair(    "Tkr1EFrac",       "EvtTkr1EFrac"),
-                std::make_pair(    "Tkr1EQual",       "EvtTkr1EQual"),
-                std::make_pair(    "Tkr2E1stChisq",   "EvtTkr2EFirstChisq"),
-                std::make_pair(    "Tkr2EChisq",      "EvtTkr2EChisq"),
-                std::make_pair(    "Tkr2EQual",       "EvtTkr2EQual"),
-                std::make_pair(    "TwrEdgeAngle",    "EvtTkrEdgeAngle"),
-                std::make_pair(    "VtxEAngle",       "EvtVtxEAngle")
+  std::pair< string,  string> alias_pairs[]={
+                std::make_pair(   string( "CalEdgeAngle"),     string( "EvtCalEdgeAngle")),
+                std::make_pair(     string( "Energy.Sum.Opt"),   string( "EvtEnergyOpt")),
+                std::make_pair(    string(  "TKR.ComptonRatio"),string("EvtTkrComptonRatio")),
+                std::make_pair(    string(  "Tkr1.1stGaps"),   string( "Tkr1FirstGaps")),
+                std::make_pair(     string( "Tkr1E1stChisq"),  string( "EvtTkr1EFirstChisq")),
+                std::make_pair(    string(  "Tkr1EChisq"),     string( "EvtTkr1EChisq")),
+                std::make_pair(   string(   "Tkr1EFrac"),      string( "EvtTkr1EFrac")),
+                std::make_pair(    string(  "Tkr1EQual"),      string( "EvtTkr1EQual")),
+                std::make_pair(     string( "Tkr2E1stChisq"),  string( "EvtTkr2EFirstChisq")),
+                std::make_pair(     string( "Tkr2EChisq"),     string( "EvtTkr2EChisq")),
+                std::make_pair(    string(  "Tkr2EQual"),      string( "EvtTkr2EQual")),
+                std::make_pair(    string(  "TwrEdgeAngle"),   string( "EvtTkrEdgeAngle")),
+                std::make_pair(     string( "VtxEAngle"),      string( "EvtVtxEAngle"))
             };
         
    enum{ CAL_ENERGY, 
@@ -93,11 +94,11 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         Lookup looker(t);
 
         //add aliases to the tuple
-        int npairs = sizeof(alias_pairs)/sizeof(std::pair<std::string, std::string>);
+        int npairs = sizeof(alias_pairs)/sizeof(std::pair< std::string, std::string*>);
         for( int i=0; i< npairs; ++i) {
             // create a tuple item first
-            std::string tname = alias_pairs[i].second;
-            const TupleItem* ti = t.tupleItem(tname);
+            std::string tname = std::string(alias_pairs[i].second);
+	    // const TupleItem* ti = t.tupleItem(std::string(tname));
 
             t.add_alias(tname, alias_pairs[i].first);
         }
@@ -109,7 +110,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
         // now connect to output
         //
-        for( int i = 0; i< sizeof(nodenames)/sizeof(void*); ++i) {
+        for(unsigned int i = 0; i< sizeof(nodenames)/sizeof(void*); ++i) {
             rootNode.push_back(m_classifier->getPredictTree(nodenames[i]) );
         }
 
