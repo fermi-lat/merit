@@ -1,5 +1,5 @@
 /** @file PruneTree.h
- $Header$
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PruneTree.h,v 1.4 2003/12/18 02:37:57 hansl Exp $
  */
 #ifndef  MERIT_PRUNETREE_H
 #define  MERIT_PRUNETREE_H
@@ -33,7 +33,7 @@ class PruneTree {
     public:
 
     /** Set up the selection
-     *  @param t           The input ROOT tuple
+     *  @param t           The Tuple ( = vector of TupleItems)
      *  @param xml_file    IM file containing descriptions of the predict nodes 
      */
     PruneTree( Tuple& t,  std::string xml_file = "");
