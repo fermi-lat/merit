@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Mon Sep  2 08:41:28 PDT 2002
+merit/src
+
+Modified Files:
+	FigureOfMerit.cxx 
+Log Message:
+fix unix specs
+    *
+------------------------------------------------------------
+User: burnett  Mon Sep  2 08:41:28 PDT 2002
 merit/cmt
 
 Modified Files:
