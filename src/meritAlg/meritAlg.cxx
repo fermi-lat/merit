@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.78 2004/08/28 14:12:37 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.79 2004/08/28 16:13:14 burnett Exp $
 */
 // Include files
 
@@ -168,6 +168,7 @@ private:
     double m_statusHi, m_statusLo,m_separation;
     double m_filterAlgStatus;
 
+
     int m_generated;
     int m_warnNoFilterStatus;   // count WARNINGs: no FilterStatus found
 
@@ -288,14 +289,15 @@ StatusCode meritAlg::initialize() {
     addItem( "Run",  &m_run );
     addItem( "Event_ID",   &m_event );
     addItem( "elapsed_time", &m_time );
-#if 0  //add when approved by Science Analysis group  
-    //addItem( "EvtLiveTime", &m_livetime);
-#endif
+
+    //temporary until approved by Science Analysis group  
+    addItem( "LiveTime", &m_livetime);
 
     addItem( "MC_src_Id", &m_mc_src_id );
 
     addItem( "FilterStatus_HI",   &m_statusHi );
     addItem( "FilterStatus_LO",   &m_statusLo );
+
     addItem( "FilterAlgStatus",  &m_filterAlgStatus );
     addItem( "FilterAngSep",     &m_separation );
 
@@ -377,6 +379,7 @@ StatusCode meritAlg::initialize() {
     printer->addPrinter("IM  tree", new gui::PrinterByPrefix_T<meritAlg>(this,"IM"));
     printer->addPrinter("FT1 tree", new gui::PrinterByPrefix_T<meritAlg>(this,"FT1"));
     printer->addPrinter("Pt tree", new gui::PrinterByPrefix_T<meritAlg>(this,"Pt"));
+    printer->addPrinter("Filter tree", new gui::PrinterByPrefix_T<meritAlg>(this,"Filt"));
     // also for the exposure tree
     printer->addPrinter("Exposure tree", new gui::Printer_T<meritAlg::TTree>(m_pointingTuple));
 
@@ -502,7 +505,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.78 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.79 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -606,6 +609,8 @@ StatusCode meritAlg::finalize() {
     delete m_tuple;
     delete m_fm;
     delete m_ctree;
+    setFinalized(); //  prevent being called again
+
     return StatusCode::SUCCESS;
 }
 
