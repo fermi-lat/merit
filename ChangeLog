@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Sun May 25 20:09:21 PDT 2003
+merit/src
+
+Modified Files:
+	Cut.cxx FigureOfMerit.cxx LayerGroup.cxx LayerGroup.h 
+	PSFanalysis.cxx PSFanalysis.h PSFtailCuts.cxx 
+Log Message:
+adopt vertex/one-track categories
+    *
+------------------------------------------------------------
+User: burnett  Sun May 25 20:09:21 PDT 2003
 merit/cmt
 
 Modified Files:
