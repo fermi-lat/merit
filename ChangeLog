@@ -1,5 +1,20 @@
 ------------------------------------------------------------
 User: usher  Tue Dec 18 15:28:30 PST 2001
+merit/src/root
+
+Added Files:
+	MeritLinkDef.h MeritPlots.cxx MeritPlots.h dorootcint.bat 
+	meritFoM.cxx meritFoM.h meritcint.cxx meritcint.h 
+Log Message:
+Add subfolder and files for interfacing root to merit.
+These classes will allow root to provide control over running
+merit and, most importantly, to allow root to provide plots of
+the results. MeritPlots, in particular, contains several example
+plots of final results.
+
+    *
+------------------------------------------------------------
+User: usher  Tue Dec 18 15:28:30 PST 2001
 merit/src/app
 
 Modified Files:
