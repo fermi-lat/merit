@@ -9,42 +9,18 @@
 #include <sstream>
 #include <cassert>
 
-/*  Output from analysis of the PSF_Analysis IM file, extracted to a UserLibrary
-
-Loading Trees from file "C:\glast\DeltaRelease\classification\v0r5\xml\PSF_Analysis_14a.imw"
-Prediction Nodes:
-        id                         label     nodes max depth    min prob    max prob
-       507                CT  GoodEnergy       209        18           0           1
-       509                   CT VTX Thin       273        22           0           1
-       511                  CT Thick VTX       205        17           0           1
-       512              CT VTX Thin Tail       181        15           0           1
-       513              RT VTX Thin Core        89        14       0.292        6.15
-       514            CT  1Tkr Thin Tail       235        20           0           1
-       515             RT 1Tkr Thin Core       131        18       0.582        17.5
-       517             CT VTX Thick Tail       165        15           0           1
-       518             RT VTX Thick Core       113        15       0.737        9.61
-       520            CT 1Tkr Thick Tail       283        31           0           1
-       521            RT 1Tkr Thick Core        91        25       0.993        28.5
-Found 11 prediction nodes
-
-Combined used names:
-
-"CalCntRLn", "CalDeadCntRat", "CalDeadTotRat", "CalLongRms", "CalTotRLn", "CalTotSumCorr", "CalTrackDoca",
-"CalTrackSep", "CalTransRms", "CalTwrEdge", "CalTwrGap", "CalXtalRatio", "CalXtalsTrunc", "EvtCalEdgeAngle",
-"EvtEnergySumOpt", "EvtTkr1EChisq", "EvtTkr1EFirstChisq", "EvtTkr1EFrac", "EvtTkr1EQual", "EvtTkr2EChisq",
-"EvtTkr2EFirstChisq", "EvtTkr2EQual", "EvtTkrComptonRatio", "EvtTkrEdgeAngle", "EvtVtxEAngle", 
-"Tkr1DieEdge", "Tkr1DifHits", "Tkr1Gaps", "Tkr1PrjTwrEdge", "Tkr1TwrEdge", "TkrHDCount", "TkrNumTracks",
-"TkrTwrEdge", "VtxHeadSep",
+/* 
 */
 namespace {
 
     // Convenient identifiers used for the nodes
-    enum{  GOODENERGY,
+    enum{  CALHIGH, CALLOW, NOCAL,
        VTX_THIN, VTX_THICK,
        VTX_THIN_TAIL,     VTX_THIN_BEST,
        ONE_TRK_THIN_TAIL, ONE_TRK_THIN_BEST,
        VTX_THICK_TAIL,    VTX_THICK_BEST, 
        ONE_TRK_THICK_TAIL, ONE_TRK_THICK_BEST, 
+       NODE_COUNT
     };
 
     /** table of information about nodes to expect in the IM file.
@@ -57,17 +33,19 @@ namespace {
         int index;        // index of the classification type within the list of probabilites
     };
     IMnodeInfo imNodeInfo[] = {
-        { GOODENERGY,       "CT  GoodEnergy",  0 },
-        { VTX_THIN,         "CT VTX Thin",     1},
-        { VTX_THICK,        "CT Thick VTX",     0 },
-        { VTX_THIN_TAIL,    "CT VTX Thin Tail" ,0}, 
-        { VTX_THIN_BEST,    "RT VTX Thin Core", 0},
-        { ONE_TRK_THIN_TAIL, "CT  1Tkr Thin Tail",0},
+        { CALHIGH,           "CT Cal High",  0 },
+        { CALLOW,            "CT Cal Low",  0 },
+        { NOCAL,             "CT No Cal",  0 },
+        { VTX_THIN,          "CT VTX Thin",     0},
+        { VTX_THICK,         "CT Thick VTX",     0 },
+        { VTX_THIN_TAIL,     "CT VTX Thin Tail" ,0}, 
+        { VTX_THIN_BEST,     "RT VTX Thin Core", 0},
+        { ONE_TRK_THIN_TAIL, "CT 1Tkr Thin Tail",0},
         { ONE_TRK_THIN_BEST, "RT 1Tkr Thin Core",0},
-        { VTX_THICK_TAIL,    "CT VTX Thick Tail", 1},
+        { VTX_THICK_TAIL,    "CT VTX Thick Tail", 0},
         { VTX_THICK_BEST,    "RT VTX Thick Core", 0},
         { ONE_TRK_THICK_TAIL,"CT 1Tkr Thick Tail", 0},
-        { ONE_TRK_THICK_BEST, "RT 1Tkr Thick Core", 0}
+        { ONE_TRK_THICK_BEST,"RT 1Tkr Thick Core", 0}
     };
 
     /** Manage interface to one of the prediction nodes
@@ -137,9 +115,43 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 #endif
         // special tuple items we want on the output: make sure they are included in the list
         t.tupleItem("AcdActiveDist");
-        t.tupleItem("VtxAngle");    
-        t.tupleItem("McTkr1DirErr");
+        t.tupleItem("VtxAngle"); 
+        t.tupleItem("CalEnergySum");
+        t.tupleItem("TkrRadLength");
+        t.tupleItem("CalCsIRLn");
+        t.tupleItem("CalBkHalfRatio");
+        t.tupleItem("CalLyr7Ratio");
+        t.tupleItem("CalLyr0Ratio");
+        t.tupleItem("EvtTkrEComptonRatio");
+        t.tupleItem("CalXtalRatio");
+        t.tupleItem("EvtLogESum");
+        t.tupleItem("EvtCalETrackDoca");
+        t.tupleItem("EvtCalETrackSep");
+        t.tupleItem("EvtCalEXtalTrunc");
+        t.tupleItem("EvtCalEXtalRatio");
+        t.tupleItem("EvtCalETLRatio");
+        t.tupleItem("CalDeltaT");
+        t.tupleItem("CalLATEdge");
+        t.tupleItem("TkrBlankHits");
+        t.tupleItem("TkrThickHits");
+        t.tupleItem("EvtCalETrackDoca");
+        t.tupleItem("TkrThinHits");
+        t.tupleItem("Tkr1ZDir");
+        t.tupleItem("TkrSumKalEne");
+        t.tupleItem("TkrTotalHits");
+        t.tupleItem("Tkr1FirstGaps");
+        t.tupleItem("Tkr2KalEne"); // no cal only?
+        t.tupleItem("Tkr1Qual");  
+        t.tupleItem("Tkr1FirstChisq"); 
+        t.tupleItem("Tkr2Qual");
+        t.tupleItem("Tkr2Chisq");
+        t.tupleItem("Tkr1Hits");
+        t.tupleItem("Tkr1KalEne");
+
         m_firstLayer = t.tupleItem("Tkr1FirstLayer");
+        m_calEnergySum = t.tupleItem("CalEnergySum");
+        m_calTotRLn =t.tupleItem("CalTotRLn");
+
 
         // New items to create
 
@@ -147,14 +159,14 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         new TupleItem("IMvertexProb", &m_vtxProb);
         new TupleItem("IMcoreProb",   &m_coreProb);
         new TupleItem("IMpsfErrPred", &m_psfErrPred);
-        m_classifier = new classification::Tree(looker, log);
+        m_classifier = new classification::Tree(looker, log, 0); // verbosity
         // translate the Tuple map
   
         m_classifier->load(xml_file);
 
         // get the list of root prediction tree nodes
         imnodes.reserve(20);
-        for( unsigned int i=0; i<11; ++i){
+        for( unsigned int i=0; i<NODE_COUNT; ++i){
             IMpredictNode n(imNodeInfo[i],m_classifier);
            imnodes[imNodeInfo[i].id]=n;
         }
@@ -164,7 +176,21 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
     void ClassificationTree::execute()
     {
 
-        m_goodCalProb= imnodes[GOODENERGY].evaluate();
+        // apply cuts on cal energy:
+        //ifelse((CalEnergySum< 100. | CalTotRLn < 2), ifelse((CalTotRLn < 2 | CalEnergySum <  5), "NoCal", "LowCal"),"HighCal")
+
+        if( *m_calEnergySum> 100. && *m_calTotRLn > 2. ) { 
+            m_goodCalProb= imnodes[CALHIGH].evaluate();
+        }else if ( *m_calEnergySum >5 && *m_calTotRLn >2.) {
+            m_goodCalProb= imnodes[CALLOW].evaluate();
+        }else {
+            m_goodCalProb= imnodes[NOCAL].evaluate();
+        } 
+        if( m_goodCalProb<0.5) { 
+            m_coreProb=m_psfErrPred=0;
+            return;
+        }
+
         if( *m_firstLayer < 12 ) {
             m_vtxProb = imnodes[VTX_THIN].evaluate(); 
             if( m_vtxProb >0.5) {
