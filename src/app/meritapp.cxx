@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/main.cxx,v 1.1.1.1 1999/12/20 22:29:13 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.1 2001/03/23 19:52:02 burnett Exp $
 
 // Main for merit
 
@@ -14,12 +14,13 @@
 #include <sys/types.h>
 #include <sys/timeb.h>
 #include <string>
+#include <strstream>
 
 #include <assert.h>
 
-const char* _MERIT_VERSION = "$Revision: 1.1.1.1 $";
+const char* _MERIT_VERSION = "$Revision: 1.1 $";
 static std::string  cutstr("nA");
-static std::string  file_name("-");
+static std::string  file_name("");
 
 
 void FATAL(const char* s){std::cerr << "\nERROR: "<< s;}
@@ -28,12 +29,12 @@ void WARNING(const char* s){std::cerr << "\nWARNING: " << s;}
 static timeb t_init, t_final;
 static const char* helptext=
 "\n----------------------------------------------"
-"\nCalling syntax: merit  -CUTS [p] [file1] [file2] ..."
+"\nCalling syntax: merit  -CUTS [p] [file1 | - ] [file2] ..."
 "\n\nAnalysis cuts: allow re-ordering of gamma rejection cuts and trigger"
 "\ncounting at runtime. Order of cuts is same as in this string, specific"
 "\n'cuts' will increment the counters merit uses for analysis of the tuple."
 "\nIf 'p' is specified  then percentages will be displayed as well."
-"\n Reads from stdin if FILENAME not present, or \"-\"."
+"\n Reads from stdin next parameter is \"-\", or from $(MERIT_INPUT_FILE) otherwise."
 "\n\n\tCut keys are as follows:"
 "\n\t\t1 : level 1 trigger: Track or LoCal "
 "\n\t\tI : level 1 trigger: (Track or Local)* !Veto + HiCal "
@@ -92,10 +93,26 @@ int main(int argc, char* argv[])
             } else file_name = argv[n];	
         }
     }
+
+    if( file_name=="" ) {
+        const char * env = ::getenv("MERIT_INPUT_FILE");
+        if( env ) file_name=env;
+        else {
+            std::cerr << "No input file specified, see help" << std::endl;
+            exit(1);
+        }
+    }
+    std::cerr << "Merit reading from file: \"" << file_name << "\"" << std::endl;
     // charge a head with ROOT here, figure out later how to do it consistently
 
     RootTuple* tuple = new RootTuple("unknown", file_name, "AORECON/t1");
     // now assign input stream, either the file name or std input
+        // Determine the # of events stored in ntuple
+
+    std::strstream title; 
+    title << "gen(" << tuple->numEvents() << ")" << '\0';
+    tuple->setTitle(title.str());
+
 #if 0
     std::istream* infile;
     if( file_name== "-") {
@@ -116,9 +133,11 @@ int main(int argc, char* argv[])
         tuple = new RootTuple("unknown title", file_name, "t1");
     }
     else {
-        // assume it is a
+        // assume it is ascii. (need to fix, I think).
         tuple = new AsciiTuple(*infile);
     }
+
+
 #endif
     std::cerr << "Tuple title: \""<< tuple->title() << "\"\n" ;
 
