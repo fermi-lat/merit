@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.15 2002/08/29 17:38:29 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.16 2002/08/30 17:13:36 burnett Exp $
 
 // Include files
 
@@ -69,7 +69,9 @@ private:
     Tuple*   m_tuple;
     std::string m_cuts; 
     
+
     // places to put stuff found in the TDS
+    float m_event, m_mc_src_id;
     float m_mce, m_trig, m_angle_diff, m_recon_energy;
     float m_time;
 
@@ -99,9 +101,8 @@ private:
     // set by acd analysis
     float m_acd_doca;
     float m_doca[5];
-    float m_acd_actdist;
     float m_acd_actdist_top;
-    float m_acd_actdist_side[3];
+    float m_acd_actdist[5];
     // index for these guys is top, side row 0, side row 1, side row 2
     float m_acd_tileCount[4];
     float m_acd_deposit_max[4];
@@ -146,6 +147,8 @@ StatusCode meritAlg::initialize() {
     static float dummy = -99; // flag for defined, not implemented
 
     // define tuple items
+    new TupleItem("Event_ID",       &m_event);
+    new TupleItem("MC_src_Id",      &m_mc_src_id);
     new TupleItem("MC_Energy",      &m_mce);
     new TupleItem("MC_Gamma_Err",   &m_angle_diff);
     new TupleItem("MC_zdir",        &m_mc_zdir);
@@ -184,10 +187,10 @@ StatusCode meritAlg::initialize() {
     new TupleItem("ACD_S0DOCA",      &m_doca[1]);
     new TupleItem("ACD_S1DOCA",      &m_doca[2]);
     new TupleItem("ACD_S2DOCA",      &m_doca[3]);
-    new TupleItem("ACD_Act_Dist",    &m_acd_actdist);
-    new TupleItem("REC_Act_Dist_SideRow0",&m_acd_actdist_side[0]);
-    new TupleItem("REC_Act_Dist_SideRow1",&m_acd_actdist_side[1]);
-    new TupleItem("REC_Act_Dist_SideRow2",&m_acd_actdist_side[2]);
+    new TupleItem("ACD_Act_Dist",    &m_acd_actdist[0]);
+    new TupleItem("REC_Act_Dist_SideRow0",&m_acd_actdist[1]);
+    new TupleItem("REC_Act_Dist_SideRow1",&m_acd_actdist[2]);
+    new TupleItem("REC_Act_Dist_SideRow2",&m_acd_actdist[3]);
     new TupleItem("ACD_TileCount",   &m_acd_tileCount[0]);
     new TupleItem("ACD_No_SideRow0", &m_acd_tileCount[1]);
     new TupleItem("ACD_No_SideRow1", &m_acd_tileCount[2]);
@@ -197,6 +200,10 @@ StatusCode meritAlg::initialize() {
     new TupleItem("ACD_Deposit_Max1", &m_acd_deposit_max[1]);
     new TupleItem("ACD_Deposit_Max2", &m_acd_deposit_max[2]);
     new TupleItem("ACD_Deposit_Max3", &m_acd_deposit_max[3]);
+
+    // not implemented at all
+    new TupleItem("REC_Surplus_Hit_ratio", &dummy);
+    new TupleItem("ACD_Throttle_Bits",     &dummy);
 
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
@@ -225,12 +232,12 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple" << std::endl;
+    out << "Merit tuple, " << "$Revision: $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
         out << std::setw(25) << item.name() 
-            << "  " << std::setprecision(3)<< float(item) << std::endl;
+            << "  " << std::setprecision(4)<< float(item) << std::endl;
     }
 }
 
@@ -279,7 +286,8 @@ void meritAlg::processTDS(const Event::EventHeader& header,
     MsgStream   log( msgSvc(), name() );
     
     m_time = header.time();
-    
+    m_event = header.event();
+    m_mc_src_id = -1; // need MC header for this?
  
     m_tracks = tracks.size();
     m_trig = header.trigger();
@@ -453,7 +461,6 @@ namespace {
 void meritAlg::tileReco(const Event::AcdRecon& acd)
 {
     m_acd_doca = acd.getDoca();
-    m_acd_actdist = acd.getActiveDist();
     m_acd_tileCount[0] = acd.getTileCount(); // save total, not top.
 
     const std::vector<double> & doca = acd.getRowDocaCol();
@@ -476,7 +483,7 @@ void meritAlg::tileReco(const Event::AcdRecon& acd)
     const std::vector<double> & adist = acd.getRowActDistCol();
     int nd = doca.size();
     std::copy(doca.begin(), doca.end(), m_doca);
-    std::copy(adist.begin(), adist.end(), m_acd_actdist_side);
+    std::copy(adist.begin(), adist.end(), m_acd_actdist);
 
 
 }
