@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.63 2004/10/11 21:30:03 burnett Exp $
+ * $Id: release.notes,v 1.64 2004/12/16 19:15:20 usher Exp $
  *
+ *  v6r19   THB  20-Dec-04 Allow mode which disables decision tree variables.
  *  v6r18p1 TU   16-Dec-04 This tag to get an initial GlastRelease to feed the RM
             THB  11-oct-04 Remove livetime, GemConditionWord, eventflags, since moving to AnaTup.
  *  v6r18   THB  13-sep-04 Remove redundant vars Run, Event, elapsed_time, MC_src_Id
