@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Fri Mar 23 11:52:02 PST 2001
+merit/src/meritAlg GaudiTuple.cxx GaudiTuple.h meritAlg.cxx
+
+Added Files:
+	GaudiTuple.cxx GaudiTuple.h meritAlg.cxx 
+Log Message:
+initial mods for Gaudi environment
+    *
+------------------------------------------------------------
+User: burnett  Fri Mar 23 11:52:02 PST 2001
 merit/src/app AsciiTuple.cxx AsciiTuple.h MeritTuple.h RootTuple.cxx RootTuple.h meritapp.cxx
 
 Added Files:
