@@ -1,4 +1,4 @@
-//  $Header: /cvs/glastsim/merit/FigureOfMerit.cxx,v 1.45 1999/08/27 20:14:24 burnett Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.1.1.1 1999/12/20 22:29:12 burnett Exp $
 
 #ifdef __GNUG__
 #pragma implementation
@@ -110,8 +110,8 @@ class EventSize : public Analyze{
 public:
     EventSize(const Tuple&t ) : Analyze("Average Event size"),
         m_acd(t, "No_Vetos_Hit", "ACD Hits (19 b)"),
-        m_ssd(t, "Cnv_Lyr_Hits", "SSD Hits (20 b)"),
-        m_cal(t, "CsI_No_Xtals", "CAL Hits (40 b)")
+        m_ssd(t, "TKR_Cnv_Lyr_Hits", "SSD Hits (20 b)"),
+        m_cal(t, "Cal_No_Xtals", "CAL Hits (40 b)")
     {}
     void EventSize::report(ostream& out)
     {   
@@ -139,7 +139,7 @@ private:
 //=============================================================================
 class FOMnsistrips : public Summation {
 public:
-    FOMnsistrips(const Tuple&t ): Summation(t, "N_Tracker_Hits", "Tracker hits (avg):"){};
+    FOMnsistrips(const Tuple&t ): Summation(t, "TKR_Cnv_Lyr_Hits", "Tracker hits (avg):"){};
     void FOMnsistrips::report(ostream& out)
     {
 	out << endl << make_label(name());
@@ -151,7 +151,7 @@ public:
 //=============================================================================
 class FOMncsixtals : public Summation {
 public:
-    FOMncsixtals(const Tuple&t ): Summation(t, "CsI_No_Xtals", "CsI logs hit (avg):"){};
+    FOMncsixtals(const Tuple&t ): Summation(t, "Cal_No_Xtals", "CsI logs hit (avg):"){};
     void FOMncsixtals::report(ostream& out)
     {
 	out << endl << make_label(name());
@@ -245,9 +245,9 @@ public:
 
     Level3(const Tuple& t): AnalysisList(" Level 3")
     {
-        push_back( new Cut(t, "CsI_No_Xtals>0") );
-        push_back( new Cut(t, "No_Tracks>0") );
-        push_back( new Cut(t, "Veto_DOCA>25") );
+        push_back( new Cut(t, "Cal_No_Xtals>0") );
+        push_back( new Cut(t, "TKR_No_Tracks>0") );
+        push_back( new Cut(t, "ACD_DOCA>25") );
         //push_back( new Cut(t, "CsI_Fit_errNrm>10"));
     };
     void report(ostream& out)
@@ -264,10 +264,10 @@ public:
     CosmicCuts(const Tuple&t, bool noline=false)
         : AnalysisList("  ---Cosmic cuts---", noline)
     {
-        push_back( new Cut(t, "Surplus_Hit_Ratio", Cut::GT, 2.05) );
-        push_back( new Cut(t, "Veto_DOCA",      Cut::GT, 30) );
-        push_back( new Cut(t, "CsI_Fit_errNrm", Cut::LT, 5) );
-        push_back( new Cut(t, "CsI_Xtal_Ratio",  Cut::GT, 0.25) );
+        push_back( new Cut(t, "REC_Surplus_Hit_Ratio", Cut::GT, 2.05) );
+        push_back( new Cut(t, "ACD_DOCA",      Cut::GT, 30) );
+        push_back( new Cut(t, "Cal_Fit_errNrm", Cut::LT, 5) );
+        push_back( new Cut(t, "Cal_Xtal_Ratio",  Cut::GT, 0.25) );
     }
 };
 //=============================================================================
@@ -276,11 +276,11 @@ public:
     ResolutionCuts(const Tuple& t, bool noline=false)
         : AnalysisList("  ---Resolution cuts---",noline)
     {
-        push_back( new Cut(t, "No_Tracks",      Cut::GT,  0,  "track found") );
-        push_back( new Cut(t, "Chisq",          Cut::LT, 50) );
-        push_back( new Cut(t, "First_Fit_Gaps", Cut::LT, 0.5) );
-        push_back( new Cut(t, "Diff_1st_XY_Lyr",Cut::EQ, 0) );
-        push_back( new Cut(t, "Active_Dist",    Cut::GT, 0 ) );
+        push_back( new Cut(t, "TKR_No_Tracks",      Cut::GT,  0,  "track found") );
+        push_back( new Cut(t, "TKR_Chisq",          Cut::LT, 50) );
+        push_back( new Cut(t, "TKR_First_Fit_Gaps", Cut::LT, 0.5) );
+        push_back( new Cut(t, "TKR_Diff_1st_XY_Lyr",Cut::EQ, 0) );
+        push_back( new Cut(t, "REC_Active_Dist",    Cut::GT, 0 ) );
     };
 };
 //=============================================================================
@@ -344,7 +344,7 @@ void	FigureOfMerit::setCuts ( string istr )
 		m_cuts->push_back( new FOMtrigII(*s_tuple) );
 		break;
 	case 'n':	    // n = ntracks
-	    m_cuts->push_back( new Cut(*s_tuple, "No_Tracks>0" ) );
+	    m_cuts->push_back( new Cut(*s_tuple, "TKR_No_Tracks>0" ) );
 	    break;
 	case 'r':	    // r = resolution cuts
 	    m_cuts->push_back( new ResolutionCuts(*s_tuple) );

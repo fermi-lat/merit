@@ -1,4 +1,5 @@
 // PSFanalysis.cxx
+// June 12, 2001 - rename variables to TKR_...  TU
 
 #include "PSFanalysis.h"
 
@@ -10,11 +11,11 @@ using namespace std;
 inline static double sqr(double x){return x*x;}
 
 PSFanalysis::PSFanalysis(const Tuple& t, double emin, double emax)
-	: Analyze(t, "Gamma_Err" , "PSF analysis" )
+	: Analyze(t, "MC_Gamma_Err" , "PSF analysis" )
 	, RebinHist("PSF", 0, 3.0, 0.1 )
 	, m_sigma(-1)
         , m_energy(t, "MC_Energy", "energy")
-        , m_first_layer(t, "fst_X_Lyr", "first hit layer")
+        , m_first_layer(t, "TKR_First_XHit", "first hit layer")
         , m_emin(emin), m_emax(emax)
 {}
 
