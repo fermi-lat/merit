@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.31 2003/03/04 05:49:00 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.32 2003/03/08 22:00:19 burnett Exp $
 */
 // Include files
 
@@ -180,7 +180,7 @@ StatusCode meritAlg::initialize() {
 
      //now make the parallel ROOT tuple
     if(!m_root_filename.value().empty() ){
-        log << MSG::INFO << "OPening " << m_root_filename << " to write ROOT tuple" << endreq;
+        log << MSG::INFO << "Opening " << m_root_filename << " to write ROOT tuple" << endreq;
         m_root_tuple=new MeritRootTuple(m_tuple, m_root_filename);
     }
 
@@ -220,7 +220,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.31 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.32 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
