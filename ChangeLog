@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sat Nov 22 07:34:54 PST 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx ClassificationTree.h 
+Log Message:
+two new apps to process tuple files
+    *
+------------------------------------------------------------
+User: burnett  Sat Nov 22 07:34:54 PST 2003
 merit/cmt
 
 Modified Files:
