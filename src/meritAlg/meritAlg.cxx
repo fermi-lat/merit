@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.22 2002/09/13 23:14:39 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.23 2002/09/30 22:39:21 lsrea Exp $
 
 // Include files
 
@@ -262,7 +262,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.22 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.23 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -500,8 +500,16 @@ void meritAlg::tileReco(const Event::AcdRecon& acd)
 
     const std::vector<double> & doca = acd.getRowDocaCol();
     
-    // get the map of energy vs tile id
-    const std::map<idents::AcdId, double>& emap = acd.getEnergyCol();
+    // get the map of energy vs tile id: have to construct from two parallel vectors
+    const std::vector<double> energies = acd.getEnergyCol();
+    const std::vector<idents::AcdId>& ids = acd.getIdCol();
+    std::vector<double>::const_iterator eit = energies.begin();
+
+    std::map<idents::AcdId, double> emap;
+    for( std::vector<idents::AcdId>::const_iterator idit = ids.begin(); 
+    idit != ids.end() && eit !=energies.end(); ++idit, ++ eit){
+        emap[*idit]=*eit;
+    }
 
 
     // use acd_row predicate to count number of tiles per side row
