@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Fri May 31 10:48:02 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+remove stringstream
+    *
+------------------------------------------------------------
+User: burnett  Fri May 31 10:48:02 PDT 2002
 merit/src
 
 Modified Files:
