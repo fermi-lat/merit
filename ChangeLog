@@ -1,4 +1,12 @@
 ------------------------------------------------------------
+TAG activity
+User: tlindner  Fri Mar 23 18:01:41 2001
+Tag name: v2
+Tag operation: mov
+Repository: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg
+File(s) and revision(s): GaudiTuple.cxx
+    *
+------------------------------------------------------------
 User: tlindner  Fri Mar 23 18:01:30 PST 2001
 merit/src/meritAlg GaudiTuple.cxx
 
