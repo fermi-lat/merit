@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.56 2003/10/14 20:45:46 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.57 2003/10/15 00:14:55 hansl Exp $
 */
 // Include files
 
@@ -480,7 +480,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.56 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.57 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -514,9 +514,9 @@ StatusCode meritAlg::execute() {
 
         m_warnNoFilterStatus++;
         if (   m_warnNoFilterStatus <= 10 ) {
-          log << MSG::WARNING << "FilterStatus not found" << endl;
+            log << MSG::WARNING << "FilterStatus not found" ;
           if ( m_warnNoFilterStatus == 10 ) {
-            log << "  Further WARNINGs on missing FilterStatus are suppressed"; }
+            log << " -- Further WARNINGs on missing FilterStatus are suppressed"; }
           log  << endreq;
         }
     }
