@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Oct 21 11:08:29 PDT 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+simplify earth_azimuth calculation
+    *
+------------------------------------------------------------
 User: burnett  Tue Oct 21 07:04:54 PDT 2003
 merit/doc
 
