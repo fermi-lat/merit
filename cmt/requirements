@@ -1,6 +1,6 @@
 package merit
 version v6r2
-# $Id: requirements,v 1.27 2003/03/10 22:12:53 burnett Exp $
+# $Id: requirements,v 1.28 2003/03/15 17:59:33 burnett Exp $
 
 branches doc
 
@@ -14,23 +14,24 @@ use AnalysisNtuple v*
 use GlastSvc *
 use Event *
 use GuiSvc v3*
+use classification *
 
 # read/ write ROOT trees (any old ROOT will do)
 use RootPolicy *
 
 apply_pattern package_Cshlibflags 
 
-apply_pattern package_headers
+
 # this to allow includes of internal "package" 
 macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 
 
 #static library
-macro analysis_h "" WIN32 " analysis/*.h"
-macro meritAlg_h "" WIN32 " meritAlg/*.h"
+macro source "*.cxx" WIN32 "*.h *.cxx"
 
-library merit_lib -no_share ${merit_headers} *.cxx\
-  ${analysis_h} analysis/*.cxx 
+library merit_lib -no_share \
+   $(source)\
+  -s=analysis $(source)
 
 #component library with meritAlg
 

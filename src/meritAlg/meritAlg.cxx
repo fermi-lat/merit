@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.33 2003/03/15 03:40:32 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.34 2003/03/15 17:59:34 burnett Exp $
 */
 // Include files
 
@@ -26,6 +26,7 @@
 
 #include "FigureOfMerit.h"
 #include "analysis/Tuple.h"
+#include "ClassificationTree.h"
 
 #include "GuiSvc/IGuiSvc.h"
 #include "gui/DisplayControl.h"
@@ -64,6 +65,7 @@ private:
     Tuple*   m_tuple;
     std::string m_cuts; 
     StringProperty m_root_filename;
+    StringProperty m_IM_filename;
     
     MeritRootTuple* m_root_tuple;
 
@@ -91,6 +93,7 @@ Algorithm(name, pSvcLocator), m_tuple(0), m_root_tuple(0) {
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
+    declareProperty("IM_filename", m_IM_filename="/common/IM_files/PSF_Analysis_11.imw");
 }
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,12 +164,19 @@ StatusCode meritAlg::initialize() {
             return StatusCode::FAILURE;
         }
     }
-    static double dummy = -99; // flag for defined, not implemented
-
      //now make the parallel ROOT tuple
     if(!m_root_filename.value().empty() ){
         log << MSG::INFO << "Opening " << m_root_filename << " to write ROOT tuple" << endreq;
         m_root_tuple=new MeritRootTuple(m_tuple, m_root_filename);
+    }
+    // the tuple is made: create the classification object 
+    try { 
+        ClassificationTree ctree(*m_tuple, m_IM_filename);
+    //TODO: finish setup.
+    }catch ( const char * error){
+        log << MSG::ERROR << "Classification tree error, " << error << endreq;
+    }catch (...)  {
+        log << MSG::ERROR << "Unexpected exception creating classification trees" << endreq;
     }
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
@@ -205,7 +215,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.33 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.34 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -230,6 +240,7 @@ StatusCode meritAlg::execute() {
 
     if(m_root_tuple)m_root_tuple->fill();
 
+    // TODO: process classification trees.
     m_fm->execute();
     
     return sc;
