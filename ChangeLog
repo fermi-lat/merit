@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: golpa  Mon Aug  2 18:17:48 PDT 2004
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+Write out angular separation and FilterAlg status code from new filter
+    *
+------------------------------------------------------------
 User: hansl  Tue Jul  6 11:42:37 PDT 2004
 merit/src
 
