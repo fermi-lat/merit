@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri Mar 14 19:40:32 PST 2003
+merit/src/meritAlg
+
+Modified Files:
+	MeritRootTuple.cxx MeritRootTuple.h meritAlg.cxx 
+Log Message:
+finish double/float conversion
+    *
+------------------------------------------------------------
 User: burnett  Mon Mar 10 14:12:54 PST 2003
 merit/src/analysis
 
