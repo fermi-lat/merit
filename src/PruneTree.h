@@ -1,45 +1,55 @@
 /** @file PruneTree.h
-     @brief apply the set of Bill's cuts for pruning background 
+     @brief declare PruneTree
 */
-
-
 #ifndef PRUNETREE_H
 #define  PRUNETREE_H
 
 #include <string>
-#include <vector>
-#include "classification/Tree.h"
 
-class TupleItem;
+// forward class declarations
+namespace classification { class Tree;}
 class Tuple;
+
+/** @class PruneTree
+     @brief apply the set of Bill's cuts for pruning background 
+
+     @authors Traudl Hansl-Kozanecka, Toby Burnett
+
+     Usage:
+     @verbatim
+    Tuple tuple; 
+     PruneTree pt(tuple);
+     [...]
+     double prob = pt();
+     @endverbatim
+  
+*/
 
 class PruneTree {
 
     public:
     /** set up the tree:
-    * @param t The input tuple -- and will create new columns with the output
-    * @param log -- optional stream for ouptut [std::cout]
+    * @param t The input tuple
     * @param xml_file -- IM file containing descriptions of the predict nodes 
     */
-    PruneTree( Tuple&t, std::ostream& log=std::cout, std::string xml_file="");
+    PruneTree( Tuple&t,  std::string xml_file="");
 
-    /** run the prediction nodes on the current tuple instance
+    /** run the prediction nodes on the current tuple instance, return the value of the 
+        selected CT, a gamma probability
     */
-    void execute();  
+    double operator()(); 
 
     ~PruneTree();
 
 private:
     classification::Tree * m_classifier;
 
+    // nested helper classes,  only declare here
     class Lookup;
 
     class PreClassify;
     PreClassify * m_preclassify;
 
-    std::ostream& m_log;
-    // new tuple item needed by tree
-    double * m_acdUpperTileCnt;
 };
 #endif
 
