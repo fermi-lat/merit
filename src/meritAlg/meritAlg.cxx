@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.83 2004/10/11 21:24:58 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.84 2004/12/16 16:31:18 usher Exp $
 */
 // Include files
 
@@ -196,7 +196,7 @@ static const AlgFactory<meritAlg>  Factory;
 const IAlgFactory& meritAlgFactory = Factory;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 meritAlg::meritAlg(const std::string& name, ISvcLocator* pSvcLocator) :
-Algorithm(name, pSvcLocator), m_tuple(0), m_rootTupleSvc(0)
+Algorithm(name, pSvcLocator), m_tuple(0), m_rootTupleSvc(0), m_ctree(0)
 {
 
     declareProperty("cuts" , m_cuts=default_cuts);
@@ -316,12 +316,16 @@ StatusCode meritAlg::initialize() {
     // add some of the AnalysisNTuple items
     if( setupTools().isFailure()) return StatusCode::FAILURE;
 
-    // the tuple is made: create the classification object 
+    // the tuple is made: create the classification object if requested
     try { 
-        //        const char * pkgpath = ::getenv("CLASSIFICATIONROOT");
         std::string path =  m_IM_filename.value(); 
-        facilities::Util::expandEnvVar(&path);
-        m_ctree = new  ClassificationTree(*m_tuple, log.stream(), path);
+        if(! path.empty() ){
+            facilities::Util::expandEnvVar(&path);
+            m_ctree = new  ClassificationTree(*m_tuple, log.stream(), path);
+            log << MSG::INFO << "Loading classification trees from " << path << endreq;
+        } else {
+            log << MSG::INFO << "No classification trees loaded" << endreq;
+        }
         //TODO: finish setup.
     }catch ( std::exception& e){
         log << MSG::ERROR << "Exception caught, class  "<< typeid( e ).name( ) << ", message:"
@@ -446,7 +450,7 @@ void meritAlg::copyFT1Info(){
     }
     else if(m_primaryType.value() == "RECO")
     {
-        if(m_ctree->useVertex())
+        if(m_ctree==0 || m_ctree->useVertex())
         {
             // Retrieve Vertex to get summary info from reco
             //	  m_ft1energy    = m_tuple->tupleItem("TkrSumConEne")->value();
@@ -499,7 +503,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.83 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.84 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -559,7 +563,7 @@ StatusCode meritAlg::execute() {
         m_filterAlgStatus=(double)filterAlgStatus->getVetoWord();
     }
  
-    m_ctree->execute();
+    if( m_ctree!=0) m_ctree->execute();
     m_fm->execute();
 
     // always write the event tuple
