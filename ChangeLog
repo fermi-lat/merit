@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Nov 26 13:00:26 PST 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx FigureOfMerit.cxx 
+Log Message:
+undo more of the name flipping; fix the rerun classification (double vs. float problem)
+    *
+------------------------------------------------------------
 User: cohen  Wed Nov 26 10:13:37 PST 2003
 merit/doc
 
