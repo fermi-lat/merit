@@ -11,7 +11,7 @@ use GuiSvc v3*
 use ROOT *
 
 apply_pattern packageShr
-
+ignore_pattern RuleChecker
 
 private
 
@@ -20,9 +20,21 @@ apply_pattern package_headers
 # this to allow includes of internal "package" 
 macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 
+
+#static library
+
+library merit_lib -no_share *.cxx analysis/*.cxx ${merit_headers}
+
 #component library with meritAlg
-macro_append merit_headers "" WIN32 " analysis/*.h meritAlg/*.h" 
-library merit  *.cxx analysis/*.cxx meritAlg/*.cxx Dll/*.cxx ${merit_headers}
+macro_append merit_headers "" WIN32 " analysis/*.h" 
+
+library merit   meritAlg/*.cxx Dll/*.cxx $(libs) meritAlg/*.h
 
 
+macro libs ""   WIN32   "$(meritDir)/merit_lib.lib
 
+application merit_app app/*.cxx app/*.h $(libs)
+
+public
+set MERIT_INPUT_FILE "$(MERITROOT)/src/test/merit100.root"
+application test_merit app/*.cxx $(libs)

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.6 2001/10/19 20:49:00 ritz Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.7 2001/10/22 18:34:32 burnett Exp $
 
 // Main for merit
 
@@ -18,7 +18,7 @@
 
 #include <assert.h>
 
-const char* _MERIT_VERSION = "$Revision: 1.6 $";
+const char* _MERIT_VERSION = "$Revision: 1.7 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
     // charge a head with ROOT here, figure out later how to do it consistently
 
 //    RootTuple* tuple = new RootTuple("unknown", file_name, "AORECON/t1");
-    RootTuple* tuple = new RootTuple("unknown", file_name, "PDR/t1");
+    RootTuple* tuple = new RootTuple("unknown", file_name, "MeritTuple");
     // now assign input stream, either the file name or std input
         // Determine the # of events stored in ntuple
 
