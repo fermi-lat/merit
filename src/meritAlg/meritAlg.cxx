@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.26 2002/10/14 18:52:02 lsrea Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.27 2002/10/15 05:25:30 burnett Exp $
 
 // Include files
 
@@ -178,6 +178,7 @@ StatusCode meritAlg::initialize() {
     new TupleItem("TKR_Fit_Kink",   &m_tkr_fit_kink);
     new TupleItem("TKR_xeneXSlope", &m_tkr_eneslope[0]);
     new TupleItem("TKR_xeneYSlope", &m_tkr_eneslope[1]);
+    new TupleItem("TKR_Zbottom",    &dummy);
 
     new TupleItem("REC_Surplus_Hit_ratio", &m_surplus_hit_ratio);
     new TupleItem("REC_Tkr_SkirtX",        &m_tkr_skirtX);
@@ -262,7 +263,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.26 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.27 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -310,7 +311,7 @@ void meritAlg::particleReco(const Event::McParticleCol& particles)
     if( ! particles.empty() ){
        // assume first mc particle is the primary.   
        const Event::McParticle& primary= **particles.begin();
-       m_mce = (primary.initialFourMomentum().e() - primary.initialFourMomentum().mag())*1e-3;
+       m_mce = primary.initialFourMomentum().e() - primary.initialFourMomentum().mag();
        m_incident_dir = Hep3Vector(primary.initialFourMomentum()).unit();
        m_mc_zdir = m_incident_dir.z();
     }
@@ -384,6 +385,9 @@ void meritAlg::processTDS(const Event::EventHeader& header,
         m_tkr_eneslope[1] =  -999.; //TODO
 
 
+        // this is Bill's estimate based on CAL and multiple scattering
+        double energy= track.getEnergy();
+        m_recon_energy = (float) energy;
     }
     
 
@@ -468,7 +472,8 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     m_no_xtals_trunc = no_xtals_trunc;
     m_cal_xtal_ratio = cal_xtal_ratio;
     
-    m_recon_energy = clusters.getCluster(0)->getEnergySum()*1e-3; // convert to GeV
+    // use 
+    //m_recon_energy = clusters.getCluster(0)->getEnergySum()*1e-3; // convert to GeV
     
 }
 namespace {

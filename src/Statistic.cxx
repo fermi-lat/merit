@@ -1,5 +1,5 @@
 // Statistic.cxx
-// $Id: Statistic.cxx,v 1.8 1999/09/06 12:10:38 burnett Exp $
+// $Id: Statistic.cxx,v 1.1.1.1 1999/12/20 22:29:13 burnett Exp $
 #include "Statistic.h"
 
 #include <iomanip>
@@ -13,7 +13,7 @@ Statistic::Statistic(const Tuple&t, std::string::const_iterator& it, std::string
     std::string name;
     for(;   it != end && *it!=','; ++it) name += *it;
     set_tuple_item(t,name);
-    set_name(std::string(begin,it-begin));
+    set_name(std::string(begin,it));
     if( *it==',')++it;
 }
 

@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.14 2002/09/02 03:06:38 burnett Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.15 2002/09/02 15:41:28 burnett Exp $
 
 
 #include "FigureOfMerit.h"
@@ -294,7 +294,7 @@ void	FigureOfMerit::setCuts ( string istr )
             
         case 'G': // Gnn, -- override number generated
         {
-            s_generated= ::atoi(it);
+            s_generated= ::atoi(&*it);
             while( it !=istr.end() && (*it++)!=',');
             cerr << "Overriding generated number to " << s_generated << endl;
             break;
