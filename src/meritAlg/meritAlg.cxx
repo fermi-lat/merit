@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.28 2002/10/27 19:00:04 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.29 2002/10/31 03:29:49 burnett Exp $
 
 // Include files
 
@@ -88,12 +88,12 @@ private:
     float m_mce, m_trig, m_angle_diff, m_recon_energy;
     float m_time;
 
-    float m_mc_zdir;
+    float m_mc_xdir, m_mc_ydir, m_mc_zdir;
 
     // from track analysis
     float m_tracks;
     float m_first_hit;
-    float m_tkr_gamma_zdir;
+    float m_tkr_gamma_xdir, m_tkr_gamma_ydir, m_tkr_gamma_zdir;
 
     float m_tkr_qual, m_tkr_t_angle, m_tkr_fit_kink;
     float m_surplus_hit_ratio, m_tkr_skirtX, m_tkr_skirtY;
@@ -166,12 +166,16 @@ StatusCode meritAlg::initialize() {
     new TupleItem("MC_src_Id",      &m_mc_src_id);
     new TupleItem("MC_Energy",      &m_mce);
     new TupleItem("MC_Gamma_Err",   &m_angle_diff);
+    new TupleItem("MC_xdir",        &m_mc_xdir);
+    new TupleItem("MC_ydir",        &m_mc_ydir);
     new TupleItem("MC_zdir",        &m_mc_zdir);
     new TupleItem("elapsed_time",   &m_time);
 
     new TupleItem("trig_bits",      &m_trig);
     new TupleItem("TKR_No_Tracks",  &m_tracks);
     new TupleItem("TKR_First_XHit", &m_first_hit);
+    new TupleItem("TKR_Gamma_xdir", &m_tkr_gamma_xdir);
+    new TupleItem("TKR_Gamma_ydir", &m_tkr_gamma_ydir);
     new TupleItem("TKR_Gamma_zdir", &m_tkr_gamma_zdir);
     new TupleItem("TKR_qual",       &m_tkr_qual);
     new TupleItem("TKR_t_angle",    &m_tkr_t_angle);
@@ -263,7 +267,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.28 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.29 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -313,6 +317,8 @@ void meritAlg::particleReco(const Event::McParticleCol& particles)
        const Event::McParticle& primary= **particles.begin();
        m_mce = primary.initialFourMomentum().e() - primary.initialFourMomentum().mag();
        m_incident_dir = Hep3Vector(primary.initialFourMomentum()).unit();
+       m_mc_xdir = m_incident_dir.x();
+       m_mc_ydir = m_incident_dir.y();
        m_mc_zdir = m_incident_dir.z();
     }
     
@@ -338,6 +344,8 @@ void meritAlg::processTDS(const Event::EventHeader& header,
         Point p = track.getPosition();
         Vector dir = track.getDirection();
         
+        m_tkr_gamma_xdir = dir.x();
+        m_tkr_gamma_ydir = dir.y();
         m_tkr_gamma_zdir = dir.z();
 
         // get difference from incident mc direction: allow either convention on direction of 
