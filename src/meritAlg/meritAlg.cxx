@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.67 2003/11/25 15:57:47 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.68 2003/11/25 23:11:12 burnett Exp $
 */
 // Include files
 
@@ -278,12 +278,18 @@ StatusCode meritAlg::initialize() {
   m_tuple = new Tuple(title.str());
 
   // define tuple items
-  new TupleItem("EvtRun",            &m_run);
-  new TupleItem("EvtEventID",        &m_event);
-  new TupleItem("McSrcId",           &m_mc_src_id);
-  new TupleItem("EvtTime",           &m_time);
-  new TupleItem("GltFilterStatusHI", &m_statusHi);
-  new TupleItem("GltFilterStatusLO", &m_statusLo);
+  //  new TupleItem("EvtRun",            &m_run);
+  new TupleItem("Run",            &m_run);
+  //  new TupleItem("EvtEventID",        &m_event);
+  new TupleItem("Event_ID",        &m_event);
+  //  new TupleItem("McSrcId",           &m_mc_src_id);
+  new TupleItem("MC_src_Id",           &m_mc_src_id);
+  //  new TupleItem("EvtTime",           &m_time);
+  new TupleItem("elapsed_time",           &m_time);
+  //  new TupleItem("GltFilterStatusHI", &m_statusHi);
+  new TupleItem("FilterStatus_HI", &m_statusHi);
+  //  new TupleItem("GltFilterStatusLO", &m_statusLo);
+  new TupleItem("FilterStatus_LO", &m_statusLo);
 
   //FT1 INFO:
   new TupleItem("FT1EventId",           &m_ft1eventid);
@@ -374,7 +380,8 @@ void meritAlg::setupPointingInfo(){
   if( treeName.empty()) return;
 
   std::vector<const char* > names;
-  const char * point_info_name[] = {"PtTime","PtLat","PtLon","PtAlt","PtPosx","PtPosy","PtPosz","PtRax","PtDecx","PtRaz","PtDecz"};
+  //  const char * point_info_name[] = {"PtTime","PtLat","PtLon","PtAlt","PtPosx","PtPosy","PtPosz","PtRax","PtDecx","PtRaz","PtDecz"};
+  const char * point_info_name[] = {"elapsed_time","lat","lon","alt","posx","posy","posz","rax","decx","raz","decz"};
   for( int i = 0; i< (int)(sizeof(point_info_name)/sizeof(void*)); ++i){ 
     names.push_back(point_info_name[i]); }
     
@@ -484,7 +491,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-  out << "Merit tuple, " << "$Revision: 1.67 $" << std::endl;
+  out << "Merit tuple, " << "$Revision: 1.68 $" << std::endl;
 
   for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
     const TupleItem& item = **tit;
