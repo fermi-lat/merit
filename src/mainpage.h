@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.8 2004/01/07 18:56:13 hansl Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.9 2004/07/06 18:42:37 hansl Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -9,9 +9,12 @@
   Implements an algorithm, meritAlg, that does a PSF and Aeff analysis.
 
   <h3> Properties for meritAlg </h3> 
-    @param  meritAlg.cuts ["LnA"]
+    @param  meritAlg.cuts ["LntA"]  remove the "t" to disable tree-based tail cuts
     @param  meritAlg.generated [10000]
     @param  meritAlg.RootFilename  [""]
+    @param  meritAlg.IM_filename ["$(MERITROOT)/xml/classification.imw"] 
+    @param  meritAlg.PrimaryType ["RECO"] or "MC" (why not a bool?)
+    @param  meritAlg.NbOfEvtsInFile [100000]  to define FT1 event ID. (see code)
 
   <h3> Keys Used in FigureOfMerit::setCuts </h3>
   
