@@ -2,7 +2,7 @@
 //
 //
 // Original author: T. Burnett tburnett@u.washington.edu
-// $Header: /cvs/glastsim/merit/Cut.h,v 1.5 1999/08/23 16:51:01 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/Cut.h,v 1.1.1.1 1999/12/20 22:29:12 burnett Exp $
 //////////////////////////////////////////////////////////////////////
 
 #if !defined(CUT_H__INCLUDED_)
@@ -43,4 +43,4 @@ private:
 };
 
 #endif // !defined(AFX_ANALYSISCUT_H__CD2E7DD1_F406_11D2_83A8_000000000000__INCLUDED_)
-;
+

@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.8 2002/09/02 03:06:39 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.9 2002/09/02 15:48:33 burnett Exp $
 
 // Main for merit
 
@@ -18,8 +18,8 @@
 
 #include <assert.h>
 
-const char* _MERIT_VERSION = "$Revision: 1.8 $";
-static std::string  cutstr("nA");
+const char* _MERIT_VERSION = "$Revision: 1.9 $";
+static std::string  cutstr("nAW");
 static std::string  file_name("");
 
 
