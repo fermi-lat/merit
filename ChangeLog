@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Tue Aug 10 20:25:00 PDT 2004
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+rename localally generated variables according to standard convention
+make local guys float (can't do that yet for AnaTup)
+clean up logic a bit
+    *
+------------------------------------------------------------
 User: golpa  Mon Aug  2 18:20:31 PDT 2004
 merit/doc
 
