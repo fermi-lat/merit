@@ -30,9 +30,9 @@ macro_append merit_headers "" WIN32 " analysis/*.h"
 
 library merit   meritAlg/*.cxx Dll/*.cxx $(libs) 
 
-macro merit_linkopts      "-L $(meritDir) -lmerit-lib"   WIN32 ""
-macro merit_app_linkopts  "-L $(meritDir) -lmerit-lib"   WIN32 ""
-macro test_merit_linkopts "-L $(meritDir) -lmerit-lib"   WIN32 ""
+macro merit_linkopts      "-L $(meritDir) -lmerit_lib"   WIN32 ""
+macro merit_app_linkopts  "-L $(meritDir) -lmerit_lib"   WIN32 ""
+macro test_merit_linkopts "-L $(meritDir) -lmerit_lib"   WIN32 ""
 
 macro libs ""   WIN32   "$(meritDir)/merit_lib.lib
 

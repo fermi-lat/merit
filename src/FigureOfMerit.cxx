@@ -1,4 +1,4 @@
-//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.13 2002/06/16 23:51:24 burnett Exp $
+//  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.14 2002/09/02 03:06:38 burnett Exp $
 
 
 #include "FigureOfMerit.h"
@@ -184,205 +184,6 @@ private:
 };
 
 //=============================================================================
-// Level  2 analysis
-class Level2 : public Analyze {	
-public:
-    Level2(const Tuple& t): Analyze(t, "Trig_Level2_Bits", "Level2")
-        , m_trig_cal(t,32)
-    { clear(); };
-    void report(std::ostream& out)
-    {
-        out << endl << name() ;
-        out << endl << "          track:" << setw(8) << m_track;
-        out << endl << "           veto:" << setw(8) << m_veto;
-        out << endl << "  veto & !hical:" << setw(8) << m_cal;
-        Analyze::report(out);
-        separator(out);
-    }
-    void clear(){m_track=m_veto=m_cal=0; Analyze::clear();}
-private:
-    virtual bool  apply ()
-    { 
-        int trig2 = static_cast<unsigned>(item()) & 15;
-        bool cal = m_trig_cal() ;
-        if( trig2 & 1){
-            m_track++; 
-            if( trig2 >1 ){
-                m_veto++;
-                if( !cal) m_cal++ ;
-            }
-        }
-        return trig2 == 1 ||  cal;
-    }
-    FOMtrig1Cal m_trig_cal;
-    int m_track; // number with track bit set
-    int m_veto;  // number with also veto
-    int m_cal;   // calorimeter trigger overrides veto
-
-};
-//=============================================================================
-class FOMtrigII : public Analyze {	
-public:
-    FOMtrigII(const Tuple& t): Analyze(t, "Trig_Level2_Bits", "Level2 3row only"){};
-private:
-    virtual bool  apply (){ return ((static_cast<unsigned>(item()) & 1) == 1); }
-};
-//=====================================================================================
-class FOML2T : public Analyze {
-public:
-    FOML2T (const Tuple& t) 
-        : Analyze (t, "ACD_DOCA", "L2 Selections")
-        , m_sourceid(t.tupleItem ("MC_src_Id"))
-	  , m_numtracks(t.tupleItem ("TKR_No_Tracks"))
-	  , m_edeposit(t.tupleItem ("Cal_Energy_Deposit"))
-	  , m_acd_topdoca(t.tupleItem ("ACD_TopDOCA"))
-	  , m_acd_s0doca(t.tupleItem ("ACD_S0DOCA"))
-	  , m_acd_s1doca(t.tupleItem ("ACD_S1DOCA"))
-
-    {    }
-private:
-    virtual bool    apply () {
-        float doca = item();
-	    float sourceid = *m_sourceid;
-        float numtracks = *m_numtracks;
-        float edeposit = *m_edeposit;
-        float acd_topdoca = *m_acd_topdoca;
-        float acd_s0doca = *m_acd_s0doca;
-        float acd_s1doca = *m_acd_s1doca;
-        bool newdoca = min(acd_topdoca,min(acd_s0doca,acd_s1doca))>25.;
-//        return (sourceid!=2&&((numtracks>0.&&doca>25.)||(edeposit>10000.)));
-        return ((numtracks>0.&&newdoca)||edeposit>10000.); // we'll want to use this
-    }
-    
-    const TupleItem*	m_sourceid;
-    const TupleItem*	m_numtracks;
-    const TupleItem*	m_edeposit;
-    const TupleItem*	m_acd_topdoca;
-    const TupleItem*	m_acd_s0doca;
-    const TupleItem*	m_acd_s1doca;
-};
-//=============================================================================
-class FOML3T : public Analyze {
-public:
-    FOML3T (const Tuple& t) 
-        : Analyze (t, "Cal_Energy_Deposit", "L3 Selections")
-        , m_surplushit(t.tupleItem ("REC_Surplus_Hit_Ratio"))
-	  , m_xtalrat(t.tupleItem ("Cal_Xtal_Ratio"))
-	  , m_fiterrnrm(t.tupleItem ("Cal_Fit_errNrm"))
-      , m_tilecount(t.tupleItem ("ACD_TileCount"))
-	  , m_siderow3(t.tupleItem ("ACD_No_SideRow3"))
-	  , m_siderow2(t.tupleItem ("ACD_No_SideRow2"))
-	  , m_elayer0(t.tupleItem ("Cal_eLayer0"))
-	  , m_elayer1(t.tupleItem ("Cal_eLayer1"))
-	  , m_elayer2(t.tupleItem ("Cal_eLayer2"))
-	  , m_elayer3(t.tupleItem ("Cal_eLayer3"))
-	  , m_elayer4(t.tupleItem ("Cal_eLayer4"))
-	  , m_elayer5(t.tupleItem ("Cal_eLayer5"))
-	  , m_elayer6(t.tupleItem ("Cal_eLayer6"))
-	  , m_elayer7(t.tupleItem ("Cal_eLayer7"))
-	  , m_s2doca(t.tupleItem ("ACD_S2DOCA"))
-	  , m_tkr_zbottom(t.tupleItem ("TKR_Zbottom"))
-	  , m_tkr_skirtx(t.tupleItem ("REC_Tkr_SkirtX"))
-	  , m_tkr_skirty(t.tupleItem ("REC_Tkr_SkirtY"))
-	  , m_tkr_no_tracks(t.tupleItem ("TKR_No_Tracks"))
-
-
-    {    }
-private:
-    virtual bool    apply () {
-        float edeposit = item();
-    	float surplushit = *m_surplushit;
-        float xtalrat = *m_xtalrat;
-        float fiterrnrm = *m_fiterrnrm;
-    	float tilecount = *m_tilecount;
-        float siderow3 = *m_siderow3;
-        float siderow2 = *m_siderow2;
-        float elayer0 = *m_elayer0;
-#if 0 // not used
-        float elayer1 = *m_elayer1;
-        float elayer2 = *m_elayer2;
-        float elayer3 = *m_elayer3;
-        float elayer4 = *m_elayer4;
-        float elayer5 = *m_elayer5;
-        float elayer6 = *m_elayer6;
-#endif
-        float elayer7 = *m_elayer7;
-        float s2doca  = *m_s2doca;
-
-        float tkr_zbottom  = *m_tkr_zbottom;
-        float tkr_skirty  = *m_tkr_skirty;
-        float tkr_skirtx  = *m_tkr_skirtx;
-        float tkr_no_tracks  = *m_tkr_no_tracks;
-        
-        float rat0 = 2.;
-        float rat7 = 2.;
-        if (edeposit>0.) {
-              rat0=elayer0/edeposit;
-              rat7=elayer7/edeposit;
-        }
-
-        bool ACDinfo = ((tilecount-siderow3-siderow2)<1.||edeposit>350.) && (edeposit>0.||tilecount<1.)&&
-            (s2doca<40.||s2doca>199.||edeposit>500.);
-        bool CALinfo = ((edeposit<1.&&surplushit>2.)||(edeposit>0.&&(xtalrat>.2||edeposit>1000.)))&&(fiterrnrm<15.||edeposit<300.) &&
-            (edeposit==0.||(rat0>0.01&&rat0<.9));
-        bool TKRinfo = ((tkr_no_tracks>2.&&edeposit>0.)||
-        ((abs(tkr_skirtx)<70.||abs(tkr_skirtx)>85.)&&(abs(tkr_skirty)<70.||abs(tkr_skirty)>85.)))&&
-        (surplushit>2.||edeposit>350.)&&(tkr_zbottom<2.||edeposit==0.);
-
-
-
-        return (ACDinfo&&CALinfo&&TKRinfo);
-    }
-    const TupleItem*	m_surplushit;
-    const TupleItem*	m_xtalrat;
-    const TupleItem*	m_fiterrnrm;
-    const TupleItem*	m_tilecount;
-    const TupleItem*	m_siderow3;
-    const TupleItem*    m_siderow2;
-    const TupleItem*    m_elayer0;
-    const TupleItem*    m_elayer1;
-    const TupleItem*    m_elayer2;
-    const TupleItem*    m_elayer3;
-    const TupleItem*    m_elayer4;
-    const TupleItem*    m_elayer5;
-    const TupleItem*    m_elayer6;
-    const TupleItem*    m_elayer7;
-    const TupleItem*    m_s2doca;
-    const TupleItem*    m_tkr_zbottom;
-    const TupleItem*    m_tkr_skirty;
-    const TupleItem*    m_tkr_skirtx;
-    const TupleItem*    m_tkr_no_tracks;
-
-};
-//=============================================================================
-class FOML1V : public Analyze {
-public:
-    FOML1V (const Tuple& t) 
-        : Analyze (t, "ACD_Throttle_Bits", "L1 Throttle")
-        , m_tilecount(t.tupleItem ("ACD_TileCount"))
-	  , m_siderow3(t.tupleItem ("ACD_No_SideRow3"))
-	  , m_siderow2(t.tupleItem ("ACD_No_SideRow2"))
-	  , m_trigbits(t.tupleItem ("Trig_Bits"))
-
-    {    }
-private:
-    virtual bool    apply () {
-        float throttlebits = item();
-	  float tilecount = *m_tilecount;
-        float siderow3 = *m_siderow3;
-        float siderow2 = *m_siderow2;
-        int trigbits = *m_trigbits;
-
-        return (((throttlebits==0||throttlebits>127.)&&(tilecount-siderow2-siderow3)<3.)||(trigbits&16));
-    }
-    
-    const TupleItem*	m_throttlebits;
-    const TupleItem*	m_tilecount;
-    const TupleItem*	m_siderow3;
-    const TupleItem*    m_siderow2;
-    const TupleItem*    m_trigbits;
-};
-//=============================================================================
 class WriteTuple : public Analyze {
 public:
     WriteTuple(const Tuple& t, std::ostream &stream = std::cout) 
@@ -503,27 +304,14 @@ void	FigureOfMerit::setCuts ( string istr )
             m_cuts->push_back( new Level1(*s_tuple) );
             break;
         }
-            // added 18 oct 2001 by S.Ritz
-        case 'V':        // V = level 1 VETO using ACD
-            m_cuts->push_back( new FOML1V(*s_tuple) );
-            break;
-            //change 18 oct 2001 by S.Ritz to new L2T and L3T selections
-        case '2':	    // 2 = level II trigger - no veto
-            m_cuts->push_back( new FOML2T(*s_tuple) );
-            break;
-        case '3':	    // 3 = level 3 trigger 
-       	    m_cuts->push_back( new FOML3T(*s_tuple) );
-            break;
-            // 18 october 2001 by S.Ritz -- add selections for Front and Back
+
         case 'F':		// F = Front TKR section only
             m_cuts->push_back( new FOMFront(*s_tuple) );
             break;
         case 'B':		// B = Back TKR section only
             m_cuts->push_back( new FOMBack(*s_tuple) );
             break;
-        case 'd':		// d = level II trigger - with veto
-            m_cuts->push_back( new FOMtrigII(*s_tuple) );
-            break;
+
         case 'n':	    // n = ntracks
             m_cuts->push_back( new Cut(*s_tuple, "TKR_No_Tracks>0" ) );
             break;
