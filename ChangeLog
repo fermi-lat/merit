@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Sep  8 13:33:22 PDT 2004
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+add (temporary) live time variable for testing; make finalize call setFinalized().
+    *
+------------------------------------------------------------
 User: burnett  Wed Sep  8 13:29:25 PDT 2004
 merit/src
 
