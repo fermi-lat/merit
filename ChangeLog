@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Dec  7 08:43:57 PST 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx ClassificationTree.h 
+Log Message:
+Implement  Atwood background cuts (without CT's)
+    *
+------------------------------------------------------------
 User: burnett  Tue Dec  2 16:30:56 PST 2003
 merit/doc
 
