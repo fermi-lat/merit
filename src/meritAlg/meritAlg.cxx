@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of meritAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.51 2003/08/25 23:38:47 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.52 2003/09/29 00:12:18 burnett Exp $
 */
 // Include files
 
@@ -268,6 +268,7 @@ void meritAlg::copyPointingInfo(){
 
         Event::ExposureCol* elist = 0;
         eventSvc()->retrieveObject("/Event/MC/ExposureCol",(DataObject *&)elist);
+        if( elist==0) return; // should not happen, but make sure ok.
         //Event::ExposureCol::iterator curEntry = (*elist).begin();
         const Event::Exposure& exp = **(*elist).begin();
         int n= 0;
@@ -294,7 +295,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.51 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.52 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
