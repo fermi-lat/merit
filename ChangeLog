@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: cohen  Fri Dec 12 08:28:37 PST 2003
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fixed the Ft1Energy entry, now pointing to EvtEnergySumOpt
+    *
+------------------------------------------------------------
+User: cohen  Fri Dec 12 08:28:37 PST 2003
 merit/src/meritAlg
 
 Modified Files:
