@@ -1,5 +1,5 @@
 /** @file  fastFilter.cxx 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.2 2003/12/18 03:01:26 hansl Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.3 2003/12/18 03:25:10 hansl Exp $
 */
 
 #include "app/RootTuple.h"
@@ -31,6 +31,11 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.2 2003/12
 
 int main(int argc, char* argv[])
 {
+    int debug = 1;  // debug level increasing with value
+
+    // Set up input, output files and IM XML file
+    //_________________________________________________________________________
+
     std::string  input_filename(""), output_filename(""), tree_name("MeritTuple");
     int n=0;
     if( argc>++n ) input_filename  = argv[n];
@@ -89,7 +94,7 @@ int main(int argc, char* argv[])
     //_________________________________________________________________________
 
     std::cout << "FastFilter: Output enhanced merit Tuple: "
-              << "\n\t " << output_filename   << "\"" << std::endl;
+              << "\n\t " << output_filename   << "\"" << __DATE__ <<std::endl;
 
     // set up the output Root file and Root Tree
     std::string outTitle( "Filtered" );
@@ -102,13 +107,13 @@ int main(int argc, char* argv[])
          Double_t * val  = &item.value();
 	 std::string leaf_name = item.isFloat() ? item.name() : item.name()+"/D";
          out_tree->Branch( item.name().c_str(), val, leaf_name.c_str() );
-
-         std::cout << " name      " << item.name() 
-                   << " value     " << val 
-                   << " leaf name " << leaf_name << std::endl; 
+         if ( debug >3 ) {
+           std::cout << " name      " << item.name() 
+                     << " value     " << val 
+                     << " leaf name " << leaf_name << std::endl; }
     }
 
-    std::cout << "fastFilter: Number of branches "<< out_tree->GetNbranches() << std::endl;
+    std::cout << "fastFilter: Number of branches "<<out_tree->GetNbranches() <<std::endl;
     
 
 
@@ -124,9 +129,7 @@ int main(int argc, char* argv[])
             if (prob >= 0.0 ) {  // 0.0 for test of filter
               
               out_file.cd();
-              nBytes = out_tree->Fill(); //  nBytes = out_tree->GetEntry(nEntries, 0); 
-	      std::cout << "nBytes = " << nBytes << std::endl; // # bytes 8*239 ok
-
+              nBytes = out_tree->Fill();
               ++nEntries;
             }  // check prob  
           }  // loop events
@@ -138,17 +141,15 @@ int main(int argc, char* argv[])
             std::cerr << "Unknown exception from classification " << std::endl;
         }
 
-    // leftovers from debug
-       // out_file.Recover();
        out_file.ls();
        //out_file.Map();
 
-       // out_tree->Print();
+       if (debug>2) { out_tree->Print();}
        out_tree->ls();
 
-       out_tree->BuildIndex("EvtRun", "EvtEventID");
-    // end leftovers
-       out_file.Write();
+       // out_tree->BuildIndex("EvtRun", "EvtEventID");
+
+     out_file.Write();
      out_file.Close();
      std::cout << "fastFilter: " << nEntries 
                << " events selected for filtered file " << std::endl;
