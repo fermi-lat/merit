@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed May 14 21:49:01 PDT 2003
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx 
+Log Message:
+Implement alias from root tuple for testing.
+    *
+------------------------------------------------------------
 User: burnett  Sat May 10 21:47:16 PDT 2003
 merit/doc
 
