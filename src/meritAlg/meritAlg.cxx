@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
     @brief Declaration and implementation of mertAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.48 2003/08/17 03:14:43 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.49 2003/08/17 18:46:47 burnett Exp $
 */
 // Include files
 
@@ -34,7 +34,8 @@
 #include "gui/PrintControl.h"
 #include "gui/GuiMgr.h"
 
-#include "MeritRootTuple.h"
+//#include "MeritRootTuple.h"
+#include "ntupleWriterSvc/INTupleWriterSvc.h"
 
 #include "OnboardFilter/FilterStatus.h"
 
@@ -72,7 +73,11 @@ private:
     StringProperty m_root_filename;
     StringProperty m_IM_filename;
     StringProperty m_treename;    
+#if 0
     MeritRootTuple* m_root_tuple;
+#else
+    INTupleWriterSvc* m_rootTupleSvc;;
+#endif
 
     IToolSvc* m_pToolSvc;
 
@@ -97,12 +102,15 @@ static const AlgFactory<meritAlg>  Factory;
 const IAlgFactory& meritAlgFactory = Factory;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 meritAlg::meritAlg(const std::string& name, ISvcLocator* pSvcLocator) :
-Algorithm(name, pSvcLocator), m_tuple(0), m_root_tuple(0) {
+Algorithm(name, pSvcLocator), m_tuple(0)
+, m_rootTupleSvc(0)
+{
     
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
     declareProperty("RootFilename", m_root_filename="");
     declareProperty("IM_filename", m_IM_filename="$(CLASSIFICATIONROOT)/xml/PSF_Analysis.xml");
+// deprecated:: needed to flag that using the RootTupleSvc
     declareProperty("RootTreeName", m_treename="MeritTuple"); 
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -197,12 +205,24 @@ StatusCode meritAlg::initialize() {
 
      //now make the parallel ROOT tuple
     if(!m_root_filename.value().empty() ){
-        log << MSG::INFO << "Opening " << m_root_filename << " to write ROOT tuple" << endreq;
-        m_root_tuple=new MeritRootTuple(m_tuple, m_root_filename, m_treename);
+    // get a pointer to RootTupleSvc 
+    if( (sc = service("RootTupleSvc", m_rootTupleSvc)). isFailure() ) {
+        log << MSG::ERROR << " failed to get the RootTupleSvc" << endreq;
+        return sc;
+    }
+
     }
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
-    
+   
+    if( m_rootTupleSvc !=0) {
+         // now tell the root tuple service about our tuple
+        for(Tuple::iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
+            TupleItem& item = **tit;
+            m_rootTupleSvc->addItem("",item.name(), &item.value());
+        }
+    }
+
     // setup tuple output via the print service
         // get the Gui service
     IGuiSvc* guiSvc=0;
@@ -230,7 +250,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.48 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.49 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -263,11 +283,9 @@ StatusCode meritAlg::execute() {
         m_statusHi=m_statusLo=0;
         log << MSG::ERROR << "did not find the filterstatus" << endreq;
     }
-
-    if(m_root_tuple)m_root_tuple->fill();
-
     m_ctree->execute();
     m_fm->execute();
+    if( m_rootTupleSvc)  m_rootTupleSvc->storeRowFlag(true);
     
     return sc;
 }
@@ -285,12 +303,6 @@ StatusCode meritAlg::finalize() {
     }
     log << endreq;
     delete m_tuple;
-    if(m_root_tuple !=0) {
-        log << MSG::INFO << "Wrote " << m_root_tuple->entries() << " ROOT tuple entries" << endreq;
-        delete m_root_tuple;
-    }
-
-    
     delete m_fm;
     return StatusCode::SUCCESS;
 }

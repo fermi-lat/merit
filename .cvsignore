@@ -10,5 +10,7 @@ Makefile
 Makefile.in
 stamp-h*
 Win32
-Win32Debug
+Win32*
 Visual
+VC*
+rh_*
