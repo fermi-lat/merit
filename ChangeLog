@@ -1,13 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Thu Nov  1 09:28:00 PST 2001
-merit/src FigureOfMerit.cxx FigureOfMerit.h
-
-Modified Files:
-	FigureOfMerit.cxx FigureOfMerit.h 
-Log Message:
-move inlines since gcc cound not find them
-    *
-------------------------------------------------------------
 User: usher  Wed Oct 31 09:05:53 PST 2001
 merit/src BackgroundCuts.cxx
 
