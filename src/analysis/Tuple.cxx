@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.5 2002/06/01 15:33:24 burnett Exp $
+// $Id: Tuple.cxx,v 1.6 2002/09/02 03:06:39 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -6,11 +6,7 @@
 #include <cassert>
 #include <cmath>
 #include <cfloat>
-#ifndef DEFECT_NO_STRINGSTREAM
 #include <sstream>
-#else
-#include <strstream>
-#endif
 
 static inline void WARNING(const char* text){ std::cerr << text;}
 static inline void FATAL(const char* text) {
@@ -77,7 +73,7 @@ void Tuple::nextStream(std::istream& infile)
 Tuple*
 Tuple::s_currentTuple=0;
 
-float
+double
 Tuple::operator[](unsigned i)const
 {
     return (*(begin()+i))->datum;
@@ -127,7 +123,7 @@ Tuple::find(const std::string& nam)const
 }
 
 void
-Tuple::fillArray(float array[])const
+Tuple::fillArray(double array[])const
 {
     for( const_iterator it=begin(); it !=end(); ++it)
       *array++ = (*it)->datum;
@@ -157,7 +153,7 @@ std::ostream& operator << (std::ostream& out, const Tuple& t)
     }else {
 
 	for( Tuple::const_iterator it=t.begin(); it !=t.end(); ++it)
-	    out << float(**it) << '\t';
+	    out << double(**it) << '\t';
     }
     out << '\n';
     return out;
@@ -165,7 +161,7 @@ std::ostream& operator << (std::ostream& out, const Tuple& t)
 
 std::istream& operator >> (std::istream& in, Tuple& t)
 {
-    float x;
+    double x;
     for( Tuple::iterator it = t.begin(); it != t.end(); ++it) {
 	in >> x;
 	if( in.fail() ){  // protect against 1.#INF!
@@ -208,7 +204,7 @@ std::istream& operator >> (std::istream& in, Tuple& t)
     return in;
 }
 
-TupleItem::TupleItem(const std::string& iname, float x)
+TupleItem::TupleItem(const std::string& iname, double x)
 : m_name(iname), datum(x), m_pdatum(&datum)
 {
 
@@ -230,14 +226,14 @@ TupleItem::TupleItem(const std::string& iname, float x)
     Tuple::s_currentTuple->push_back(this);
 }
 
-TupleItem::TupleItem(const std::string& iname, float* px)
+TupleItem::TupleItem(const std::string& iname, double* px)
 : m_name(iname), m_pdatum(px)
 {
     Tuple::s_currentTuple->push_back(this);
 }
 
 
-float &
+double &
 TupleItem::operator()(){
     return *m_pdatum;
 }
@@ -255,11 +251,7 @@ Tuple::tupleItem(const std::string& name)const
     Tuple::const_iterator it = find(name);
     // compare lowercase only
     if( it != end() ) return *it;
-#ifndef DEFECT_NO_STRINGSTREAM
     std::stringstream  errmsg;
-#else
-    std::strstream errmsg;
-#endif
     errmsg << "Sorry, did not find '" << name << "' in the tuple\n";
     std::cerr << errmsg.str() << std::endl;
     throw (errmsg.str());

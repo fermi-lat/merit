@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.1 2002/05/26 03:35:10 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.2 2002/09/01 14:37:57 burnett Exp $
 
 #ifndef TUPLE_H
 #define TUPLE_H
@@ -13,24 +13,24 @@ private:
 public:
 
     TupleItem(){}
-    TupleItem(const std::string& name, float x=0);
+    TupleItem(const std::string& name, double x=0);
 
     //! alternate constructor uses pointer to other buffer
-    TupleItem(const std::string& name, float* x);
+    TupleItem(const std::string& name, double* x);
 
-    void operator=(float x){
+    void operator=(double x){
       datum=x;
 
     }
-     float & value(){ return *m_pdatum;}
+     double & value(){ return *m_pdatum;}
 
     // assign value to the tuple element
     
-    float operator()()const{
+    double operator()()const{
       return *m_pdatum;
 }
 
-    operator float()const{
+    operator double()const{
       return *m_pdatum;
     }
 
@@ -45,10 +45,10 @@ public:
 
    private:
 
-    float& operator()();
+    double& operator()();
     std::string m_name;
-    float datum;
-    float* m_pdatum;
+    double datum;
+    double* m_pdatum;
 };
 
 
@@ -69,7 +69,7 @@ private:
    void setTitle(const std::string&);
    // set title after the fact
 
-   float operator[](unsigned i)const;
+   double operator[](unsigned i)const;
    // access to value of the ith element (start from 0)
 
    const char* name(unsigned i)const;
@@ -80,7 +80,7 @@ private:
    // return index of element by name, if found (-1 otherwise)
    // return iterator for element with name, end() otherwise
 
-   void fillArray(float array[])const;
+   void fillArray(double array[])const;
    // fill the given array from the tuple
 
    void writeHeader(std::ostream&)const;

@@ -1,9 +1,16 @@
 package merit
-version v5r13p1
-# $Id: requirements,v 1.23 2002/12/23 00:57:00 srobinsn Exp $
+version v6r0
+# $Id: requirements,v 1.24 2003/01/15 03:02:16 burnett Exp $
 
 branches doc
 
+use GlastPolicy v*
+apply_pattern packageShr
+
+
+private
+#--------------------------------------------------------------
+use AnalysisNtuple v*
 use GlastSvc *
 use Event *
 use GuiSvc v3*
@@ -11,11 +18,8 @@ use GuiSvc v3*
 # read/ write ROOT trees (any old ROOT will do)
 use RootPolicy *
 
-apply_pattern packageShr
-
-private
-
 apply_pattern package_Cshlibflags 
+
 apply_pattern package_headers
 # this to allow includes of internal "package" 
 macro_prepend includes "-I ../src " WIN32 "/I ..\src "
