@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sun May 25 10:12:53 PDT 2003
+merit/src/app
+
+Modified Files:
+	RootTuple.h 
+Log Message:
+float vs double determinded by tuple.
+    *
+------------------------------------------------------------
+User: burnett  Sun May 25 10:12:53 PDT 2003
 merit/src/analysis
 
 Modified Files:
