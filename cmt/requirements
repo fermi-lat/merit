@@ -1,0 +1,24 @@
+package merit
+version v5
+
+use GlastSvc v8*
+use Event v8*
+
+branches doc
+
+apply_pattern packageShr
+
+
+private
+
+apply_pattern package_Cshlibflags 
+apply_pattern package_headers
+# this to allow includes of internal "package" 
+macro_prepend includes "-I ../src " WIN32 "/I ..\src "
+
+#component library with meritAlg
+macro_append merit_headers "" WIN32 " analysis/*.h"
+library merit  *.cxx analysis/*.cxx meritAlg/*.cxx Dll/*.cxx ${merit_headers}
+
+private
+

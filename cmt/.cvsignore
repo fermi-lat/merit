@@ -1,0 +1,5 @@
+*.make*
+*.sh
+*.csh
+0
+setup.*
