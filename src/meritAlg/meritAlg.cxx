@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.13 2002/08/21 17:01:09 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.14 2002/08/29 00:53:00 burnett Exp $
 
 // Include files
 
@@ -36,6 +36,7 @@
 #else
 # include <strstream>
 #endif
+#include <algorithm>
 
 static std::string  default_cuts("LnA");
 
@@ -100,7 +101,8 @@ private:
     float m_acd_actdist;
     float m_acd_actdist_top;
     float m_acd_actdist_side[3];
-    float m_acd_tileCount;
+    // index for these guys is top, side row 0, side row 1, side row 2
+    float m_acd_tileCount[4];
     float m_acd_deposit_max[4];
 
     int m_generated;
@@ -185,9 +187,10 @@ StatusCode meritAlg::initialize() {
     new TupleItem("REC_Act_Dist_SideRow0",&m_acd_actdist_side[0]);
     new TupleItem("REC_Act_Dist_SideRow1",&m_acd_actdist_side[1]);
     new TupleItem("REC_Act_Dist_SideRow2",&m_acd_actdist_side[2]);
-    new TupleItem("ACD_TileCount",   &m_acd_tileCount);
-    new TupleItem("ACD_No_SideRow2", &dummy);
-    new TupleItem("ACD_No_SideRow3", &dummy);
+    new TupleItem("ACD_TileCount",   &m_acd_tileCount[0]);
+    new TupleItem("ACD_No_SideRow0", &m_acd_tileCount[1]);
+    new TupleItem("ACD_No_SideRow1", &m_acd_tileCount[2]);
+    new TupleItem("ACD_No_SideRow2", &m_acd_tileCount[3]);
 
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
@@ -319,80 +322,77 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     double fit_ener,fitalpha,fitlambda,profchi2,eleak,start;
     float energy_sum;
     
-    // loop through the clusters, 
-    for( Event::CalClusterCol::const_iterator icl=clusters.begin(); icl!=clusters.end(); ++icl){
-
-        const Event::CalCluster* cl = *icl;
-
-        energy_sum = cl->getEnergySum();
-        
-        //stop writing NANs to the tuple
-        float zpos = -1000.0;
-        float xpos = -1000.0;
-        float ypos = -1000.0;
-        
-        zpos = (cl->getPosition()).z(); 
-        xpos = (cl->getPosition()).x();
-        ypos = (cl->getPosition()).y();
-        
-        const std::vector<double>& eneLayer = cl->getEneLayer();
-
-        const std::vector<Vector>& posLayer = cl->getPosLayer();
-        
-        float trans_rms = cl->getRmsTrans();
-        float long_rms = cl->getRmsLong();
-        Vector caldir = cl->getDirection();
-        float caltheta = -1000.0;
-        float calphi = -1000.0;
-        if(abs(caldir.z())<1.){ caltheta=acos(caldir.z());
-        calphi=float(M_PI/2.);
-        if(caldir.x()!=0.) calphi = atan(caldir.y()/caldir.x());
-        }
-        fit_ener = cl->getFitEnergy();
-        profchi2 = cl->getProfChisq();
-        fitalpha = cl->getCsiAlpha();
-        fitlambda = cl->getCsiLambda();
-        start = cl->getCsiStart();
-        eleak = cl->getEnergyLeak();
-        float transvOffset = cl->getTransvOffset();
-        
-        float eFactor = .26 + .35 / (cl->getEnergyCorrected());
-        float calFitErrNrm = transvOffset/eFactor;
-
-        
-        
-/*
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Transv_Offset", transvOffset);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Fit_errNrm", calFitErrNrm);
-        
-        
+    
+    const Event::CalCluster* cl = clusters.front();
+    
+    energy_sum = cl->getEnergySum();
+    
+    //stop writing NANs to the tuple
+    float zpos = -1000.0;
+    float xpos = -1000.0;
+    float ypos = -1000.0;
+    
+    zpos = (cl->getPosition()).z(); 
+    xpos = (cl->getPosition()).x();
+    ypos = (cl->getPosition()).y();
+    
+    const std::vector<double>& eneLayer = cl->getEneLayer();
+    
+    const std::vector<Vector>& posLayer = cl->getPosLayer();
+    
+    float trans_rms = cl->getRmsTrans();
+    float long_rms = cl->getRmsLong();
+    Vector caldir = cl->getDirection();
+    float caltheta = -1000.0;
+    float calphi = -1000.0;
+    if(abs(caldir.z())<1.){ caltheta=acos(caldir.z());
+    calphi=float(M_PI/2.);
+    if(caldir.x()!=0.) calphi = atan(caldir.y()/caldir.x());
+    }
+    fit_ener = cl->getFitEnergy();
+    profchi2 = cl->getProfChisq();
+    fitalpha = cl->getCsiAlpha();
+    fitlambda = cl->getCsiLambda();
+    start = cl->getCsiStart();
+    eleak = cl->getEnergyLeak();
+    float transvOffset = cl->getTransvOffset();
+    
+    float eFactor = .26 + .35 / (cl->getEnergyCorrected());
+    float calFitErrNrm = transvOffset/eFactor;
+    
+    
+    
+    /*
+    sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Transv_Offset", transvOffset);
+    sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Fit_errNrm", calFitErrNrm);
+    
+      
         sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Energy_Deposit", energy_sum);
         sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Energy_Inc_Prof", fit_ener);
         sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Energy_Inc_LeakCorr", eleak);
         sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Energy_Incident", fit_ener);  // for the moment
         sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Energy_Incident_CalTkr", energy_sum);  // to be updated
         
-        const std::string name_eLayer = "Cal_eLayer";
-        const char* digit[8]={"0","1","2","3","4","5","6","7"};
-        for (int layer=0; layer<8; layer++)
-            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), (name_eLayer+digit[layer]).c_str(), eneLayer[layer]);
-        
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Z", zpos);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_X", xpos);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Y", ypos);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_transv_rms", trans_rms);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_long_rms", long_rms);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_theta", caltheta);
-        sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_phi", calphi);
- */       
+          const std::string name_eLayer = "Cal_eLayer";
+          const char* digit[8]={"0","1","2","3","4","5","6","7"};
+          for (int layer=0; layer<8; layer++)
+          sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), (name_eLayer+digit[layer]).c_str(), eneLayer[layer]);
+          
+            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Z", zpos);
+            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_X", xpos);
+            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_Y", ypos);
+            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_transv_rms", trans_rms);
+            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_long_rms", long_rms);
+            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_theta", caltheta);
+            sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "Cal_phi", calphi);
+    */       
     // set tuple items for this cluster. (What if more????)
-        m_cal_z=zpos;
-        std::copy(eneLayer.begin(), eneLayer.end(), m_cal_elayer);
-        m_calFitErrNrm = calFitErrNrm;
-        m_cal_transv_rms = trans_rms;
-        m_cal_long_rms = long_rms;
-
-    }
+    m_cal_z=zpos;
+    std::copy(eneLayer.begin(), eneLayer.end(), m_cal_elayer);
+    m_calFitErrNrm = calFitErrNrm;
+    m_cal_transv_rms = trans_rms;
+    m_cal_long_rms = long_rms;
+    
     
     
     int no_xtals=0;
@@ -421,15 +421,37 @@ void meritAlg::clusterReco(const Event::CalClusterCol& clusters, const Event::Ca
     m_recon_energy = clusters.getCluster(0)->getEnergySum()*1e-3; // convert to GeV
     
 }
+namespace {
+
+    // predicate to identify top, (row -1) or  side  (row 0-2)
+    class acd_row { 
+    public:
+        acd_row(int row):m_row(row){}
+        bool operator() ( std::pair<idents::AcdId ,double> entry){
+            return m_row==-1? entry.first.face() == 0 : entry.first.row()==m_row;
+        }
+        int m_row;
+    };
+}
 //------------------------------------------------------------------------------
 void meritAlg::tileReco(const Event::AcdRecon& acd)
 {
-    //TODO: set appropriate stuff
     m_acd_doca = acd.getDoca();
     m_acd_actdist = acd.getActiveDist();
-    m_acd_tileCount = acd.getTileCount();
+    m_acd_tileCount[0] = acd.getTileCount(); // save total, not top.
+
     const std::vector<double> & doca = acd.getRowDocaCol();
-        
+    
+    // get the map of energy vs tile id
+    const std::map<idents::AcdId, double>& emap = acd.getEnergyCol();
+
+
+    // use acd_row predicate to count number of tiles per side row
+    for( int row = 0; row<3; ++row){ 
+        m_acd_tileCount[row+1] = std::count_if(emap.begin(), emap.end(), acd_row(row) );
+    }
+
+
     const std::vector<double> & adist = acd.getRowActDistCol();
     int nd = doca.size();
     std::copy(doca.begin(), doca.end(), m_doca);
