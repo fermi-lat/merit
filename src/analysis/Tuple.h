@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.2 2002/09/01 14:37:57 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.3 2003/03/04 05:49:00 burnett Exp $
 
 #ifndef TUPLE_H
 #define TUPLE_H
@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 class TupleItem  {
 private:
@@ -85,6 +86,14 @@ private:
 
    void writeHeader(std::ostream&)const;
 
+   /**
+    @param name1 the value
+    @param name2 the key
+   */
+   void add_alias(std::string name1, std::string name2);
+
+
+
 public:
    // make a list of the names of the tupleitems
 
@@ -107,6 +116,8 @@ public:
     std::string m_title;
 
     static Tuple* s_currentTuple;
+
+    std::map<std::string, std::string> m_alias_list;
 
 
 };

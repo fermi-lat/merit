@@ -1,9 +1,10 @@
 /** @file release.notes
  * @brief package merit <pre>
  * package manager:T.Burnett
- * $Id: release.notes,v 1.16 2002/11/25 16:08:47 burnett Exp $
+ * $Id: release.notes,v 1.17 2003/01/15 03:02:17 burnett Exp $
  *
 
+ *  v6r1    THB  8-mar-03 Use AnalysisTuple for all values
  *  v5r13p1 THB  15-jan-02 Fixes for vsnet
  *  ------------------ new GlastRelease --------------------------
  *  v5r12p3 THB 25-nov-02 gcc 3.2 patch; also ok for gaudi v11
