@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Tue Sep  9 12:21:19 PDT 2003
+merit/src/root
+
+Removed Files:
+      Tag: v6r9p1
+	MeritCint.cxx 
+Log Message:
+fix  test for vtx/1tkr selection. to correspond to IM code.
+    *
+------------------------------------------------------------
+User: burnett  Tue Sep  9 12:21:19 PDT 2003
 merit/src
 
 Modified Files:
