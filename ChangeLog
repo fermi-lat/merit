@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Nov 25 13:22:47 PST 2003
+merit/src/app
+
+Modified Files:
+	run_classification_main.cxx 
+Log Message:
+put the Atwood IM file into this package; adjust wired-in cuts to post-Rome analysis
+    *
+------------------------------------------------------------
+User: burnett  Tue Nov 25 13:22:47 PST 2003
 merit/src
 
 Modified Files:
