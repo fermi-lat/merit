@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: burnett  Sat Mar 24 16:02:51 PST 2001
+merit/src/app RootTuple.cxx RootTuple.h meritapp.cxx MeritTuple.h
+
+Modified Files:
+	RootTuple.cxx RootTuple.h meritapp.cxx 
+Removed Files:
+	MeritTuple.h 
+Log Message:
+fix up root read, put in test file, disable Gaudi for now
+    *
+------------------------------------------------------------
+User: burnett  Sat Mar 24 16:02:51 PST 2001
 merit/mgr requirements
 
 Modified Files:
