@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: lsrea  Mon Sep 30 15:39:21 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+connect up to TkrMeritTool (requires TkrRecon v8r2)
+    *
+------------------------------------------------------------
 User: burnett  Fri Sep 13 16:14:39 PDT 2002
 merit/src/meritAlg
 
