@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: golpa  Fri Aug 13 13:58:59 PDT 2004
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+Was storing wrong value in GltFilterAngSep
+    *
+------------------------------------------------------------
 User: burnett  Tue Aug 10 20:25:00 PDT 2004
 merit/src/meritAlg
 
