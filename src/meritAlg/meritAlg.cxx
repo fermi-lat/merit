@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.14 2002/08/29 00:53:00 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.15 2002/08/29 17:38:29 burnett Exp $
 
 // Include files
 
@@ -37,6 +37,7 @@
 # include <strstream>
 #endif
 #include <algorithm>
+#include <numeric>
 
 static std::string  default_cuts("LnA");
 
@@ -191,6 +192,11 @@ StatusCode meritAlg::initialize() {
     new TupleItem("ACD_No_SideRow0", &m_acd_tileCount[1]);
     new TupleItem("ACD_No_SideRow1", &m_acd_tileCount[2]);
     new TupleItem("ACD_No_SideRow2", &m_acd_tileCount[3]);
+    new TupleItem("ACD_Deposit_Max_Top", &m_acd_deposit_max[0]);
+    new TupleItem("ACD_Deposit_Max0", &m_acd_deposit_max[0]);
+    new TupleItem("ACD_Deposit_Max1", &m_acd_deposit_max[1]);
+    new TupleItem("ACD_Deposit_Max2", &m_acd_deposit_max[2]);
+    new TupleItem("ACD_Deposit_Max3", &m_acd_deposit_max[3]);
 
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
@@ -432,6 +438,16 @@ namespace {
         }
         int m_row;
     };
+    // used by accumulate to get maximum for a given row
+    class acd_max_energy { 
+    public:
+        acd_max_energy(int row):m_row(row), m_acd_row(row){}
+        double operator()(double energy, std::pair<idents::AcdId ,double> entry) {
+            return m_acd_row(entry)? std::max(energy, entry.second) : energy;
+        }
+        int m_row;
+        acd_row m_acd_row;
+    };
 }
 //------------------------------------------------------------------------------
 void meritAlg::tileReco(const Event::AcdRecon& acd)
@@ -447,10 +463,15 @@ void meritAlg::tileReco(const Event::AcdRecon& acd)
 
 
     // use acd_row predicate to count number of tiles per side row
-    for( int row = 0; row<3; ++row){ 
+    if(true)for( int row = 0; row<3; ++row){ 
         m_acd_tileCount[row+1] = std::count_if(emap.begin(), emap.end(), acd_row(row) );
     }
 
+    // use the acd_max_energy function object here
+    if(true)for( int row = -1; row<3; ++row){ 
+        double emax=0;
+        m_acd_deposit_max[row+1]= std::accumulate(emap.begin(), emap.end(), emax, acd_max_energy(row));
+    }
 
     const std::vector<double> & adist = acd.getRowActDistCol();
     int nd = doca.size();
