@@ -1,8 +1,7 @@
 /** @file ClassificationTree.h
-@brief 
+@brief  Calculate the "IM" variables according to Atwood Insightful Miner analysis 
 
-
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.13 2003/11/25 11:10:55 cohen Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.14 2003/11/25 21:22:47 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -35,7 +34,9 @@ public:
     bool useVertex()const;
 
 private:
-    int backgroundRejection();
+    // forward declaration and reference to object of special class to analyze tuple
+    class BackgroundCut;
+    BackgroundCut & m_background;
 
     classification::Tree * m_classifier;
     const TupleItem*  m_firstLayer; /// access to the first layer in the tuple
