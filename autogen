@@ -5,7 +5,7 @@ if [ ! -d config ] ; then
     mkdir config
 fi
 
-aclocal
+aclocal -I config
 autoconf
 autoheader
 automake --add-missing --copy
