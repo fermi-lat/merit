@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.16 2003/05/16 23:44:24 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.17 2003/05/25 17:14:26 burnett Exp $
 
 // Main for merit
 
@@ -19,7 +19,7 @@
 #include <typeinfo>
 
 
-const char* _MERIT_VERSION = "$Revision: 1.16 $";
+const char* _MERIT_VERSION = "$Revision: 1.17 $";
 static std::string  cutstr("nA");
 static std::string  file_name("");
 
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
         // Determine the # of events stored in ntuple
 
         std::stringstream title; 
-        title << "gen(" << tuple->numEvents() << ")" << '\0';
+        title << "gen(" << tuple->numEvents() << ")";
         tuple->setTitle(title.str());
 
 
