@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Nov 25 15:11:12 PST 2003
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+undo damage.
+    *
+------------------------------------------------------------
+User: burnett  Tue Nov 25 15:11:12 PST 2003
 merit/src/analysis
 
 Modified Files:
