@@ -5,83 +5,111 @@
 #include "ClassificationTree.h"
 #include "classification/Tree.h" 
 #include "analysis/Tuple.h"
+
+#include <sstream>
+#include <cassert>
+
 /*  Output from analysis of the PSF_Analysis IM file, extracted to a UserLibrary
 
-Loading Trees from file "\glast\IM\PSF_Analysis_14.imw"
+Loading Trees from file "C:\glast\DeltaRelease\classification\v0r5\xml\PSF_Analysis_14a.imw"
 Prediction Nodes:
-        id                         label     nodes max depth
-       385                 CT CAL Energy'        133        17
-       507                CT  GoodEnergy'        209        18
-       509                   CT VTX Thin'        273        22
-       511                  CT Thick VTX'        205        17
-       512              CT VTX Thin Tail'        181        15
-       513              RT VTX Thin Core'         89        14
-       514            CT  1Tkr Thin Tail'        235        20
-       515             RT 1Tkr Thin Core'        131        18
-       517             CT VTX Thick Tail'        165        15
-       518             RT VTX Thick Core'        113        15
-       520            CT 1Tkr Thick Tail'        283        31
-       521            RT 1Tkr Thick Core'         91        25
-Found 12 prediction nodes
+        id                         label     nodes max depth    min prob    max prob
+       507                CT  GoodEnergy       209        18           0           1
+       509                   CT VTX Thin       273        22           0           1
+       511                  CT Thick VTX       205        17           0           1
+       512              CT VTX Thin Tail       181        15           0           1
+       513              RT VTX Thin Core        89        14       0.292        6.15
+       514            CT  1Tkr Thin Tail       235        20           0           1
+       515             RT 1Tkr Thin Core       131        18       0.582        17.5
+       517             CT VTX Thick Tail       165        15           0           1
+       518             RT VTX Thick Core       113        15       0.737        9.61
+       520            CT 1Tkr Thick Tail       283        31           0           1
+       521            RT 1Tkr Thick Core        91        25       0.993        28.5
+Found 11 prediction nodes
 
 Combined used names:
 
-"CalCntRLn", "CalDeadCntRat", "CalDeadTotRat", "CalEdgeAngle", "CalLongRms", "CalTotRLn", "CalTotSumCorr",
-"CalTrackDoca", "CalTrackSep", "CalTransRms", "CalTwrEdge", "CalTwrGap", "CalXtalRatio", "CalXtalsTrunc",
-"Energy.Sum.Opt", "EvtCalEdgeAngle", "EvtEnergySumOpt", "EvtTkr1EChisq", "EvtTkr1EFirstChisq", "EvtTkr1EFrac",
-"EvtTkr1EQual", "EvtTkr2EChisq", "EvtTkr2EFirstChisq", "EvtTkr2EQual", "EvtTkrComptonRatio", "EvtTkrEdgeAngle",
-"EvtVtxEAngle", "Tkr1DieEdge", "Tkr1DifHits", "Tkr1Gaps", "Tkr1PrjTwrEdge", "Tkr1TwrEdge", "TkrHDCount",
-"TkrNumTracks", "TkrTwrEdge", "TwrEdgeAngle", "VtxHeadSep",
-
+"CalCntRLn", "CalDeadCntRat", "CalDeadTotRat", "CalLongRms", "CalTotRLn", "CalTotSumCorr", "CalTrackDoca",
+"CalTrackSep", "CalTransRms", "CalTwrEdge", "CalTwrGap", "CalXtalRatio", "CalXtalsTrunc", "EvtCalEdgeAngle",
+"EvtEnergySumOpt", "EvtTkr1EChisq", "EvtTkr1EFirstChisq", "EvtTkr1EFrac", "EvtTkr1EQual", "EvtTkr2EChisq",
+"EvtTkr2EFirstChisq", "EvtTkr2EQual", "EvtTkrComptonRatio", "EvtTkrEdgeAngle", "EvtVtxEAngle", 
+"Tkr1DieEdge", "Tkr1DifHits", "Tkr1Gaps", "Tkr1PrjTwrEdge", "Tkr1TwrEdge", "TkrHDCount", "TkrNumTracks",
+"TkrTwrEdge", "VtxHeadSep",
 */
 namespace {
-  using std::string;
-    const char *nodenames[]={
-    "CT CAL Energy",
-    "CT  GoodEnergy",
-    "CT VTX Thin",
-    "CT Thick VTX",
-    "CT VTX Thin Tail",
-    "RT VTX Thin Core",
-    "CT  1Tkr Thin Tail",
-    "RT 1Tkr Thin Core",
-    "CT VTX Thick Tail",
-    "RT VTX Thick Core",
-    "CT 1Tkr Thick Tail",
-    "RT 1Tkr Thick Core"};
+
+    // Convenient identifiers used for the nodes
+    enum{  GOODENERGY,
+       VTX_THIN, VTX_THICK,
+       VTX_THIN_TAIL,     VTX_THIN_BEST,
+       ONE_TRK_THIN_TAIL, ONE_TRK_THIN_BEST,
+       VTX_THICK_TAIL,    VTX_THICK_BEST, 
+       ONE_TRK_THICK_TAIL, ONE_TRK_THICK_BEST, 
+    };
+
+    /** table of information about nodes to expect in the IM file.
+
+    */
+    class IMnodeInfo { 
+    public:
+        int id;           // unique ID for local identification
+        const char* name; // the name of the Preciction node in the IM XML file
+        int index;        // index of the classification type within the list of probabilites
+    };
+    IMnodeInfo imNodeInfo[] = {
+        { GOODENERGY,       "CT  GoodEnergy",  0 },
+        { VTX_THIN,         "CT VTX Thin",     1},
+        { VTX_THICK,        "CT Thick VTX",     0 },
+        { VTX_THIN_TAIL,    "CT VTX Thin Tail" ,0}, 
+        { VTX_THIN_BEST,    "RT VTX Thin Core", 0},
+        { ONE_TRK_THIN_TAIL, "CT  1Tkr Thin Tail",0},
+        { ONE_TRK_THIN_BEST, "RT 1Tkr Thin Core",0},
+        { VTX_THICK_TAIL,    "CT VTX Thick Tail", 1},
+        { VTX_THICK_BEST,    "RT VTX Thick Core", 0},
+        { ONE_TRK_THICK_TAIL,"CT 1Tkr Thick Tail", 0},
+        { ONE_TRK_THICK_BEST, "RT 1Tkr Thick Core", 0}
+    };
+
+    /** Manage interface to one of the prediction nodes
+
+    */
+    class IMpredictNode { 
+    public:
+        IMpredictNode(const IMnodeInfo& info, const classification::Tree* tree)
+            :  m_offset(info.index), m_tree(tree)
+        {
+            m_node = m_tree->getPredictTree(info.name);
+            assert(m_node);
+        }
+
+        double evaluate() const{
+            return m_tree->navigate(m_node)[m_offset];
+        }
+
+        int m_offset;
+        const classification::Tree* m_tree;
+        const classification::Tree::Node* m_node;
+    };
+
+  std::vector<IMpredictNode> imnodes;
+#if 0
   std::pair< string,  string> alias_pairs[]={
-                std::make_pair(   string( "CalEdgeAngle"),     string( "EvtCalEdgeAngle")),
-                std::make_pair(   string( "Energy.Sum.Opt"),   string( "EvtEnergyOpt")),
-                std::make_pair(   string( "TKR.ComptonRatio"), string( "EvtTkrComptonRatio")),
-                std::make_pair(   string( "Tkr1.1stGaps"),     string( "Tkr1FirstGaps")),
-                std::make_pair(   string( "Tkr1E1stChisq"),    string( "EvtTkr1EFirstChisq")),
-                std::make_pair(   string( "Tkr1EChisq"),       string( "EvtTkr1EChisq")),
-                std::make_pair(   string( "Tkr1EFrac"),        string( "EvtTkr1EFrac")),
-                std::make_pair(   string( "Tkr1EQual"),        string( "EvtTkr1EQual")),
-                std::make_pair(   string( "Tkr2E1stChisq"),    string( "EvtTkr2EFirstChisq")),
-                std::make_pair(   string( "Tkr2EChisq"),       string( "EvtTkr2EChisq")),
-                std::make_pair(   string( "Tkr2EQual"),        string( "EvtTkr2EQual")),
-                std::make_pair(   string( "TwrEdgeAngle"),     string( "EvtTkrEdgeAngle")),
+//example if have to add
                 std::make_pair(   string( "VtxEAngle"),        string( "EvtVtxEAngle"))
             };
-        
-   enum{ CAL_ENERGY, GOODENERGY,
-       VTX_THICK, VTX_THICK_TAIL, VTX_THICK_BEST, 
-       ONE_TRK_THICK_TAIL, ONE_TRACK_THICK_BEST, 
-       VTX_THIN, VTX_THIN_TAIL, VTX_THIN_BEST,
-       ONE_TRK_THIN_TAIL, ONE_TRK_THIN_BEST};
-
-   std::vector<const classification::Tree::Node*> rootNode;
-
-}
+#endif
+  
+}// anonymous namespace
 
 ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string xml_file)
 : m_log(log)
     {
+        std::string default_file("/xml/PSF_Analysis_14a.imw");
+       // std::string default_file("/xml/UserLibrary.xml");
 
         if( xml_file.empty() ){
             const char *sPath = ::getenv("CLASSIFICATIONROOT");
-            xml_file= (sPath==0)?  "../xml/PSF_Analysis.xml":  std::string(sPath) + "/xml/PSF_Analysis_14.imw";
+            xml_file= std::string(sPath==0?  "../": sPath) + default_file;
         }
 
         // create lookup class to make translations
@@ -94,40 +122,68 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
                 const double * f = & (ti->value());
                 return f;
             }
+            // note that float flag depends on how the tuple does it.
+            bool isFloat()const{return m_t.isFloat();}
             Tuple& m_t;
         };
         Lookup looker(t);
-
+#if 0  // uncomment this if needed
         //add aliases to the tuple
         int npairs = sizeof(alias_pairs)/sizeof(std::pair< std::string, std::string>);
         for( int i=0; i< npairs; ++i) {
             // create a tuple item first
             std::string tname = std::string(alias_pairs[i].second);
-	    // const TupleItem* ti = t.tupleItem(std::string(tname));
-
             t.add_alias(tname, alias_pairs[i].first);
         }
+#endif
+        // special tuple items we want on the output: make sure they are included in the list
+        t.tupleItem("AcdActiveDist");
+        t.tupleItem("VtxAngle");    
+        t.tupleItem("McTkr1DirErr");
+        m_firstLayer = t.tupleItem("Tkr1FirstLayer");
 
-        m_classifier = new classification::Tree(looker, log, 2);
+        // New items to create
+
+        new TupleItem("IMgoodCalProb",&m_goodCalProb);
+        new TupleItem("IMvertexProb", &m_vtxProb);
+        new TupleItem("IMcoreProb",   &m_coreProb);
+        new TupleItem("IMpsfErrPred", &m_psfErrPred);
+        m_classifier = new classification::Tree(looker, log);
         // translate the Tuple map
   
         m_classifier->load(xml_file);
 
-        // now connect to output
-        //
-        for(unsigned int i = 0; i< sizeof(nodenames)/sizeof(void*); ++i) {
-            classification::Tree::Node* node= m_classifier->getPredictTree(nodenames[i]);
-            rootNode.push_back(node);
+        // get the list of root prediction tree nodes
+        imnodes.reserve(20);
+        for( unsigned int i=0; i<11; ++i){
+            IMpredictNode n(imNodeInfo[i],m_classifier);
+           imnodes[imNodeInfo[i].id]=n;
         }
 
     }
 
     void ClassificationTree::execute()
     {
-        //call something that will pick up the values from the pointers,  save the result    m_classifier->navigateTree();
-        double u[12];
-        for( int i = 0; i<12; ++i){
-         u[i] = m_classifier->navigate(rootNode[i])[0];
+
+        m_goodCalProb= imnodes[GOODENERGY].evaluate();
+        if( *m_firstLayer < 12 ) {
+            m_vtxProb = imnodes[VTX_THIN].evaluate(); 
+            if( m_vtxProb >0.5) {
+                m_coreProb =   imnodes[VTX_THIN_TAIL].evaluate();
+                m_psfErrPred = imnodes[VTX_THIN_BEST].evaluate();
+            }else{
+                m_coreProb =   imnodes[ONE_TRK_THIN_TAIL].evaluate();
+                m_psfErrPred = imnodes[ONE_TRK_THIN_BEST].evaluate();
+            }
+        }else {
+            m_vtxProb = imnodes[VTX_THICK].evaluate();
+            if( m_vtxProb >0.5) {
+                m_coreProb =   imnodes[VTX_THICK_TAIL].evaluate();
+                m_psfErrPred = imnodes[VTX_THICK_BEST].evaluate();
+            }else{
+                m_coreProb =   imnodes[ONE_TRK_THICK_TAIL].evaluate();
+                m_psfErrPred = imnodes[ONE_TRK_THICK_BEST].evaluate();
+            }
         }
 
     }
