@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri May 31 10:48:02 PDT 2002
+merit/src
+
+Modified Files:
+	FigureOfMerit.cxx mainpage.h 
+Log Message:
+remove stringstream
+    *
+------------------------------------------------------------
 User: burnett  Wed May 29 19:40:07 PDT 2002
 merit/src/meritAlg
 
