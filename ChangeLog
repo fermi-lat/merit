@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Aug 31 21:53:48 PDT 2002
+merit/src/meritAlg
+
+Modified Files:
+	MeritRootTuple.cxx MeritRootTuple.h 
+Log Message:
+TNtuple sucks!!!! Convert to TTree.
+    *
+------------------------------------------------------------
 User: burnett  Sat Aug 31 14:55:20 PDT 2002
 merit/src/meritAlg
 
