@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.57 2004/08/27 01:17:48 heather Exp $
+ * $Id: release.notes,v 1.58 2004/08/28 14:14:34 burnett Exp $
  *
+ *  v6r16p2 THB  29-aug-04 set up alias for event_time, use std::runtime_error for exceptions. 
  *  v6r16p1 THB  29-aug-04 restore names to v6r14 versions. 
                            event flag word removed from HEAD (Still on branch)  
  *  v6r16   HMK  27-aug-04 Add new event flag word
