@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: hansl  Fri Dec 12 14:21:57 PST 2003
+merit/src
+
+Modified Files:
+	PruneTree.cxx 
+Log Message:
+mechanics for prune tree in place, logic to be improved
+    *
+------------------------------------------------------------
 User: cohen  Fri Dec 12 08:28:37 PST 2003
 merit/doc
 
