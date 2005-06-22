@@ -8,7 +8,7 @@
 using namespace std;
 
 EnergyAnalysis::EnergyAnalysis(const Tuple& t)
-: Analyze(t, "EvtEnergySumOpt", //"TkrEnergyCorr",
+: Analyze(t, "EvtEnergyCorr", //"TkrEnergyCorr",
           "Energy analysis")
 , Histogram("Normalized Energy", 0.5, 1.5, 0.01)
 , m_tuple(&t)
