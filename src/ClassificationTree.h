@@ -1,17 +1,18 @@
 /** @file ClassificationTree.h
 @brief  Calculate the "IM" variables according to Atwood Insightful Miner analysis 
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.14 2003/11/25 21:22:47 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.15 2003/12/07 16:43:57 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
 
 #include <string>
 #include <vector>
-#include "classification/Tree.h"
+#include <iostream>
 
 class TupleItem;
 class Tuple;
+namespace GlastClassify { class TreeFactory; }
 
 class ClassificationTree 
 {
@@ -38,7 +39,7 @@ private:
     class BackgroundCut;
     BackgroundCut & m_background;
 
-    classification::Tree * m_classifier;
+    GlastClassify::TreeFactory* m_factory;
     const TupleItem*  m_firstLayer; /// access to the first layer in the tuple
     const TupleItem*  m_calTotRLn; 
     const TupleItem*  m_calEnergySum;
@@ -51,10 +52,9 @@ private:
     const TupleItem*  m_vtxAngle;
 
     // output quantities: pointers to corresponding tuple items
-    double* m_goodCalProb;
-    double* m_coreProb; 
-    double* m_vtxProb ;
-    double* m_psfErrPred; 
+    double* m_goodCalProb; 
+    double* m_goodPsfProb; 
+    double* m_vtxProb ; // vertex or track choice
     double* m_gammaProb ;
     
 
