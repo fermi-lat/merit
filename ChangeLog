@@ -1,24 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Sun Jul  3 14:03:10 PDT 2005
-merit/src/meritAlg
-
-Modified Files:
-	meritAlg.cxx 
-Log Message:
-update to use new C++ classifer package for creating and using classification trees
-    *
-------------------------------------------------------------
-User: burnett  Sun Jul  3 14:03:10 PDT 2005
-merit/src
-
-Modified Files:
-	ClassificationTree.cxx ClassificationTree.h 
-Removed Files:
-	PruneTree.cxx PruneTree.h 
-Log Message:
-update to use new C++ classifer package for creating and using classification trees
-    *
-------------------------------------------------------------
 TAG
 Tag name: v6r21p0, operation: add
 Package: merit
