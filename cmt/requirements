@@ -1,25 +1,30 @@
 package merit
-version v6r21p0
-# $Id: requirements,v 1.83 2005/03/21 23:52:08 burnett Exp $
+version v6r22
+# $Id: requirements,v 1.84 2005/06/23 20:29:04 usher Exp $
 
 branches doc
 
 use GlastPolicy v*
+use GlastClassify * -no_auto_imports
 
 apply_pattern packageShr
 
 private
 #--------------------------------------------------------------
 use ntupleWriterSvc v*
-use classification v2*
+#use classification v2*
+
+use classifier v*
+
+
 use astro *
 use AnalysisNtuple v*
 use GlastSvc *
 use Event *
-use GuiSvc v3*
-use OnboardFilter v1*
+use GuiSvc v*
+use OnboardFilter v*
 use facilities *
-use LdfEvent v2*
+use LdfEvent v*
 
 # read/ write ROOT trees (any old ROOT will do)
 use ROOT * IExternal
@@ -47,16 +52,18 @@ macro merit_app_linkopts  $(merit_linkopts)
 macro test_merit_linkopts $(merit_linkopts)
 macro write_text_linkopts $(merit_linkopts)
 macro run_classification_linkopts $(merit_linkopts)
-macro fastFilter_linkopts $(merit_linkopts)
+#macro fastFilter_linkopts $(merit_linkopts)
 
 macro libs ""   WIN32   "$(meritDir)/merit_lib.lib
 
 #set MERIT_OUTPUT_FILE "$(MERITROOT)/cmt/merit.txt"
-set IM_FILE "$(MERITROOT)/xml/classification.imw"
+#set IM_FILE "$(MERITROOT)/xml/classification.imw"
 
 # IM xml file for fastFilter
-set IM_FILE_FILTER  "$(MERITROOT)/xml/CTPruner_DC1.imw"
+#set IM_FILE_FILTER  "$(MERITROOT)/xml/CTPruner_DC1.imw"
 
+# where to find the 
+set CTREE_PATH "$(GLASTCLASSIFYROOT)/output"
 
 application merit_app app/meritapp.cxx app/RootTuple.cxx $(libs)
 
@@ -65,8 +72,8 @@ macro run_classification $(merit_linkopts)
 application run_classification app/run_classification_main.cxx app/RootTuple.cxx $(libs)
 
 # application to read merit tuple and reject background-type events
-macro fastFilter $(merit_linkopts)
-application fastFilter app/fastFilter.cxx app/RootTuple.cxx PruneTree.cxx $(libs)
+#macro fastFilter $(merit_linkopts)
+#application fastFilter app/fastFilter.cxx app/RootTuple.cxx PruneTree.cxx $(libs)
 
 # application to write out the tuple as a text file
 macro write_text $(merit_linkopts) 
