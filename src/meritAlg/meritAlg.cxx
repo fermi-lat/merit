@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.86 2005/03/21 23:52:09 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.88 2005/06/22 21:38:15 usher Exp $
 */
 // Include files
 
@@ -183,6 +183,7 @@ private:
     StringProperty m_pointingTreeName;
     StringProperty m_primaryType;
     long           m_nbOfEvtsInFile;
+    StringProperty m_classifyPath;
 
 };
 
@@ -199,7 +200,8 @@ Algorithm(name, pSvcLocator), m_tuple(0), m_rootTupleSvc(0), m_ctree(0)
     declareProperty("generated" , m_generated=10000);
     declareProperty("EventTreeName",     m_eventTreeName="MeritTuple");
     declareProperty("PointingTreeName", m_pointingTreeName="Exposure");
-    declareProperty("IM_filename", m_IM_filename="$(MERITROOT)/xml/classification.imw");
+    declareProperty("IM_filename", m_IM_filename=""); // deprecated, not used now
+    declareProperty("ClassifyPath", m_classifyPath="$(GLASTCLASSIFYROOT)/data");
     declareProperty("PrimaryType", m_primaryType="RECO"); // or "MC" (why not a bool?)
     declareProperty("NbOfEvtsInFile", m_nbOfEvtsInFile=100000);
 
@@ -327,7 +329,7 @@ StatusCode meritAlg::initialize() {
 
     // the tuple is made: create the classification object if requested
     try { 
-        std::string path =  m_IM_filename.value(); 
+        std::string path(  m_classifyPath.value()); 
         if(! path.empty() ){
             facilities::Util::expandEnvVar(&path);
             m_ctree = new  ClassificationTree(*m_tuple, log.stream(), path);
@@ -340,9 +342,8 @@ StatusCode meritAlg::initialize() {
         log << MSG::ERROR << "Exception caught, class  "<< typeid( e ).name( ) << ", message:"
             << e.what() <<endreq;
     }catch (...)  {
-        log << MSG::ERROR << "Unexpected exception creating classification trees" << endreq;
+        log << MSG::ERROR << "Unexpected exception loading classification trees" << endreq;
     }
-
 
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
@@ -487,7 +488,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.86 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.88 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;

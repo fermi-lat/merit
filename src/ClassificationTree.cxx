@@ -1,10 +1,12 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.26 2003/12/07 16:43:57 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.27 2003/12/18 02:39:41 hansl Exp $
 
 */
+#include "facilities/Util.h"
 #include "ClassificationTree.h"
-#include "classification/Tree.h" 
+#include "classifier/DecisionTree.h"
+#include "GlastClassify/TreeFactory.h"
 #include "analysis/Tuple.h"
 
 #include <sstream>
@@ -15,84 +17,76 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.26 20
 namespace {
 
     // Convenient identifiers used for the nodes
-    enum{  CALHIGH, CALMED, CALLOW, NOCAL,
+    enum{
+       GOODCAL,
        VTX_THIN, VTX_THICK,
-       VTX_THIN_TAIL,     VTX_THIN_BEST,
-       ONE_TRK_THIN_TAIL, ONE_TRK_THIN_BEST,
-       VTX_THICK_TAIL,    VTX_THICK_BEST, 
-       ONE_TRK_THICK_TAIL, ONE_TRK_THICK_BEST,
+       VTX_THIN_TAIL,    
+       ONE_TRK_THIN_TAIL,
+       VTX_THICK_TAIL,   
+       ONE_TRK_THICK_TAIL,
+       NODE_COUNT, // stop here
+       NOCAL,
        BKG_VTX_HI, BKG_VTX_LO, BKG_1TRK_HI, BKG_1TRK_LO,
-       NODE_COUNT
     };
 
-    /** table of information about nodes to expect in the IM file.
+    /** table to correlate indeces with 
       */
     //___________________________________________________________________________
 
-    class IMnodeInfo { 
+    class CTinfo { 
     public:
         int id;           // unique ID for local identification
-        const char* name; // the name of the Preciction node in the IM XML file
-        int index;        // index of the classification type within the list of probabilites
+        std::string name; // the name of the DecisionTree
     };
-    // these have to correspond to the IM file, derived from v3r3p7 in this case
-    IMnodeInfo imNodeInfo[] = {
-        { CALHIGH,           "CT Cal High",  1 },
-        { CALMED,            "Ct Cal Med",   1 }, // note variation in name
-        { CALLOW,            "CT Cal Low",   1 },
-        { NOCAL,             "CT No Cal",    1 },
-        { VTX_THIN,          "CT VTX Thin",     1},
-        { VTX_THICK,         "CT Thick VTX",     0 },
-        { VTX_THIN_TAIL,     "CT VTX Thin Tail" ,1}, 
-        { VTX_THIN_BEST,     "RT VTX Thin Core", 0},
-        { ONE_TRK_THIN_TAIL, "CT 1Tkr Thin Tail",1},
-        { ONE_TRK_THIN_BEST, "RT 1Tkr Thin Core",0},
-        { VTX_THICK_TAIL,    "CT VTX Thick Tail", 1},
-        { VTX_THICK_BEST,    "RT VTX Thick Core", 0},
-        { ONE_TRK_THICK_TAIL,"CT 1Tkr Thick Tail", 1},
-        { ONE_TRK_THICK_BEST,"RT 1Tkr Thick Core", 0},
-        { BKG_VTX_HI,        "CT VTX-HI", 1},
-        { BKG_VTX_LO,        "CT VTX-LO", 1},
-        { BKG_1TRK_HI,       "CT 1TRK-HI", 1},
-        { BKG_1TRK_LO,       "CT 1TRK-LO", 0}
+    // these have to correspond to the folder names
+    CTinfo imNodeInfo[] = {
+        { GOODCAL,           "goodcal" },
+        { VTX_THIN,          "vertex_thin"},
+        { VTX_THICK,         "vertex_thick" },
+        { VTX_THIN_TAIL,     "psf_thin_vertex"}, 
+        { ONE_TRK_THIN_TAIL, "psf_thin_track"},
+        { VTX_THICK_TAIL,    "psf_thick_vertex"},
+        { ONE_TRK_THICK_TAIL,"psf_thick_track"}
+#if 0 // wait for background
+        { NOCAL,             "nocal"  },
+        { BKG_VTX_HI,        "CT VTX-HI"},
+        { BKG_VTX_LO,        "CT VTX-LO"},
+        { BKG_1TRK_HI,       "CT 1TRK-HI"},
+        { BKG_1TRK_LO,       "CT 1TRK-LO"}
+#endif
     };
 
+#if 1  // define aliases to deal with new values for now
+  using std::string;
+  std::pair< string,  string> alias_pairs[]=
+      //
+      {std::make_pair( string( "CalEnergySum"       ),string( "CalEnergyRaw"       ))
+      ,std::make_pair( string( "EvtLogESum"         ),string( "EvtLogEnergy"       ))
+      ,std::make_pair( string( "EvtCalETrackDoca"   ),string( "EvtECalTrackDoca"   ))
+      ,std::make_pair( string( "EvtCalETrackSep"    ),string( "EvtECalTrackSep"    ))
+      ,std::make_pair( string( "EvtCalEXtalTrunc"   ),string( "EvtECalXtalTrunc"   ))
+      ,std::make_pair( string( "EvtCalEXtalRatio"   ),string( "EvtECalXtalRatio"   ))
+      ,std::make_pair( string( "EvtTkrEComptonRatio"),string( "EvtETkrComptonRatio"))
+      ,std::make_pair( string( "CalTotSumCorr"      ),string( "CalTotalCorr"       ))
+      ,std::make_pair( string( "EvtVtxEEAngle"      ),string( "EvtEVtxAngle"       ))
+      ,std::make_pair( string( "EvtTkr1EChisq"      ),string( "EvtETkr1Chisq"      ))
+      ,std::make_pair( string( "EvtTkr1EFirstChisq" ),string( "EvtETkr1FirstChisq" ))
 
-    /** Manage interface to one of the prediction nodes
-     */
-    //___________________________________________________________________________
-
-    class IMpredictNode { 
-    public:
-        IMpredictNode(const IMnodeInfo& info, const classification::Tree* tree)
-            :  m_offset(info.index), m_tree(tree)
-        {
-            m_node = m_tree->getPredictTree(info.name);
-            if( m_node==0) std::cerr << "Tree " << info.name << " not found in tree" << std::endl;
-            assert(m_node);
-        }
-
-        double evaluate() const{
-            return m_tree->navigate(m_node)[m_offset];
-        }
-        int m_offset;
-        const classification::Tree* m_tree;
-        const classification::Tree::Node* m_node;
-    };
-
-  std::vector<IMpredictNode> imnodes;
-#if 0
-  std::pair< string,  string> alias_pairs[]={
-//example if have to add
-                std::make_pair(   string( "VtxEAngle"),        string( "EvtVtxEAngle"))
-            };
+      // ================junk below here!===================================
+      ,std::make_pair( string( "EvtTkr2EChisq"      ),string( "EvtETkr1Chisq"     ))
+      ,std::make_pair( string( "EvtTkr2EFirstChisq" ),string( "EvtETkr1FirstChisq"))
+      ,std::make_pair( string( "VtxTotalWgt"        ),string( "VtxChisq"          ))
+      ,std::make_pair( string( "EvtVtxEHeadSep"     ),string( "VtxHeadSep"        ))
+  };
 #endif
 
 
 // create lookup class to make translations
 //___________________________________________________________________________
 
-class Lookup : public classification::Tree::ILookUpData {
+  class Lookup 
+      : public GlastClassify::TreeFactory::ILookupData
+{
 public:
     Lookup(Tuple& t):m_t(t){}
 
@@ -212,20 +206,13 @@ private:
 
 //_________________________________________________________________________
 
-ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string xml_file)
+ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string treepath)
 : m_log(log)
 , m_background(*new BackgroundCut(t))
     {
-        std::string default_file("/xml/PSF_Analysis.imw");
-
-        if( xml_file.empty() ){
-            const char *sPath = ::getenv("CLASSIFICATIONROOT");
-            xml_file= std::string(sPath==0?  "../": sPath) + default_file;
-        }
-
         Lookup looker(t);
 
-#if 0  // uncomment this if needed
+#if 1 // uncomment this if needed
         //add aliases to the tuple
         int npairs = sizeof(alias_pairs)/sizeof(std::pair< std::string, std::string>);
         for( int i=0; i< npairs; ++i) {
@@ -250,7 +237,6 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         t.tupleItem("EvtCalETrackSep");
         t.tupleItem("EvtCalEXtalTrunc");
         t.tupleItem("EvtCalEXtalRatio");
-        t.tupleItem("EvtCalETLRatio");
         t.tupleItem("CalDeltaT");
         t.tupleItem("CalLATEdge");
         t.tupleItem("TkrBlankHits");
@@ -277,31 +263,30 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_evtTkrEComptonRatio = t.tupleItem("EvtTkrEComptonRatio");
         m_evtTkrComptonRatio  = t.tupleItem("EvtTkrComptonRatio");
         m_calMIPDiff          = t.tupleItem("CalMIPDiff");
-        m_calLRmsRatio        = t.tupleItem("CalLRmsRatio");
         m_acdTileCount        = t.tupleItem("AcdTileCount");
         m_vtxAngle            = t.tupleItem("VtxAngle");
 
         // New items to create or override
-        m_goodCalProb = getTupleItemPointer(t,"IMgoodCalProb");
-        m_vtxProb=      getTupleItemPointer(t,"IMvertexProb");
-        m_coreProb =    getTupleItemPointer(t,"IMcoreProb");
-        m_psfErrPred =  getTupleItemPointer(t,"IMpsfErrPred");
-        m_gammaProb=    getTupleItemPointer(t,"IMgammaProb");
+        m_goodCalProb = getTupleItemPointer(t,"CTgoodCal");
+        m_vtxProb=      getTupleItemPointer(t,"CTvertex");
+        m_goodPsfProb = getTupleItemPointer(t,"CTgoodPsf");
+        m_gammaProb=    getTupleItemPointer(t,"CTgamma");
 
-        // since at least one of the background rejection trees needs to 
-        // know about the core prob
-        t.add_alias( "IMcoreProb", "Pr(CORE)");
+        /** @page ctree Classification Tree variables
 
-        m_classifier = new classification::Tree(looker, log, 0); // verbosity
+    - CTgoodCal  Good measurement of the Calorimeter  
+    - CTvertex   The vertex measure of the incoming direction is better than the first track 
+    - CTgoodPsf  The incoming direction is well measured  (PSF is good)    
+    - CTgamma    The event is a gamma, not background
+    */
 
-        // translate the Tuple map  
-        m_classifier->load(xml_file);
 
-        // get the list of root prediction tree nodes
-        imnodes.reserve(NODE_COUNT);
+
+        facilities::Util::expandEnvVar(&treepath);
+        m_factory = new GlastClassify::TreeFactory(treepath, looker);
+
         for( unsigned int i=0; i<NODE_COUNT; ++i){
-            IMpredictNode n(imNodeInfo[i],m_classifier);
-           imnodes[imNodeInfo[i].id]=n;
+           (*m_factory)(imNodeInfo[i].name);
         }
     }
 
@@ -317,53 +302,33 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
     void ClassificationTree::execute()
     {
 
-        // initialize IM output variables
-        *m_coreProb = *m_psfErrPred=0;
+        // initialize CT output variables
+        *m_goodPsfProb=0;
         *m_vtxProb  = *m_gammaProb=0;
 
-        // select cal energy type:
-        //ifelse((CalEnergySum< 100. | CalTotRLn < 2), ifelse((CalTotRLn < 2 | CalEnergySum <  5), "NoCal", "LowCal"),"HighCal")
-/*      ifelse((CalEnergySum< 3500. | CalTotRLn < 2), 
-            ifelse((CalTotRLn < 2 | CalEnergySum <  350),
-		ifelse((CalTotRLn < 2 | CalEnergySum <  5),
-		"NoCal", "LowCal"),
-              "MedCal")
-           ,"HighCal")
- */
-
-        int cal_type=NOCAL;
-        if(        *m_calEnergySum >3500. && *m_calTotRLn > 2.){ cal_type=CALHIGH;
-        }else if ( *m_calEnergySum > 350. && *m_calTotRLn > 2.){ cal_type=CALMED;
-        }else if ( *m_calEnergySum >   5. && *m_calTotRLn > 2.){ cal_type=CALLOW;
-        } 
+        int cal_type = ( *m_calEnergySum >5. && *m_calTotRLn > 4.)? GOODCAL : NOCAL;
         // evalue appropriate tree for good cal prob
-        *m_goodCalProb = imnodes[cal_type].evaluate();
+        if( cal_type==NOCAL) return;
+        *m_goodCalProb = m_factory->evaluate(cal_type);
 
         // evaluate the rest only if cal prob ok
-        if( *m_goodCalProb<0.25 || cal_type==NOCAL )   return;
+        if( *m_goodCalProb<0.25 )   return;
 
  
         // select vertex-vs-1 track, corresponding tree for core, psf
-        int core_type=0, psf_type=0;
-        if( *m_firstLayer < 12 ) {
-            *m_vtxProb = imnodes[VTX_THIN].evaluate(); 
-            if( *m_vtxAngle>0 && *m_vtxProb >0.5) { 
-                    core_type=VTX_THIN_TAIL;     psf_type= VTX_THIN_BEST;
-            }else{
-                    core_type=ONE_TRK_THIN_TAIL; psf_type= ONE_TRK_THIN_BEST;
-            }
+
+        int goodPsfType=0; 
+        if( *m_firstLayer > 5 ) { 
+
+            *m_vtxProb = m_factory->evaluate(VTX_THIN); 
+            goodPsfType = useVertex() ? VTX_THIN_TAIL : ONE_TRK_THIN_TAIL;
         }else {
-            *m_vtxProb = imnodes[VTX_THICK].evaluate();
-            if(  *m_vtxAngle>0 &&  *m_vtxProb >0.5) {
-                core_type=VTX_THICK_TAIL;         psf_type= VTX_THICK_BEST;
-            }else{
-                core_type=ONE_TRK_THICK_TAIL;     psf_type= ONE_TRK_THICK_BEST;
-            }
+            *m_vtxProb = m_factory->evaluate(VTX_THICK);
+            goodPsfType = useVertex() ? VTX_THICK_TAIL : ONE_TRK_THICK_TAIL;
         }
 
         // now evalute the appropriate trees
-        *m_coreProb   = imnodes[core_type].evaluate();
-        *m_psfErrPred = imnodes[psf_type].evaluate();
+        *m_goodPsfProb   = m_factory->evaluate(goodPsfType);
 
         // gamma prob: for now just the preliminary cuts
         *m_gammaProb  = m_background?  0 : 1;
@@ -374,6 +339,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
     ClassificationTree::~ClassificationTree()
     {
-        delete m_classifier;
+
+        delete m_factory;
         delete &m_background;
     }
