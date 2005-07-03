@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Jul  3 14:40:08 PDT 2005
+merit/xml
+
+Removed Files:
+	CTPruner_DC1.imw classification.imw 
+Log Message:
+don't need these anymore.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r22, operation: add
 Package: merit
