@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.66 2005/03/21 23:52:09 burnett Exp $
+ * $Id: release.notes,v 1.67 2005/06/23 20:29:04 usher Exp $
  *
+ *  v6r22   THB2 03-Jul-05 Revise to generate new decision tree variables
  *  v6r21p0  TU  23-Jun-05 Updates for new variable names from AnalysisNtuple
  *  v6r20   THB  21-mar-05 Remove pointing and history code: now done in FluxSvc
  *  v6r19   THB  20-Dec-04 Allow mode which disables decision tree variables.
