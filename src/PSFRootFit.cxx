@@ -18,7 +18,7 @@ void PSFRootFit::report(ostream& out)
     rootFit(out);
 }
 
-double PSFRootFit::rootFit(ostream& returnstr){
+double PSFRootFit::rootFit(ostream& /*returnstr*/){
     //TODO: TAKE THE OUTPUT OUT OF THE ROOT FILE, 
     //AND SEND IT TO THE returnstr.
     //set up the PSF file.

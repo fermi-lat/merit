@@ -5,13 +5,13 @@
 using namespace std;
 
 AnalysisList::AnalysisList(AnalysisList& a) 
-: std::vector<Analyze*>() ,Analyze(a)
+: Analyze(a), std::vector<Analyze*>() 
 {
-	const_iterator it = a.begin();
-	while (it != a.end()) {
-		push_back(new Analyze(**it));
-		it++;
-	}
+    const_iterator it = a.begin();
+    while (it != a.end()) {
+        push_back(new Analyze(**it));
+        it++;
+    }
 }
 
 bool AnalysisList::apply()
@@ -25,15 +25,15 @@ bool AnalysisList::apply()
 void AnalysisList::report(ostream& out)
 {
     if( !name().empty() ) {
-        	out << endl << name();
+        out << endl << name();
     }
     for( iterator it = begin(); it !=end() ; ++it)
-	(*it)->report(out);
+        (*it)->report(out);
     if(  ! m_noline) separator(out); // draw separator unless 
 }
 void AnalysisList::clear()
 {
     Analyze::clear();
     for( iterator it = begin(); it !=end() ; ++it)
-	(*it)->clear();
+        (*it)->clear();
 }
