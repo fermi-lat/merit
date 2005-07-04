@@ -1,18 +1,17 @@
 package merit
-version v6r22
-# $Id: requirements,v 1.84 2005/06/23 20:29:04 usher Exp $
+version v6r22p1
+# $Id: requirements,v 1.85 2005/07/03 21:38:38 burnett Exp $
 
 branches doc
 
 use GlastPolicy v*
-use GlastClassify * -no_auto_imports
+use GlastClassify * 
 
 apply_pattern packageShr
 
 private
 #--------------------------------------------------------------
 use ntupleWriterSvc v*
-#use classification v2*
 
 use classifier v*
 
