@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: burnett  Mon Jul  4 04:25:10 PDT 2005
+merit/src
+
+Modified Files:
+	AnalysisList.cxx Analyze.cxx BackgroundCuts.h 
+	ClassificationTree.cxx ClassificationTree.h FigureOfMerit.cxx 
+	PSFRootFit.cxx 
+Log Message:
+various linux warnings; new root file for test
+    *
+------------------------------------------------------------
+User: burnett  Mon Jul  4 04:25:10 PDT 2005
 merit/doc
 
 Modified Files:
