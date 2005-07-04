@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Jul  4 04:25:10 PDT 2005
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+various linux warnings; new root file for test
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r22p2, operation: add
 Package: merit
