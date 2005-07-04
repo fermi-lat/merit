@@ -1,5 +1,9 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.8 2003/11/22 15:34:55 burnett Exp $
-// Original author T. Burnett (w/ help from H. Kelley)
+/** @file RootTuple.cxx
+    @brief implement class RootTuple
+
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.9 2003/11/26 21:00:26 burnett Exp $
+  Original author T. Burnett (w/ help from H. Kelley)
+*/
 #include "RootTuple.h"
 
 // root includes
@@ -135,16 +139,9 @@ const TupleItem* RootTuple::tupleItem(const std::string& name)const
 
     TBranch* b = m_tree->GetBranch(name.c_str());
     if( b==0 ) {
-#if 1 // new behavior
         return 0;
-#else
-         std::cerr << "\nSorry, did not find '" << name << "' in the tuple\n";
-         exit(-1);
-         return *it;
-#endif
     }
     TLeafF* leaf = (TLeafF*)(*b->GetListOfLeaves())[0];
-    const char * fname = leaf->GetName();
     if( leaf->GetLenType()==4) {
         float * pf = (float*)leaf->GetValuePointer();
         return new TupleItem(name,pf);

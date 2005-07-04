@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.15 2003/11/25 23:11:12 burnett Exp $
+// $Id: Tuple.cxx,v 1.16 2004/08/28 16:13:14 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -258,7 +258,7 @@ std::ostream& operator<< (std::ostream& out, const TupleItem& t)
 void Tuple::add_alias(std::string name1, std::string name2)
 {
     // create, or find, the tuple item
-    const TupleItem * ti = tupleItem(name1);
+    //? const TupleItem * ti = tupleItem(name1);
     if( find( name1) == end() ){
         std::stringstream  errmsg;
         errmsg << "Tuple::add_alias: did not find '" << name1 << "' in the tuple\n";

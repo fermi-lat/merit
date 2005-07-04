@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.88 2005/06/22 21:38:15 usher Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.89 2005/07/03 21:03:10 burnett Exp $
 */
 // Include files
 
@@ -44,7 +44,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.88 200
 #include <numeric>
 #include <cassert>
 
-static std::string  default_cuts("LnA");
+static std::string  default_cuts("LntA");
 
 namespace gui 
 {
@@ -247,7 +247,7 @@ StatusCode meritAlg::setupTools() {
             m_merit->addItem( varName, val);
             return IValsTool::Visitor::CONT;
         }
-      IValsTool::Visitor::eVisitorRet analysisValue(std::string varName, const int& value) const
+      IValsTool::Visitor::eVisitorRet analysisValue(std::string , const int& ) const
         {
 #if 1 // not yet implemented
             return IValsTool::Visitor::ERROR;
@@ -488,7 +488,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.88 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.89 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;

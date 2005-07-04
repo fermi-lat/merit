@@ -1,7 +1,7 @@
 package merit
-version v6r22p1
-# $Id: requirements,v 1.85 2005/07/03 21:38:38 burnett Exp $
-
+version v6r22p4
+# $Id: requirements,v 1.86 2005/07/04 00:53:05 burnett Exp $
+author T.Burnett <tburnett@u.washington.edu>
 branches doc
 
 use GlastPolicy v*

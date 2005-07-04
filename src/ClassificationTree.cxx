@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.27 2003/12/18 02:39:41 hansl Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.28 2005/07/03 21:03:10 burnett Exp $
 
 */
 #include "facilities/Util.h"
@@ -207,8 +207,8 @@ private:
 //_________________________________________________________________________
 
 ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string treepath)
-: m_log(log)
-, m_background(*new BackgroundCut(t))
+: m_background(*new BackgroundCut(t))
+, m_log(log)
     {
         Lookup looker(t);
 
