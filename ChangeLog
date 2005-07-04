@@ -1,22 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Sun Jul  3 17:53:05 PDT 2005
-merit/src
-
-Modified Files:
-	PSFtailCuts.cxx 
-Log Message:
-fix for unix compile, tail cuts to use new tree
-    *
-------------------------------------------------------------
-User: burnett  Sun Jul  3 17:53:05 PDT 2005
-merit/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-fix for unix compile, tail cuts to use new tree
-    *
-------------------------------------------------------------
 User: burnett  Sun Jul  3 14:40:08 PDT 2005
 merit/xml
 
