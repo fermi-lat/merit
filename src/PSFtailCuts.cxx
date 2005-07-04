@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PSFtailCuts.cxx,v 1.11 2003/11/25 23:25:42 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/PSFtailCuts.cxx,v 1.12 2004/09/08 20:29:25 burnett Exp $
 // PSFtailCuts.cxx: implementation of the PSFtailCuts class.
 //
 //////////////////////////////////////////////////////////////////////
@@ -30,9 +30,8 @@ class AbsValueCut : public Analyze {
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-PSFtailCuts::PSFtailCuts(const Tuple& t): AnalysisList("IM PSF tail cuts")
+PSFtailCuts::PSFtailCuts(const Tuple& t): AnalysisList("CT PSF tail cuts")
 {
-    push_back( new Cut(t, "IMgoodCalProb>0.25") );
-    push_back( new Cut(t, "IMcoreProb>0.2") );
+    push_back( new Cut(t, "CTgoodCal>0.25") );
     push_back( new Cut(t, "Tkr1Zdir<-0.25") );
 }
