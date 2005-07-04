@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Jul  4 08:03:50 PDT 2005
+merit/src
+
+Modified Files:
+	AnalysisList.cxx PSFRootFit.cxx 
+Log Message:
+linux warnings
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r22p4, operation: add
 Package: merit
