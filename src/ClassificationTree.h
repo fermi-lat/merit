@@ -1,7 +1,7 @@
 /** @file ClassificationTree.h
-@brief  Calculate the "IM" variables according to Atwood Insightful Miner analysis 
+@brief  Declare class ClassificationTree
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.15 2003/12/07 16:43:57 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.16 2005/07/03 21:03:10 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -14,15 +14,22 @@ class TupleItem;
 class Tuple;
 namespace GlastClassify { class TreeFactory; }
 
+/** @class ClassificationTree
+    @brief Manage Atwood-inspired classification trees, creating new tuple variables
+    based on values found in the tuple
+
+
+
+*/
 class ClassificationTree 
 {
 public:
-    /** set up the tree:
+    /** set up the trees:
     * @param t The input tuple -- and will create new columns with the output
-    * @param log -- optional stream for ouptut [std::cout]
-    * @param xml_file -- IM file containing descriptions of the predict nodes 
+    * @param log -- optional stream for output [std::cout]
+    * @param treepath -- file path to the root of the tree definitions
     */
-    ClassificationTree( Tuple&t, std::ostream& log=std::cout, std::string xml_file="");
+    ClassificationTree( Tuple&t, std::ostream& log=std::cout, std::string treepath="");
 
     /** run the prediction nodes on the current tuple instance
     */

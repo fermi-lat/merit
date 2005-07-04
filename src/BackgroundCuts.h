@@ -1,4 +1,4 @@
-// $Header: /cvs/glastsim/merit/BackgroundCuts.h,v 1.1 1999/08/23 21:14:38 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/BackgroundCuts.h,v 1.1.1.1 1999/12/20 22:29:12 burnett Exp $
 // Initial author Steve Ritz
 
 #ifndef BackgroundCuts_H

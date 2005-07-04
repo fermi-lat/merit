@@ -4,7 +4,8 @@
 
 using namespace std;
 
-AnalysisList::AnalysisList(AnalysisList& a) : Analyze(a)
+AnalysisList::AnalysisList(AnalysisList& a) 
+: std::vector<Analyze*>() ,Analyze(a)
 {
 	const_iterator it = a.begin();
 	while (it != a.end()) {

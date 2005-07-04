@@ -2,7 +2,7 @@
   @brief Implementation of FigureOfMerit, many Analyze subclasses 
 
 
-  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.26 2004/09/13 23:22:10 burnett Exp $
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.27 2004/12/20 23:17:04 burnett Exp $
 */
 
 #include "FigureOfMerit.h"
@@ -358,7 +358,7 @@ FigureOfMerit::FigureOfMerit(const Tuple& t, std::string cut_string)
     }	// if (!s_instance)
 
     //need this to add these aliases
-    Tuple& tt = const_cast<Tuple&>(t);
+    //?Tuple& tt = const_cast<Tuple&>(t);
 
     if( !cut_string.empty()) setCuts(cut_string);
 
