@@ -1,6 +1,6 @@
 package merit
-version v6r22p4
-# $Id: requirements,v 1.86 2005/07/04 00:53:05 burnett Exp $
+version v6r23
+# $Id: requirements,v 1.87 2005/07/04 11:25:10 burnett Exp $
 author T.Burnett <tburnett@u.washington.edu>
 branches doc
 
@@ -62,7 +62,7 @@ macro libs ""   WIN32   "$(meritDir)/merit_lib.lib
 #set IM_FILE_FILTER  "$(MERITROOT)/xml/CTPruner_DC1.imw"
 
 # where to find the 
-set CTREE_PATH "$(GLASTCLASSIFYROOT)/output"
+set CTREE_PATH "$(GLASTCLASSIFYROOT)/data"
 
 application merit_app app/meritapp.cxx app/RootTuple.cxx $(libs)
 

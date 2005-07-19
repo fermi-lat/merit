@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.28 2005/07/03 21:03:10 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.29 2005/07/04 11:25:10 burnett Exp $
 
 */
 #include "facilities/Util.h"
@@ -56,17 +56,18 @@ namespace {
 #endif
     };
 
-#if 1  // define aliases to deal with new values for now
+#if 0  // define aliases to deal with new values for now
   using std::string;
   std::pair< string,  string> alias_pairs[]=
       //
-      {std::make_pair( string( "CalEnergySum"       ),string( "CalEnergyRaw"       ))
-      ,std::make_pair( string( "EvtLogESum"         ),string( "EvtLogEnergy"       ))
-      ,std::make_pair( string( "EvtCalETrackDoca"   ),string( "EvtECalTrackDoca"   ))
-      ,std::make_pair( string( "EvtCalETrackSep"    ),string( "EvtECalTrackSep"    ))
-      ,std::make_pair( string( "EvtCalEXtalTrunc"   ),string( "EvtECalXtalTrunc"   ))
-      ,std::make_pair( string( "EvtCalEXtalRatio"   ),string( "EvtECalXtalRatio"   ))
-      ,std::make_pair( string( "EvtTkrEComptonRatio"),string( "EvtETkrComptonRatio"))
+      {
+  //     std::make_pair( string( "CalEnergySum"       ),string( "CalEnergyRaw"       ))
+  //    ,std::make_pair( string( "EvtLogESum"         ),string( "EvtLogEnergy"       ))
+  //    ,std::make_pair( string( "EvtCalETrackDoca"   ),string( "EvtECalTrackDoca"   ))
+  //    ,std::make_pair( string( "EvtCalETrackSep"    ),string( "EvtECalTrackSep"    ))
+  //    ,std::make_pair( string( "EvtCalEXtalTrunc"   ),string( "EvtECalXtalTrunc"   ))
+   //   ,std::make_pair( string( "EvtCalEXtalRatio"   ),string( "EvtECalXtalRatio"   ))
+  //    ,std::make_pair( string( "EvtTkrEComptonRatio"),string( "EvtETkrComptonRatio"))
       ,std::make_pair( string( "CalTotSumCorr"      ),string( "CalTotalCorr"       ))
       ,std::make_pair( string( "EvtVtxEEAngle"      ),string( "EvtEVtxAngle"       ))
       ,std::make_pair( string( "EvtTkr1EChisq"      ),string( "EvtETkr1Chisq"      ))
@@ -212,7 +213,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
     {
         Lookup looker(t);
 
-#if 1 // uncomment this if needed
+#if 0 // uncomment this if needed
         //add aliases to the tuple
         int npairs = sizeof(alias_pairs)/sizeof(std::pair< std::string, std::string>);
         for( int i=0; i< npairs; ++i) {
@@ -225,23 +226,23 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         // special tuple items we want on the output: 
         // make sure they are included in the list
         t.tupleItem("AcdActiveDist");
-        t.tupleItem("CalEnergySum");
+        t.tupleItem("CalEnergyRaw");
         t.tupleItem("TkrRadLength");
         t.tupleItem("CalCsIRLn");
         t.tupleItem("CalBkHalfRatio");
         t.tupleItem("CalLyr7Ratio");
         t.tupleItem("CalLyr0Ratio");
         t.tupleItem("CalXtalRatio");
-        t.tupleItem("EvtLogESum");
-        t.tupleItem("EvtCalETrackDoca");
-        t.tupleItem("EvtCalETrackSep");
-        t.tupleItem("EvtCalEXtalTrunc");
-        t.tupleItem("EvtCalEXtalRatio");
+        t.tupleItem("EvtLogEnergy");
+        t.tupleItem("EvtECalTrackDoca");
+        t.tupleItem("EvtECalTrackSep");
+        t.tupleItem("EvtECalXtalTrunc");
+        t.tupleItem("EvtECalXtalRatio");
         t.tupleItem("CalDeltaT");
         t.tupleItem("CalLATEdge");
         t.tupleItem("TkrBlankHits");
         t.tupleItem("TkrThickHits");
-        t.tupleItem("EvtCalETrackDoca");
+        t.tupleItem("EvtECalTrackDoca");
         t.tupleItem("TkrThinHits");
         t.tupleItem("Tkr1ZDir");
         t.tupleItem("TkrSumKalEne");
@@ -257,10 +258,10 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
         // these are used for preliminary cuts to select the tree to use
         m_firstLayer          = t.tupleItem("Tkr1FirstLayer");
-        m_calEnergySum        = t.tupleItem("CalEnergySum");
+        m_calEnergySum        = t.tupleItem("CalEnergyRaw");
         m_calTotRLn           = t.tupleItem("CalTotRLn");
-        m_evtEnergySumOpt     = t.tupleItem("EvtEnergySumOpt");
-        m_evtTkrEComptonRatio = t.tupleItem("EvtTkrEComptonRatio");
+        m_evtEnergySumOpt     = t.tupleItem("EvtEnergyCorr");
+        m_evtTkrEComptonRatio = t.tupleItem("EvtETkrComptonRatio");
         m_evtTkrComptonRatio  = t.tupleItem("EvtTkrComptonRatio");
         m_calMIPDiff          = t.tupleItem("CalMIPDiff");
         m_acdTileCount        = t.tupleItem("AcdTileCount");

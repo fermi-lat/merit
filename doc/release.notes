@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.68 2005/07/03 21:38:39 burnett Exp $
+ * $Id: release.notes,v 1.69 2005/07/04 11:25:10 burnett Exp $
  *
+ *  v6r23   THB  19-jul-05 Added MIPS tuple variables. Small fixes in CT var code
  *  v6r22p4 THB  04-Jul-05 replace test root file, fix linux warnings
  *  v6r22p3 THB  03-Jul-05 Small updates, including author
  *  v6r22   THB  03-Jul-05 Revise to generate new decision tree variables
