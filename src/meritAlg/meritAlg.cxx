@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.90 2005/07/04 11:25:10 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.91 2005/07/19 00:31:22 piron Exp $
 */
 // Include files
 
@@ -493,7 +493,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.90 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.91 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -521,6 +521,7 @@ StatusCode meritAlg::execute() {
 
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
+
 
     calculate(); // setup Bill's tuple items
     SmartDataPtr<Event::EventHeader>   header(eventSvc(),    EventModel::EventHeader);

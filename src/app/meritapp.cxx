@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.22 2003/09/08 14:40:41 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/meritapp.cxx,v 1.23 2003/11/15 15:25:03 burnett Exp $
 
 // Main for merit
 
@@ -17,7 +17,7 @@
 #include <typeinfo>
 
 
-const char* _MERIT_VERSION = "$Revision: 1.22 $";
+const char* _MERIT_VERSION = "$Revision: 1.23 $";
 static std::string  cutstr("ntA"); 
 static std::string  file_name("");
 
@@ -117,9 +117,9 @@ int main(int argc, char* argv[])
         (*outstream) << "Tuple title: \""<< tuple->title() << "\"\n" ;
 
         try {
-            const char* imfile = ::getenv("IM_FILE");
+            const char* ctree_path = ::getenv("CTREE_PATH");
         // create the ct: pass in the tuple.
-            ClassificationTree pct(*tuple, std::cout, imfile? std::string(imfile) : "");
+            ClassificationTree pct(*tuple, std::cout, ctree_path? std::string(ctree_path) : "");
             FigureOfMerit fm(*tuple, cutstr);
 
 
