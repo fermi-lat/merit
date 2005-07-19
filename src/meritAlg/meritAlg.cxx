@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.89 2005/07/03 21:03:10 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.90 2005/07/04 11:25:10 burnett Exp $
 */
 // Include files
 
@@ -218,8 +218,13 @@ StatusCode meritAlg::setupTools() {
         return StatusCode::FAILURE;
     }
 
+    //@@@FP 07/08/05
+    //    const char * toolnames[] = {"McValsTool", "GltValsTool", "TkrValsTool", 
+    //        "VtxValsTool", "CalValsTool", "AcdValsTool", "EvtValsTool"};
+
     const char * toolnames[] = {"McValsTool", "GltValsTool", "TkrValsTool", 
-        "VtxValsTool", "CalValsTool", "AcdValsTool", "EvtValsTool"};
+        "VtxValsTool", "CalValsTool", "AcdValsTool", "EvtValsTool","CalMipValsTool"};
+    //@@@FP 07/08/05
 
     for( int i =0; i< (int)(sizeof(toolnames)/sizeof(void*)); ++i){
         m_toolvec.push_back(0);
@@ -488,7 +493,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.89 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.90 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
