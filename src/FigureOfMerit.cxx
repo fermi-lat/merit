@@ -2,7 +2,7 @@
   @brief Implementation of FigureOfMerit, many Analyze subclasses 
 
 
-  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.27 2004/12/20 23:17:04 burnett Exp $
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/FigureOfMerit.cxx,v 1.28 2005/07/04 11:25:10 burnett Exp $
 */
 
 #include "FigureOfMerit.h"
@@ -294,8 +294,8 @@ void	FigureOfMerit::setCuts ( std::string istr )
         case 'E':	    
             break;            
         case 'A': /* A = accepted */
-            m_layers.push_back(LayerGroup(*s_tuple,0,11, LayerGroup::ALL));
-            m_layers.push_back(LayerGroup(*s_tuple,12,15,LayerGroup::ALL));            
+            m_layers.push_back(LayerGroup(*s_tuple,6,15, LayerGroup::ALL));
+            m_layers.push_back(LayerGroup(*s_tuple,0,5, LayerGroup::ALL));            
             m_cuts->push_back( new FOMaccepted(this) );	    
             break;            
         case 'W': /* W = Write */        
