@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.69 2005/07/04 11:25:10 burnett Exp $
+ * $Id: release.notes,v 1.70 2005/07/19 12:15:43 burnett Exp $
  *
+ *  v6r24   THB  27-jul-05 Implement all CT variables, including CTgamma
  *  v6r23   THB  19-jul-05 Added MIPS tuple variables. Small fixes in CT var code
  *  v6r22p4 THB  04-Jul-05 replace test root file, fix linux warnings
  *  v6r22p3 THB  03-Jul-05 Small updates, including author
