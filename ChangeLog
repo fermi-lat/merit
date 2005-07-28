@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Thu Jul 28 06:45:52 PDT 2005
+merit/src/app
+
+Modified Files:
+	RootTuple.cxx 
+Log Message:
+fix for gcc error
+    *
+------------------------------------------------------------
+User: burnett  Thu Jul 28 06:45:52 PDT 2005
 merit/src
 
 Modified Files:
