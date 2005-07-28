@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.29 2005/07/04 11:25:10 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.30 2005/07/19 12:15:43 burnett Exp $
 
 */
 #include "facilities/Util.h"
@@ -24,6 +24,7 @@ namespace {
        ONE_TRK_THIN_TAIL,
        VTX_THICK_TAIL,   
        ONE_TRK_THICK_TAIL,
+       GAMMA,
        NODE_COUNT, // stop here
        NOCAL,
        BKG_VTX_HI, BKG_VTX_LO, BKG_1TRK_HI, BKG_1TRK_LO,
@@ -46,7 +47,8 @@ namespace {
         { VTX_THIN_TAIL,     "psf_thin_vertex"}, 
         { ONE_TRK_THIN_TAIL, "psf_thin_track"},
         { VTX_THICK_TAIL,    "psf_thick_vertex"},
-        { ONE_TRK_THICK_TAIL,"psf_thick_track"}
+        { ONE_TRK_THICK_TAIL,"psf_thick_track"},
+        { GAMMA,             "gamma"}
 #if 0 // wait for background
         { NOCAL,             "nocal"  },
         { BKG_VTX_HI,        "CT VTX-HI"},
@@ -91,15 +93,12 @@ namespace {
 public:
     Lookup(Tuple& t):m_t(t){}
 
-    const double * operator()(const std::string& name){
+    std::pair<bool, const void *> operator()(const std::string& name){
         TupleItem* ti = const_cast<TupleItem*>(m_t.tupleItem(name));
-        if( ti==0) return 0;
-        const double * f = & (ti->value());
-        return f;
+        if( ti==0) return std::make_pair(false, (const void*)(0));
+        return std::make_pair(ti->isFloat(), &ti->value());
     }
 
-    // note that float flag depends on how the tuple does it.
-    bool isFloat()const{return m_t.isFloat();}
     Tuple& m_t;
 };
 
@@ -331,8 +330,12 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         // now evalute the appropriate trees
         *m_goodPsfProb   = m_factory->evaluate(goodPsfType);
 
+#if 0 // old guy
         // gamma prob: for now just the preliminary cuts
         *m_gammaProb  = m_background?  0 : 1;
+#else
+        *m_gammaProb = m_factory->evaluate(GAMMA);
+#endif
 
     }
 
