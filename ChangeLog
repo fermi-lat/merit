@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Jul 28 06:45:52 PDT 2005
+merit/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+fix for gcc error
+    *
+------------------------------------------------------------
 User: burnett  Thu Jul 28 06:45:51 PDT 2005
 merit/cmt
 
