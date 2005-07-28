@@ -1,7 +1,7 @@
 /** @file RootTuple.cxx
     @brief implement class RootTuple
 
- $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.10 2005/07/04 11:25:10 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/RootTuple.cxx,v 1.11 2005/07/19 12:15:44 burnett Exp $
   Original author T. Burnett (w/ help from H. Kelley)
 */
 #include "RootTuple.h"
@@ -23,6 +23,8 @@
 #include "TKey.h"
 #include "TIterator.h"
 #include "TString.h"
+#include <stdexcept>
+
 namespace {
     // convenient utility from Heather
 TTree* getTree(TFile *f) {
@@ -32,7 +34,7 @@ TTree* getTree(TFile *f) {
   TTree* t=0; // return 
 
   // loop on keys, and search for the TTree named "t1"
-  while  ( keyTopLevel=(TKey*)nextTopLevelKey() ) {
+  while  ( (keyTopLevel=(TKey*)nextTopLevelKey())!=0 ) {
     // I'm assuming we know the name of the TTree is "t1"
     TString name(keyTopLevel->GetName());
     TString className(keyTopLevel->GetClassName());
