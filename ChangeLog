@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Jul 27 19:18:36 PDT 2005
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+adjust for float. implement all CT vars.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r23, operation: add
 Package: merit
