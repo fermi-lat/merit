@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Jul 28 06:45:51 PDT 2005
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix for gcc error
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r24, operation: add
 Package: merit
