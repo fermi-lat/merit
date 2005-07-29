@@ -1,7 +1,7 @@
-/** @file main.cxx 
-@brief Application that applies classification trees to the tuple
+/** @file run_classification_main.cxx 
+@brief Application that applies decision trees to the tuple
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,v 1.3 2003/11/26 21:00:26 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,v 1.4 2005/07/28 02:18:36 burnett Exp $
 */
 
 #include "app/RootTuple.h"
@@ -12,6 +12,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,
 #include <string>
 #include <sstream>
 #include <cassert>
+#include <stdexcept>
 
 #include "TFile.h"
 #include "TTree.h"

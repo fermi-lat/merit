@@ -1,6 +1,7 @@
-/** @file GlastDigi_dll.cpp
+/** @file merit_dll.cxx
+ @brief Gaudi interface
 
-  $Header: /nfs/slac/g/glast/ground/cvs/GlastDigi/src/Dll/GlastDigi_dll.cxx,v 1.1 2002/03/20 19:47:00 heather Exp $
+  $Header: /nfs/slac/g/glast/ground/cvs/merit/src/Dll/merit_dll.cxx,v 1.2 2002/05/26 03:35:09 burnett Exp $
 */
 
 #include "GaudiKernel/LoadFactoryEntries.h"

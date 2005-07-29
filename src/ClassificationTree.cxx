@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.30 2005/07/19 12:15:43 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.31 2005/07/28 02:18:36 burnett Exp $
 
 */
 #include "facilities/Util.h"
@@ -272,13 +272,18 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_goodPsfProb = getTupleItemPointer(t,"CTgoodPsf");
         m_gammaProb=    getTupleItemPointer(t,"CTgamma");
 
-        /** @page ctree Classification Tree variables
+        /** @page MeritTuple MeritTuple variables
+        
+        @section CT Classification Tree
 
-    - CTgoodCal  Good measurement of the Calorimeter  
-    - CTvertex   The vertex measure of the incoming direction is better than the first track 
-    - CTgoodPsf  The incoming direction is well measured  (PSF is good)    
-    - CTgamma    The event is a gamma, not background
-    */
+        These are generated in merit, calculated from other variables in the tuple, by 
+        the decision trees generated from analysis of Monte Carlo data
+
+        @param CTgoodCal  Good measurement of the Calorimeter  
+        @param CTvertex   The vertex measure of the incoming direction is better than the first track 
+        @param CTgoodPsf  The incoming direction is well measured  (PSF is good)    
+        @param CTgamma    The event is a gamma, not background
+        */
 
 
 
