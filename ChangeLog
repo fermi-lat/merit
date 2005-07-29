@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Thu Jul 28 18:10:24 PDT 2005
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+modificaitons for doxygen and ntuple documentation
+    *
+------------------------------------------------------------
+User: burnett  Thu Jul 28 18:10:24 PDT 2005
 merit/src/app
 
 Modified Files:
