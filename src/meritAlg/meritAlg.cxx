@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.92 2005/07/19 12:15:44 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.93 2005/07/29 01:10:24 burnett Exp $
 */
 // Include files
 
@@ -319,7 +319,7 @@ StatusCode meritAlg::initialize() {
     @param FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ (m) conversion point of event, whether single track or vertex, 999 if no tracks
 
         */
-    //FT1 INFO:
+    //FT1 INFO: 
     addItem( "FT1EventId",          &m_ft1eventid);
     addItem( "FT1Energy",           &m_ft1energy);
     addItem( "FT1Theta",            &m_ft1theta);
@@ -485,7 +485,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.92 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.93 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
