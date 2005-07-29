@@ -1,7 +1,7 @@
 /** @file run_classification_main.cxx 
 @brief Application that applies decision trees to the tuple
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,v 1.4 2005/07/28 02:18:36 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,v 1.5 2005/07/29 01:10:24 burnett Exp $
 */
 
 #include "app/RootTuple.h"
@@ -21,8 +21,8 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/run_classification_main.cxx,
 @page run_classification application run_classification 
 format: run_classification [input_file] [output_file]
 
-input_file: if not present look at env var MERIT_INPUT_FILE
-output_file: if not present, and MERIT_OUTPUT_FILE is not defined, just append "_new" to the file name.
+@param input_file if not present look at env var MERIT_INPUT_FILE
+@param output_file if not present, and MERIT_OUTPUT_FILE is not defined, just append "_new" to the file name.
 
 Copies the root tree MeritTuple (or "1") from input_file to output_file, but recalculates the CT variables,
 Expects the env var CTREE_PATH to point to a folder containing the trees.
