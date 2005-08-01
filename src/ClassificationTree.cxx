@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.31 2005/07/28 02:18:36 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.32 2005/07/29 01:10:23 burnett Exp $
 
 */
 #include "facilities/Util.h"
@@ -18,7 +18,7 @@ namespace {
 
     // Convenient identifiers used for the nodes
     enum{
-       GOODCAL,
+       GOODCAL_LOW, GOODCAL_MED, GOODCAL_HIGH,
        VTX_THIN, VTX_THICK,
        VTX_THIN_TAIL,    
        ONE_TRK_THIN_TAIL,
@@ -26,7 +26,7 @@ namespace {
        ONE_TRK_THICK_TAIL,
        GAMMA,
        NODE_COUNT, // stop here
-       NOCAL,
+       NOCAL, GOODCAL,
        BKG_VTX_HI, BKG_VTX_LO, BKG_1TRK_HI, BKG_1TRK_LO,
     };
 
@@ -41,7 +41,9 @@ namespace {
     };
     // these have to correspond to the folder names
     CTinfo imNodeInfo[] = {
-        { GOODCAL,           "goodcal" },
+        { GOODCAL_LOW,       "goodcal_low" },
+        { GOODCAL_MED,       "goodcal_med" },
+        { GOODCAL_HIGH,      "goodcal_high" },
         { VTX_THIN,          "vertex_thin"},
         { VTX_THICK,         "vertex_thick" },
         { VTX_THIN_TAIL,     "psf_thin_vertex"}, 
@@ -257,7 +259,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
         // these are used for preliminary cuts to select the tree to use
         m_firstLayer          = t.tupleItem("Tkr1FirstLayer");
-        m_calEnergySum        = t.tupleItem("CalEnergyRaw");
+        m_calEnergyRaw        = t.tupleItem("CalEnergyRaw");
         m_calTotRLn           = t.tupleItem("CalTotRLn");
         m_evtEnergySumOpt     = t.tupleItem("EvtEnergyCorr");
         m_evtTkrEComptonRatio = t.tupleItem("EvtETkrComptonRatio");
@@ -309,14 +311,20 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
         // initialize CT output variables
         *m_goodPsfProb=0;
-        *m_vtxProb  = *m_gammaProb=0;
+        *m_vtxProb  = *m_gammaProb = *m_goodCalProb= 0;
 
-        int cal_type = ( *m_calEnergySum >5. && *m_calTotRLn > 4.)? GOODCAL : NOCAL;
-        // evalue appropriate tree for good cal prob
+        double calenergy = *m_calEnergyRaw;
+        int cal_type = ( calenergy >5. && *m_calTotRLn > 4.)? GOODCAL : NOCAL;
         if( cal_type==NOCAL) return;
+
+        // evalue appropriate tree for good cal prob - one tree for each energy range
+        if(     calenergy <  350) cal_type = GOODCAL_LOW;
+        else if(calenergy < 3500) cal_type = GOODCAL_MED;
+        else                      cal_type = GOODCAL_HIGH;
+
         *m_goodCalProb = m_factory->evaluate(cal_type);
 
-        // evaluate the rest only if cal prob ok
+        // evaluate the rest only if cal prob ok (should this be wired in???
         if( *m_goodCalProb<0.25 )   return;
 
  

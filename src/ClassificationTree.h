@@ -1,7 +1,7 @@
 /** @file ClassificationTree.h
 @brief  Declare class ClassificationTree
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.16 2005/07/03 21:03:10 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.17 2005/07/04 11:25:10 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -49,7 +49,7 @@ private:
     GlastClassify::TreeFactory* m_factory;
     const TupleItem*  m_firstLayer; /// access to the first layer in the tuple
     const TupleItem*  m_calTotRLn; 
-    const TupleItem*  m_calEnergySum;
+    const TupleItem*  m_calEnergyRaw;
     const TupleItem*  m_acdTileCount;
     const TupleItem*  m_evtTkrEComptonRatio;
     const TupleItem*  m_evtTkrComptonRatio;
