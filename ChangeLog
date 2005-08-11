@@ -1,22 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Thu Aug 11 14:56:00 PDT 2005
-merit/src/meritAlg
-
-Modified Files:
-	meritAlg.cxx 
-Log Message:
-fix documentation
-    *
-------------------------------------------------------------
-User: burnett  Thu Aug 11 14:56:00 PDT 2005
-merit/src
-
-Modified Files:
-	mainpage.h 
-Log Message:
-fix documentation
-    *
-------------------------------------------------------------
 TAG
 Tag name: v6r25, operation: add
 Package: merit
