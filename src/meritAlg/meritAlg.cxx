@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.93 2005/07/29 01:10:24 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.94 2005/07/29 01:28:13 burnett Exp $
 */
 // Include files
 
@@ -180,7 +180,6 @@ private:
 
     /// the various tree names
     StringProperty m_eventTreeName;
-    StringProperty m_pointingTreeName;
     StringProperty m_primaryType;
     long           m_nbOfEvtsInFile;
     StringProperty m_classifyPath;
@@ -199,7 +198,6 @@ Algorithm(name, pSvcLocator), m_tuple(0), m_rootTupleSvc(0), m_ctree(0)
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
     declareProperty("EventTreeName",     m_eventTreeName="MeritTuple");
-    declareProperty("PointingTreeName", m_pointingTreeName="Exposure");
     declareProperty("IM_filename", m_IM_filename=""); // deprecated, not used now
     declareProperty("ClassifyPath", m_classifyPath="$(GLASTCLASSIFYROOT)/data");
     declareProperty("PrimaryType", m_primaryType="RECO"); // or "MC" (why not a bool?)
@@ -485,7 +483,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.93 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.94 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;

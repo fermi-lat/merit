@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.10 2004/12/22 16:06:46 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.11 2004/12/22 16:11:18 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -6,13 +6,17 @@
 <hr>
   \section meritAlg  meritAlg
 
-  Implements an algorithm, meritAlg, that does a PSF and Aeff analysis.
+  Implements an algorithm, meritAlg, that:
+  
+  - does a PSF and Aeff analysis. 
+  - runs the classification trees and adds the variables to the tuple. (see the MeritTuple page)
+  - adds FT1 variables to the tuple (see the MeritTuple page)
 
   <h3> Properties for meritAlg </h3> 
     @param  meritAlg.cuts ["LntA"]  remove the "t" to disable tree-based tail cuts
-    @param  meritAlg.generated [10000]
-    @param  meritAlg.RootFilename  [""]
-    @param  meritAlg.IM_filename ["$(MERITROOT)/xml/classification.imw"]  set this to null to not run the classification
+    @param  meritAlg.generated [10000]  number of events that were generated, for Aeff estimate
+    @param  meritAlg.EventTreeName  ["MeritTuple"]  Name to give the event tree [if null, turn off]
+    @param  meritAlg.ClassifyPath ["$(GLASTCLASSIFYROOT)/data"]  set this to null to not run the classification
     @param  meritAlg.PrimaryType ["RECO"] or "MC" (why not a bool?)
     @param  meritAlg.NbOfEvtsInFile [100000]  to define FT1 event ID. (see code)
 
@@ -45,112 +49,54 @@ Mx: Multi-PSF for bin x, x=0,1,2,3,4: do PSF analysis for 6 dE/E bins from "
 
   </pre>
 
-<h3> Sample output from meritAlg for Gleam v2r1p5 </h3>
+<h3> Sample output from meritAlg for GlastRelase HEAD1.617 </h3>
 
 <pre>
-        Generated events :  10000
+        Generated events :   1000
 =======================================================
-Analysis cuts: nA
-          Found in tuple :   2111
+Analysis cuts: LntA
+          Found in tuple :    299
 -------------------------------------------------------
-  Generated energy--mean :    0.1
-                     rms : 1.35473e-008
-                     min :    0.1
-                     max :    0.1
-         TKR_No_Tracks>0 :   1734
-   Accepted for analysis :   1734
+  Generated energy--mean :   1000
+                     rms :      0
+                     min :   1000
+                     max :   1000
+     Elapsed time (sec): :   2464
+          TkrNumTracks>0 :    185
+CT PSF tail cuts
+          CTgoodCal>0.25 :    156
+          Tkr1Zdir<-0.25 :    156
 -------------------------------------------------------
- Layers 0-11
-             Events used :    920
-        eff. proj. sigma :   1.94 deg = 116 arc-min
-           68% contained :   3.97 deg = 1.36*(1.51*sigma)
-           95% contained :   17.7 deg = 3.73*(2.45*sigma)
-        Energy: meas/gen :  0.306
-                     std :  0.172
-       events w/ no data :     12
-          effective area :   5520 cm^2
-         Figure of merit :   2196 cm
+   Accepted for analysis :    156
 -------------------------------------------------------
- Layers 12-15
-             Events used :    814
-        eff. proj. sigma :   3.97 deg = 238 arc-min
-           68% contained :   7.69 deg = 1.28*(1.51*sigma)
-           95% contained :   20.9 deg = 2.15*(2.45*sigma)
-        Energy: meas/gen :  0.535
-                     std :  0.193
-       events w/ no data :     19
-          effective area :   4884 cm^2
-         Figure of merit :   1009 cm
+ Layers 6-15  All
+             Events used :     68
+        eff. proj. sigma :  0.284 deg = 17 arc-min
+           68% contained :  0.662 deg = 1.55*(1.51*sigma)
+           95% contained :   6.68 deg = 9.62*(2.45*sigma)
+        Energy: meas/gen :  0.892
+                     std :  0.263
+       events w/ no data :      0
+          effective area :   4080 cm^2
+         Figure of merit :  12900 cm
 -------------------------------------------------------
-    total effective area :  10404 cm^2
-            Combined FOM :   2416 cm
+ Layers 0-5  All
+             Events used :     73
+        eff. proj. sigma :  0.491 deg = 29.5 arc-min
+           68% contained :   0.98 deg = 1.32*(1.51*sigma)
+           95% contained :   5.37 deg = 4.46*(2.45*sigma)
+        Energy: meas/gen :  0.973
+                     std :  0.183
+       events w/ no data :      0
+          effective area :   4380 cm^2
+         Figure of merit :   7716 cm
+-------------------------------------------------------
+    total effective area :   9360 cm^2
+            Combined FOM :  15031 cm
+
+
 
 </pre>
-<hr>
-\section fastFilter Utility fastFilter: Event selection applying Insightful Miner selection 
- <h3>Usage </h3>
-      @verbatim
-      fastFilter.exe   [input_merit.root]   [output.root]
-         input_merit.root    default   src/test/merit100.root
-         output.root         default   <input_merit.root>_filt.root
-
-         imfile              IM xml file defined by env var IM_FILE_FILTER
-      @endverbatim
-      Default path to input and output Root files and the path to the IM xml
-      file are set in the requirements. 
-
- <h3> Purpose </h3>
-      Read the input merit Root Ntuple and generate a new output Root Ntuple
-      with selected events only. Additional branches are added, which contain
-      the event category and gamma probability. The selection is tuned to reduce 
-      the background (typically by a factor of 5) and keep the gamma signal. 
-      The selection uses the IM xml file xml/CTPruner_DC1.imw (from Bill Atwood). 
-      <p>
- <h3> Method </h3>
-   <ul>
-      <li>The exclusive leaves of the classification tree (CT), file CTPruner_DC1.imw,
-      are implemented in 
-      PruneTree::PreClassify. This subclass immitates the decision chain of the CT. 
-      The result is per event the leave category, which in turn is used to evaluate the
-      gamma probability of the event via the classification::Tree 
-      (package classification). 
-      <li>
-      PruneTree creates an instance of PruneTree::PreClassify and  
-      classification::Tree. 
-      <li>
-      The interface to the branches of the Root Tree is established  via RootTuple, a
-      vector of TupleItem, each holding a pair of name and value. Additional 
-      TupleItems are added, which store per event the resulting CT category and 
-      gamma probability. PruneTree::Lookup is a helper class, which provides access 
-      to the TupleItem value by name. 
-      <li>
-      fastFilter.cxx (main) defines the input and output root files and the 
-      IM xml file. It creates the interface RootTuple. It then loops over the events 
-      of the input Root tuple, extracts the event probability and fills the new
-      Root tuple depending on this probability (value now hard coded). 
-      <li> Additional documentation:
-           <ul><li> 
-           <a href=http://www.slac.stanford.edu/~hansl/soft/glastSw/fastFilter/CTPruner.jpg>
-           IM Classification Tree </a> 
-           <li>Plot of 
-           <a href=http://www.slac.stanford.edu/~hansl/soft/glastSw/fastFilter/cat-prob-merit100.ps>
-           Leaf category versus probability </a> for test file merit100.root 
-           (196 gammas of 100 MeV). 
-           </ul>
-      <li> It would be easy to limit in addition the number of branches written to
-      the output tuple, to further reduce the size of the output files.
-      </ul></p>
-
-<h3> Updates of the classification Tree </h3>
-     In case that the CT changes the following updates of the code are needed.
-       <ul><li> If the IM tree structure changes, the declarations in PruneTree, 
-                IMnodeInfo and typedef Category have to be revised. 
-           <li> If the structure of the CT is unchanged, only an updated IM xml
-                file is needed. The cuts in PruneTree::operator Category() may
-                have to be revised. 
-           <li> If the classification tree computations must be disabled, 
-                  set the joboptions parameter IM_filename to null. Also remove the "t" in the cuts parameter.
-       </ul>
 
   <hr>
   @section notes release notes
