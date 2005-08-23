@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.75 2005/08/01 00:11:16 burnett Exp $
+ * $Id: release.notes,v 1.76 2005/08/11 21:57:26 burnett Exp $
  *
+ *  v6r25p2 THB  23-aug-05 rearrange req file a bit
  *  v6r25p1 THB  11-aug-05 Fix documentation
  *  v6r25   THB  31-jul-05 Support for new GlastClassify trees
  *  v6r24p1,2,3 THB  28-jul-05 Fix thick/thin break; gcc fixes
