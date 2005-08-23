@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Aug 23 14:37:00 PDT 2005
+merit/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+define a pattern to implement the local library;  fail to get MRvcmt to build it properly.
+    *
+------------------------------------------------------------
 User: burnett  Tue Aug 23 14:36:59 PDT 2005
 merit/cmt
 
