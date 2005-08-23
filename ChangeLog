@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Aug 23 14:36:59 PDT 2005
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+define a pattern to implement the local library;  fail to get MRvcmt to build it properly.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r25p1, operation: add
 Package: merit
