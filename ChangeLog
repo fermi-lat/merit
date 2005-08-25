@@ -1,13 +1,4 @@
 ------------------------------------------------------------
-User: golpa  Thu Aug 25 12:04:30 PDT 2005
-merit/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-Modified to work with lib directory. Tagging v6r25p3
-    *
-------------------------------------------------------------
 TAG
 Tag name: v6r25p2, operation: add
 Package: merit
