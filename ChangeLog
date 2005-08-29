@@ -1,22 +1,4 @@
 ------------------------------------------------------------
-User: golpa  Mon Aug 29 09:12:29 PDT 2005
-merit/doc
-
-Modified Files:
-	release.notes 
-Log Message:
-Carry forward lib name changes
-    *
-------------------------------------------------------------
-User: golpa  Mon Aug 29 09:12:29 PDT 2005
-merit/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-Carry forward lib name changes
-    *
-------------------------------------------------------------
 TAG
 Tag name: v6r25p3, operation: add
 Package: merit
