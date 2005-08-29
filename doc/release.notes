@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.77 2005/08/23 21:37:00 burnett Exp $
+ * $Id: release.notes,v 1.78 2005/08/25 19:04:31 golpa Exp $
  *
+ *  v6r25p4 NG   29-aug-05 carry foward lib name changes
  *  v6r25p3 NG   24-aug-05 modify to work with new lib directory
  *  v6r25p2 THB  23-aug-05 rearrange req file a bit
  *  v6r25p1 THB  11-aug-05 Fix documentation
