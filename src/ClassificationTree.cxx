@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.32 2005/07/29 01:10:23 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.33 2005/08/01 00:09:30 burnett Exp $
 
 */
 #include "facilities/Util.h"
@@ -18,16 +18,15 @@ namespace {
 
     // Convenient identifiers used for the nodes
     enum{
-       GOODCAL_LOW, GOODCAL_MED, GOODCAL_HIGH,
-       VTX_THIN, VTX_THICK,
-       VTX_THIN_TAIL,    
-       ONE_TRK_THIN_TAIL,
-       VTX_THICK_TAIL,   
-       ONE_TRK_THICK_TAIL,
-       GAMMA,
-       NODE_COUNT, // stop here
-       NOCAL, GOODCAL,
-       BKG_VTX_HI, BKG_VTX_LO, BKG_1TRK_HI, BKG_1TRK_LO,
+        CAL_LOW, CAL_MED, CAL_HIGH,
+        VERTEX_THIN, VERTEX_THICK,
+        PSF_VERTEX_THIN, 
+        PSF_VERTEX_THICK,
+        PSF_TRACK_THIN,  
+        PSF_TRACK_THICK, 
+        GAMMA_VERTEX_HIGH, GAMMA_VERTEX_MED, GAMMA_VERTEX_THIN, GAMMA_VERTEX_THICK,
+        GAMMA_TRACK_HIGH,  GAMMA_TRACK_MED,  GAMMA_TRACK_THIN,  GAMMA_TRACK_THICK,
+        NODE_COUNT, // stop here
     };
 
     /** table to correlate indeces with 
@@ -41,23 +40,25 @@ namespace {
     };
     // these have to correspond to the folder names
     CTinfo imNodeInfo[] = {
-        { GOODCAL_LOW,       "goodcal_low" },
-        { GOODCAL_MED,       "goodcal_med" },
-        { GOODCAL_HIGH,      "goodcal_high" },
-        { VTX_THIN,          "vertex_thin"},
-        { VTX_THICK,         "vertex_thick" },
-        { VTX_THIN_TAIL,     "psf_thin_vertex"}, 
-        { ONE_TRK_THIN_TAIL, "psf_thin_track"},
-        { VTX_THICK_TAIL,    "psf_thick_vertex"},
-        { ONE_TRK_THICK_TAIL,"psf_thick_track"},
-        { GAMMA,             "gamma"}
-#if 0 // wait for background
-        { NOCAL,             "nocal"  },
-        { BKG_VTX_HI,        "CT VTX-HI"},
-        { BKG_VTX_LO,        "CT VTX-LO"},
-        { BKG_1TRK_HI,       "CT 1TRK-HI"},
-        { BKG_1TRK_LO,       "CT 1TRK-LO"}
-#endif
+        { CAL_LOW,           "energy/low" },
+        { CAL_MED,           "energy/med" },
+        { CAL_HIGH,          "energy/high" },
+
+        { VERTEX_THIN,       "vertex/thin"},
+        { VERTEX_THICK,      "vertex/thick" },
+
+        { PSF_VERTEX_THIN,   "psf/vertex/thin"}, 
+        { PSF_VERTEX_THICK,  "psf/vertex/thick"},
+        { PSF_TRACK_THIN,    "psf/track/thin"},
+        { PSF_TRACK_THICK,   "psf/track/thick"},
+        { GAMMA_VERTEX_HIGH, "gamma/vertex/highcal"},
+        { GAMMA_VERTEX_MED,  "gamma/vertex/medcal"},
+        { GAMMA_VERTEX_THIN, "gamma/vertex/thin"},
+        { GAMMA_VERTEX_THICK,"gamma/vertex/thick"},
+        { GAMMA_TRACK_HIGH,  "gamma/track/highcal"},
+        { GAMMA_TRACK_MED,   "gamma/track/medcal"},
+        { GAMMA_TRACK_THIN,  "gamma/track/thin"},
+        { GAMMA_TRACK_THICK,  "gamma/track/thick"},
     };
 
 #if 0  // define aliases to deal with new values for now
@@ -273,6 +274,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_vtxProb=      getTupleItemPointer(t,"CTvertex");
         m_goodPsfProb = getTupleItemPointer(t,"CTgoodPsf");
         m_gammaProb=    getTupleItemPointer(t,"CTgamma");
+        m_gammaType=    getTupleItemPointer(t,"CTgammaType");
 
         /** @page MeritTuple MeritTuple variables
         
@@ -285,6 +287,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         @param CTvertex   The vertex measure of the incoming direction is better than the first track 
         @param CTgoodPsf  The incoming direction is well measured  (PSF is good)    
         @param CTgamma    The event is a gamma, not background
+        @param CTgammaType     integer type for the background rejection tree
         */
 
 
@@ -314,13 +317,13 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         *m_vtxProb  = *m_gammaProb = *m_goodCalProb= 0;
 
         double calenergy = *m_calEnergyRaw;
-        int cal_type = ( calenergy >5. && *m_calTotRLn > 4.)? GOODCAL : NOCAL;
-        if( cal_type==NOCAL) return;
+        if( calenergy <5. || *m_calTotRLn < 4.) return;
 
         // evalue appropriate tree for good cal prob - one tree for each energy range
-        if(     calenergy <  350) cal_type = GOODCAL_LOW;
-        else if(calenergy < 3500) cal_type = GOODCAL_MED;
-        else                      cal_type = GOODCAL_HIGH;
+        int cal_type;
+        if(     calenergy <  350) cal_type = CAL_LOW;
+        else if(calenergy < 3500) cal_type = CAL_MED;
+        else                      cal_type = CAL_HIGH;
 
         *m_goodCalProb = m_factory->evaluate(cal_type);
 
@@ -328,28 +331,45 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         if( *m_goodCalProb<0.25 )   return;
 
  
-        // select vertex-vs-1 track, corresponding tree for core, psf
+        // select vertex-vs-track, and corresponding trees for good psf, background rejection
 
-        int goodPsfType=0; 
-        if( *m_firstLayer > 5 ) { 
+        int psfType=0, gammaType=0;
+        if( *m_firstLayer > 5 ) { // thin
 
-            *m_vtxProb = m_factory->evaluate(VTX_THIN); 
-            goodPsfType = useVertex() ? VTX_THIN_TAIL : ONE_TRK_THIN_TAIL;
-        }else {
-            *m_vtxProb = m_factory->evaluate(VTX_THICK);
-            goodPsfType = useVertex() ? VTX_THICK_TAIL : ONE_TRK_THICK_TAIL;
+            *m_vtxProb = m_factory->evaluate(VERTEX_THIN); 
+            if( useVertex() ) {
+                psfType = PSF_VERTEX_THIN ;
+                if(      cal_type==CAL_HIGH) gammaType=GAMMA_VERTEX_HIGH;
+                else if( cal_type==CAL_MED)  gammaType=GAMMA_VERTEX_MED;
+                else                         gammaType=GAMMA_VERTEX_THIN;
+
+            }else{ //track
+                psfType = PSF_TRACK_THIN;
+                if(      cal_type==CAL_HIGH) gammaType=GAMMA_TRACK_HIGH;
+                else if( cal_type==CAL_MED)  gammaType=GAMMA_TRACK_MED;
+                else                         gammaType=GAMMA_TRACK_THIN;
+            }
+        }else { //thick
+            *m_vtxProb = m_factory->evaluate(VERTEX_THICK);
+           if( useVertex() ) {
+                psfType = PSF_VERTEX_THIN ;
+                if(      cal_type==CAL_HIGH) gammaType=GAMMA_VERTEX_HIGH;
+                else if( cal_type==CAL_MED)  gammaType=GAMMA_VERTEX_MED;
+                else                         gammaType=GAMMA_VERTEX_THICK;
+
+            }else{ //track
+                psfType = PSF_TRACK_THIN;
+                if(      cal_type==CAL_HIGH) gammaType=GAMMA_TRACK_HIGH;
+                else if( cal_type==CAL_MED)  gammaType=GAMMA_TRACK_MED;
+                else                         gammaType=GAMMA_TRACK_THICK;
+            }
         }
 
         // now evalute the appropriate trees
-        *m_goodPsfProb   = m_factory->evaluate(goodPsfType);
+        *m_goodPsfProb = m_factory->evaluate(psfType);
 
-#if 0 // old guy
-        // gamma prob: for now just the preliminary cuts
-        *m_gammaProb  = m_background?  0 : 1;
-#else
-        *m_gammaProb = m_factory->evaluate(GAMMA);
-#endif
-
+        *m_gammaProb   = m_factory->evaluate(gammaType);
+        *m_gammaType   = gammaType-GAMMA_VERTEX_HIGH; // will be 0-7
     }
 
     //_________________________________________________________________________

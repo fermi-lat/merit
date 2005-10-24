@@ -1,7 +1,7 @@
 /** @file ClassificationTree.h
 @brief  Declare class ClassificationTree
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.17 2005/07/04 11:25:10 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.18 2005/08/01 00:09:30 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -63,6 +63,7 @@ private:
     double* m_goodPsfProb; 
     double* m_vtxProb ; // vertex or track choice
     double* m_gammaProb ;
+    double* m_gammaType;
     
 
     std::ostream& m_log;
