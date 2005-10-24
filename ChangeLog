@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Oct 23 21:39:59 PDT 2005
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx ClassificationTree.h 
+Log Message:
+update to evaluate new backgroiund suppresision trees.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r25p4, operation: add
 Package: merit
