@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.33 2005/08/01 00:09:30 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.34 2005/10/24 04:39:59 burnett Exp $
 
 */
 #include "facilities/Util.h"
@@ -58,7 +58,7 @@ namespace {
         { GAMMA_TRACK_HIGH,  "gamma/track/highcal"},
         { GAMMA_TRACK_MED,   "gamma/track/medcal"},
         { GAMMA_TRACK_THIN,  "gamma/track/thin"},
-        { GAMMA_TRACK_THICK,  "gamma/track/thick"},
+        { GAMMA_TRACK_THICK, "gamma/track/thick"},
     };
 
 #if 0  // define aliases to deal with new values for now
@@ -66,13 +66,6 @@ namespace {
   std::pair< string,  string> alias_pairs[]=
       //
       {
-  //     std::make_pair( string( "CalEnergySum"       ),string( "CalEnergyRaw"       ))
-  //    ,std::make_pair( string( "EvtLogESum"         ),string( "EvtLogEnergy"       ))
-  //    ,std::make_pair( string( "EvtCalETrackDoca"   ),string( "EvtECalTrackDoca"   ))
-  //    ,std::make_pair( string( "EvtCalETrackSep"    ),string( "EvtECalTrackSep"    ))
-  //    ,std::make_pair( string( "EvtCalEXtalTrunc"   ),string( "EvtECalXtalTrunc"   ))
-   //   ,std::make_pair( string( "EvtCalEXtalRatio"   ),string( "EvtECalXtalRatio"   ))
-  //    ,std::make_pair( string( "EvtTkrEComptonRatio"),string( "EvtETkrComptonRatio"))
       ,std::make_pair( string( "CalTotSumCorr"      ),string( "CalTotalCorr"       ))
       ,std::make_pair( string( "EvtVtxEEAngle"      ),string( "EvtEVtxAngle"       ))
       ,std::make_pair( string( "EvtTkr1EChisq"      ),string( "EvtETkr1Chisq"      ))
@@ -126,92 +119,11 @@ double * getTupleItemPointer(Tuple& t, std::string name)
 
 
 
-/** @class BackgroundCut
-    @brief set up and apply post-Rome cuts to the data in merit Tuple
-    @author Toby Burnett
-@verbatim
-    Usage: 
-        TTree& t;
-        BackgroundCut bkg(t);
-
-        [...]
-        if( bkg ) { // this is background...
-        }
-@endverbatim
-*/
-//___________________________________________________________________________
-
-class ClassificationTree::BackgroundCut {
-public:
-    //! ctor: just associate with tree and find the branches we need
-    BackgroundCut(Tuple& t) 
-        : VtxAngle          (*getTupleItemPointer(t,"VtxAngle")) 
-        , EvtEnergySumOpt   (*getTupleItemPointer(t,"EvtEnergySumOpt"))
-        , EvtTkrComptonRatio(*getTupleItemPointer(t,"EvtTkrComptonRatio")) 
-        , Tkr1ToTFirst      (*getTupleItemPointer(t,"Tkr1ToTFirst"))
-        , Tkr1ToTAve        (*getTupleItemPointer(t,"Tkr1ToTAve"))
-        , AcdTotalEnergy    (*getTupleItemPointer(t,"AcdTotalEnergy"))  
-        , AcdRibbonActDist  (*getTupleItemPointer(t,"AcdRibbonActDist")) 
-        , AcdTileCount      (*getTupleItemPointer(t,"AcdTileCount"))
-        , FilterStatus_HI   (*getTupleItemPointer(t,"FilterStatus_HI"))
-        {  }
-
-
-    //! return truth value, for current TTree position
-    operator bool()
-    {
-        bool veto=false; // default no veto
-
-        if(VtxAngle>0.0){
-            // VERTEX 
-            if(EvtEnergySumOpt<=350.0) {
-                // LOCAL
-                veto= Tkr1ToTFirst > 4.5 
-                    || Tkr1ToTAve > 3.5
-                    || AcdTotalEnergy > 0.25
-                    || VtxAngle>0.4 ;
-            }
-            // MEDCAL, HICAL: pass
-        }
-        else{
-            // 1 TRACK
-            if(EvtEnergySumOpt <= 350.0) {
-                // LOCAL
-                veto = Tkr1ToTAve > 3.0
-                    || AcdTileCount > 0.0
-                    || AcdRibbonActDist >-300.0
-                    || EvtTkrComptonRatio <1.05
-                    || FilterStatus_HI >3.0 ;
-            }else if( EvtEnergySumOpt <= 3500.0){
-                // MEDCAL
-                veto = Tkr1ToTAve >3.0
-                    || AcdTotalEnergy >5.0
-                    || EvtTkrComptonRatio <1.0 ;
-            }
-            // HICAL: pass
-        }
-        return veto;
-    }
-private:
-    // references to the values read in from ROOT, or set directly, in the tuple
-    double &   VtxAngle; 
-    double &   EvtEnergySumOpt;
-    double &   EvtTkrComptonRatio;
-    double &   Tkr1ToTFirst;
-    double &   Tkr1ToTAve;
-    double &   AcdTotalEnergy;  
-    double &   AcdRibbonActDist; 
-    double &   AcdTileCount;
-    double &   FilterStatus_HI;
-};
-
-
 
 //_________________________________________________________________________
 
 ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string treepath)
-: m_background(*new BackgroundCut(t))
-, m_log(log)
+: m_log(log)
     {
         Lookup looker(t);
 
@@ -376,7 +288,5 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
     ClassificationTree::~ClassificationTree()
     {
-
         delete m_factory;
-        delete &m_background;
     }
