@@ -1,7 +1,7 @@
 /** @file ClassificationTree.h
 @brief  Declare class ClassificationTree
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.19 2005/10/24 04:39:59 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.20 2005/10/29 20:45:40 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -55,12 +55,18 @@ private:
     const TupleItem*  m_calLRmsRatio;
     const TupleItem*  m_vtxAngle;
 
+    const TupleItem * m_CalEnergyCorr;
+    const TupleItem * m_CalCfpEnergy;
+    const TupleItem  *m_CalLllEnergy;
+    const TupleItem * m_CalTklEnergy;
+
     // output quantities: pointers to corresponding tuple items
     double* m_goodCalProb; 
     double* m_goodPsfProb; 
     double* m_vtxProb ; // vertex or track choice
     double* m_gammaProb ;
     double* m_gammaType;
+    double* m_EvtEnergyCorr;
     
 
     std::ostream& m_log;

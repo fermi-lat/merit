@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.34 2005/10/24 04:39:59 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.35 2005/10/29 20:45:40 burnett Exp $
 
 */
 #include "facilities/Util.h"
@@ -18,7 +18,10 @@ namespace {
 
     // Convenient identifiers used for the nodes
     enum{
-        CAL_LOW, CAL_MED, CAL_HIGH,
+        ENERGY_PARAM,     
+        ENERGY_LASTLAYER, 
+        ENERGY_PROFILE,   
+        ENERGY_TRACKER,   
         VERTEX_THIN, VERTEX_THICK,
         PSF_VERTEX_THIN, 
         PSF_VERTEX_THICK,
@@ -40,12 +43,13 @@ namespace {
     };
     // these have to correspond to the folder names
     CTinfo imNodeInfo[] = {
-        { CAL_LOW,           "energy/low" },
-        { CAL_MED,           "energy/med" },
-        { CAL_HIGH,          "energy/high" },
+        { ENERGY_PARAM,      "energy/param" },
+        { ENERGY_LASTLAYER,  "energy/lastlayer" },
+        { ENERGY_PROFILE,    "energy/profile" },
+        { ENERGY_TRACKER,    "energy/tracker" },
 
         { VERTEX_THIN,       "vertex/thin"},
-        { VERTEX_THICK,      "vertex/thick" },
+        { VERTEX_THICK,      "vertex/thick"},
 
         { PSF_VERTEX_THIN,   "psf/vertex/thin"}, 
         { PSF_VERTEX_THICK,  "psf/vertex/thick"},
@@ -174,14 +178,20 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         m_firstLayer          = t.tupleItem("Tkr1FirstLayer");
         m_calEnergyRaw        = t.tupleItem("CalEnergyRaw");
         m_calTotRLn           = t.tupleItem("CalTotRLn");
-        m_evtEnergySumOpt     = t.tupleItem("EvtEnergyCorr");
         m_evtTkrEComptonRatio = t.tupleItem("EvtETkrComptonRatio");
         m_evtTkrComptonRatio  = t.tupleItem("EvtTkrComptonRatio");
         m_calMIPDiff          = t.tupleItem("CalMIPDiff");
         m_acdTileCount        = t.tupleItem("AcdTileCount");
         m_vtxAngle            = t.tupleItem("VtxAngle");
 
+        // the energy estimates
+        m_CalEnergyCorr    = t.tupleItem("CalEnergyCorr");
+        m_CalCfpEnergy     = t.tupleItem("CalCfpEnergy");
+        m_CalLllEnergy     = t.tupleItem("CalLllEnergy");
+        m_CalTklEnergy     = t.tupleItem("CalTklEnergy");
+
         // New items to create or override
+        m_EvtEnergyCorr=getTupleItemPointer(t,"EvtEnergyCorr");
         m_goodCalProb = getTupleItemPointer(t,"CTgoodCal");
         m_vtxProb=      getTupleItemPointer(t,"CTvertex");
         m_goodPsfProb = getTupleItemPointer(t,"CTgoodPsf");
@@ -228,21 +238,34 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         *m_goodPsfProb=0;
         *m_vtxProb  = *m_gammaProb = *m_goodCalProb= 0;
 
-        double calenergy = *m_calEnergyRaw;
         if( calenergy <5. || *m_calTotRLn < 4.) return;
 
-        // evalue appropriate tree for good cal prob - one tree for each energy range
+        double energymeasure[] = {*m_CalEnergyCorr, *m_CalCfpEnergy, *m_CalLllEnergy, *m_CalTklEnergy};
+        double ctree_index[] = {ENERGY_PARAM, ENERGY_PROFILE, ENERGY_LASTLAYER, ENERGY_TRACKER};
+        double bestprob(0), bestenergy(0);
+        for( int i =0; i<4; ++i){
+            double prob = energymeasure[i]>0? m_factory->evaluate(ctree_index[i]) : 0;
+            if( prob>bestprob){
+                bestprob = prob;
+                bestenergy = energymeasure[i];
+            }
+        }
+        // assign tuple items
+        *m_goodCalProb = bestprob;
+        *m_EvtEnergyCorr = bestenergy;
+
+        // evaluate the rest only if cal prob ok (should this be wired in???
+        if( *m_goodCalProb<0.25 )   return;
+
+        // selection of energy range for gamma trees
+        enum {CAL_LOW, CAL_MED, CAL_HIGH};
+        double calenergy = *m_calEnergyRaw;
         int cal_type;
         if(     calenergy <  350) cal_type = CAL_LOW;
         else if(calenergy < 3500) cal_type = CAL_MED;
         else                      cal_type = CAL_HIGH;
 
-        *m_goodCalProb = m_factory->evaluate(cal_type);
 
-        // evaluate the rest only if cal prob ok (should this be wired in???
-        if( *m_goodCalProb<0.25 )   return;
-
- 
         // select vertex-vs-track, and corresponding trees for good psf, background rejection
 
         int psfType=0, gammaType=0;
