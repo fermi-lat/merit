@@ -1,7 +1,7 @@
 /** @file ClassificationTree.h
 @brief  Declare class ClassificationTree
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.20 2005/10/29 20:45:40 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.21 2005/10/31 17:29:23 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -17,8 +17,6 @@ namespace GlastClassify { class TreeFactory; }
 /** @class ClassificationTree
     @brief Manage Atwood-inspired classification trees, creating new tuple variables
     based on values found in the tuple
-
-
 
 */
 class ClassificationTree 
@@ -55,18 +53,18 @@ private:
     const TupleItem*  m_calLRmsRatio;
     const TupleItem*  m_vtxAngle;
 
-    const TupleItem * m_CalEnergyCorr;
+    const TupleItem * m_EvtEnergyCorr;
     const TupleItem * m_CalCfpEnergy;
     const TupleItem  *m_CalLllEnergy;
     const TupleItem * m_CalTklEnergy;
 
-    // output quantities: pointers to corresponding tuple items
-    double* m_goodCalProb; 
-    double* m_goodPsfProb; 
-    double* m_vtxProb ; // vertex or track choice
-    double* m_gammaProb ;
-    double* m_gammaType;
-    double* m_EvtEnergyCorr;
+    // output quantities: corresponding tuple items
+    float m_goodCalProb; 
+    float m_goodPsfProb; 
+    float m_vtxProb ; // vertex or track choice
+    float m_gammaProb ;
+    float m_gammaType;
+    float m_BestEnergy;
     
 
     std::ostream& m_log;

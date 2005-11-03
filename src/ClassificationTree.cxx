@@ -1,6 +1,6 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.35 2005/10/29 20:45:40 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.36 2005/10/31 17:29:23 burnett Exp $
 
 */
 #include "facilities/Util.h"
@@ -101,24 +101,7 @@ public:
 
     Tuple& m_t;
 };
-
-//   simple function that either finds an existing, or creates a new TupleItem
-//___________________________________________________________________________
-
-double * getTupleItemPointer(Tuple& t, std::string name)
-{
-    // 
-      TupleItem* ti;
-      try
-	{
-	  ti = const_cast<TupleItem*>(t.tupleItem(name));
-	} catch(...)
-	  {
-	    ti = new TupleItem(name);
-	  }
-      if( ti==0) ti = new TupleItem(name);
-    return &(ti->value());
-}
+#
 }  // anonymous namespace
 
 
@@ -141,62 +124,27 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         }
 #endif
 
-        // special tuple items we want on the output: 
-        // make sure they are included in the list
-        t.tupleItem("AcdActiveDist");
-        t.tupleItem("CalEnergyRaw");
-        t.tupleItem("TkrRadLength");
-        t.tupleItem("CalCsIRLn");
-        t.tupleItem("CalBkHalfRatio");
-        t.tupleItem("CalLyr7Ratio");
-        t.tupleItem("CalLyr0Ratio");
-        t.tupleItem("CalXtalRatio");
-        t.tupleItem("EvtLogEnergy");
-        t.tupleItem("EvtECalTrackDoca");
-        t.tupleItem("EvtECalTrackSep");
-        t.tupleItem("EvtECalXtalTrunc");
-        t.tupleItem("EvtECalXtalRatio");
-        t.tupleItem("CalDeltaT");
-        t.tupleItem("CalLATEdge");
-        t.tupleItem("TkrBlankHits");
-        t.tupleItem("TkrThickHits");
-        t.tupleItem("EvtECalTrackDoca");
-        t.tupleItem("TkrThinHits");
-        t.tupleItem("Tkr1ZDir");
-        t.tupleItem("TkrSumKalEne");
-        t.tupleItem("TkrTotalHits");
-        t.tupleItem("Tkr1FirstGaps");
-        t.tupleItem("Tkr2KalEne"); // no cal only?
-        t.tupleItem("Tkr1Qual");  
-        t.tupleItem("Tkr1FirstChisq"); 
-        t.tupleItem("Tkr2Qual");
-        t.tupleItem("Tkr2Chisq");
-        t.tupleItem("Tkr1Hits");
-        t.tupleItem("Tkr1KalEne");
 
         // these are used for preliminary cuts to select the tree to use
         m_firstLayer          = t.tupleItem("Tkr1FirstLayer");
         m_calEnergyRaw        = t.tupleItem("CalEnergyRaw");
         m_calTotRLn           = t.tupleItem("CalTotRLn");
-        m_evtTkrEComptonRatio = t.tupleItem("EvtETkrComptonRatio");
-        m_evtTkrComptonRatio  = t.tupleItem("EvtTkrComptonRatio");
-        m_calMIPDiff          = t.tupleItem("CalMIPDiff");
-        m_acdTileCount        = t.tupleItem("AcdTileCount");
         m_vtxAngle            = t.tupleItem("VtxAngle");
 
         // the energy estimates
-        m_CalEnergyCorr    = t.tupleItem("CalEnergyCorr");
+        m_EvtEnergyCorr    = t.tupleItem("EvtEnergyCorr");
         m_CalCfpEnergy     = t.tupleItem("CalCfpEnergy");
         m_CalLllEnergy     = t.tupleItem("CalLllEnergy");
         m_CalTklEnergy     = t.tupleItem("CalTklEnergy");
 
         // New items to create or override
-        m_EvtEnergyCorr=getTupleItemPointer(t,"EvtEnergyCorr");
-        m_goodCalProb = getTupleItemPointer(t,"CTgoodCal");
-        m_vtxProb=      getTupleItemPointer(t,"CTvertex");
-        m_goodPsfProb = getTupleItemPointer(t,"CTgoodPsf");
-        m_gammaProb=    getTupleItemPointer(t,"CTgamma");
-        m_gammaType=    getTupleItemPointer(t,"CTgammaType");
+        // create new float TupleItem objects: will be automatically added to the overall tuple
+        new TupleItem("CTgoodCal", &m_goodCalProb);
+        new TupleItem("CTvertex",  &m_vtxProb);
+        new TupleItem("CTgoodPsf", &m_goodPsfProb);
+        new TupleItem("CTgamma" ,  &m_gammaProb);
+        new TupleItem("CTgammaType",&m_gammaType);
+        new TupleItem("BestEnergy", &m_BestEnergy);
 
         /** @page MeritTuple MeritTuple variables
         
@@ -210,6 +158,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         @param CTgoodPsf  The incoming direction is well measured  (PSF is good)    
         @param CTgamma    The event is a gamma, not background
         @param CTgammaType     integer type for the background rejection tree
+        @param BestEnergy 
         */
 
 
@@ -226,7 +175,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
     bool ClassificationTree::useVertex()const
     {
-        return *m_vtxAngle>0 && *m_vtxProb >0.5;
+        return *m_vtxAngle>0 && m_vtxProb >0.5;
     }
 
     //_________________________________________________________________________
@@ -235,31 +184,32 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
     {
 
         // initialize CT output variables
-        *m_goodPsfProb=0;
-        *m_vtxProb  = *m_gammaProb = *m_goodCalProb= 0;
+        m_goodPsfProb=0;
+        m_vtxProb  = m_gammaProb = m_goodCalProb= 0;
+        m_gammaType = -1;
 
-        if( calenergy <5. || *m_calTotRLn < 4.) return;
+        double calenergy = *m_calEnergyRaw;
+        if( calenergy <5. || *m_calTotRLn < 4.) return; // the "NoCAL" case that we cannot deal with
 
-        double energymeasure[] = {*m_CalEnergyCorr, *m_CalCfpEnergy, *m_CalLllEnergy, *m_CalTklEnergy};
+        double energymeasure[] = {*m_EvtEnergyCorr, *m_CalCfpEnergy, *m_CalLllEnergy, *m_CalTklEnergy};
         double ctree_index[] = {ENERGY_PARAM, ENERGY_PROFILE, ENERGY_LASTLAYER, ENERGY_TRACKER};
-        double bestprob(0), bestenergy(0);
-        for( int i =0; i<4; ++i){
+        double bestprob(0);
+        // ============> wire in only param here (for now) <===================
+        for( int i =0; i<1; ++i){
             double prob = energymeasure[i]>0? m_factory->evaluate(ctree_index[i]) : 0;
             if( prob>bestprob){
                 bestprob = prob;
-                bestenergy = energymeasure[i];
+                m_BestEnergy = energymeasure[i];
             }
         }
         // assign tuple items
-        *m_goodCalProb = bestprob;
-        *m_EvtEnergyCorr = bestenergy;
+        m_goodCalProb = bestprob;
 
-        // evaluate the rest only if cal prob ok (should this be wired in???
-        if( *m_goodCalProb<0.25 )   return;
+        // evaluate the rest only if cal prob ok (should this be wired in??? (Bill now has 0.1)
+        if( m_goodCalProb<0.25 )   return;
 
         // selection of energy range for gamma trees
         enum {CAL_LOW, CAL_MED, CAL_HIGH};
-        double calenergy = *m_calEnergyRaw;
         int cal_type;
         if(     calenergy <  350) cal_type = CAL_LOW;
         else if(calenergy < 3500) cal_type = CAL_MED;
@@ -271,7 +221,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         int psfType=0, gammaType=0;
         if( *m_firstLayer > 5 ) { // thin
 
-            *m_vtxProb = m_factory->evaluate(VERTEX_THIN); 
+            m_vtxProb = m_factory->evaluate(VERTEX_THIN); 
             if( useVertex() ) {
                 psfType = PSF_VERTEX_THIN ;
                 if(      cal_type==CAL_HIGH) gammaType=GAMMA_VERTEX_HIGH;
@@ -285,7 +235,7 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
                 else                         gammaType=GAMMA_TRACK_THIN;
             }
         }else { //thick
-            *m_vtxProb = m_factory->evaluate(VERTEX_THICK);
+            m_vtxProb = m_factory->evaluate(VERTEX_THICK);
            if( useVertex() ) {
                 psfType = PSF_VERTEX_THIN ;
                 if(      cal_type==CAL_HIGH) gammaType=GAMMA_VERTEX_HIGH;
@@ -301,10 +251,10 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         }
 
         // now evalute the appropriate trees
-        *m_goodPsfProb = m_factory->evaluate(psfType);
+        m_goodPsfProb = m_factory->evaluate(psfType);
 
-        *m_gammaProb   = m_factory->evaluate(gammaType);
-        *m_gammaType   = gammaType-GAMMA_VERTEX_HIGH; // will be 0-7
+        m_gammaProb   = m_factory->evaluate(gammaType);
+        m_gammaType   = gammaType-GAMMA_VERTEX_HIGH; // will be 0-7
     }
 
     //_________________________________________________________________________
