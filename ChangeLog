@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri Nov  4 10:50:58 PST 2005
+merit/src/analysis
+
+Modified Files:
+	Tuple.cxx Tuple.h 
+Log Message:
+allow definition of a tuple item to replace a previous instance of the same name.
+    *
+------------------------------------------------------------
 User: burnett  Thu Nov  3 11:16:35 PST 2005
 merit/src
 
