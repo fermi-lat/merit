@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Fri Nov  4 15:20:22 PST 2005
+merit/src
+
+Modified Files:
+	ClassificationTree.cxx ClassificationTree.h 
+Log Message:
+For testing, produce DecsionTrees from xmlTreeFactory which gets them from an Insightful Miner imw file
+    *
+------------------------------------------------------------
 User: burnett  Fri Nov  4 10:54:26 PST 2005
 merit/src/app
 
