@@ -1,12 +1,14 @@
 /** @file ClassificationTree.cxx
 @brief 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.37 2005/11/03 19:16:35 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.cxx,v 1.38 2005/11/04 18:54:26 burnett Exp $
 
 */
 #include "facilities/Util.h"
 #include "ClassificationTree.h"
 #include "classifier/DecisionTree.h"
+#include "GlastClassify/ITreeFactory.h"
 #include "GlastClassify/TreeFactory.h"
+#include "GlastClassify/xmlTreeFactory.h"
 #include "analysis/Tuple.h"
 
 #include <sstream>
@@ -88,7 +90,7 @@ namespace {
 //___________________________________________________________________________
 
   class Lookup 
-      : public GlastClassify::TreeFactory::ILookupData
+      : public GlastClassify::ITreeFactory::ILookupData
 {
 public:
     Lookup(Tuple& t):m_t(t){}
@@ -98,6 +100,8 @@ public:
         if( ti==0) return std::make_pair(false, (const void*)(0));
         return std::make_pair(ti->isFloat(), &ti->value());
     }
+    
+    int index(const std::string& name) const {return m_t.index(name);}
 
     Tuple& m_t;
 };
@@ -165,7 +169,8 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
 
 
         facilities::Util::expandEnvVar(&treepath);
-        m_factory = new GlastClassify::TreeFactory(treepath, looker);
+        //m_factory = new GlastClassify::TreeFactory(treepath, looker);
+        m_factory = new GlastClassify::xmlTreeFactory(treepath, looker);
 
         for( unsigned int i=0; i<NODE_COUNT; ++i){
            (*m_factory)(imNodeInfo[i].name);
@@ -238,13 +243,13 @@ ClassificationTree::ClassificationTree( Tuple& t, std::ostream& log, std::string
         }else { //thick
             m_vtxProb = m_factory->evaluate(VERTEX_THICK);
            if( useVertex() ) {
-                psfType = PSF_VERTEX_THIN ;
+                psfType = PSF_VERTEX_THICK ;
                 if(      cal_type==CAL_HIGH) gammaType=GAMMA_VERTEX_HIGH;
                 else if( cal_type==CAL_MED)  gammaType=GAMMA_VERTEX_MED;
                 else                         gammaType=GAMMA_VERTEX_THICK;
 
             }else{ //track
-                psfType = PSF_TRACK_THIN;
+                psfType = PSF_TRACK_THICK;
                 if(      cal_type==CAL_HIGH) gammaType=GAMMA_TRACK_HIGH;
                 else if( cal_type==CAL_MED)  gammaType=GAMMA_TRACK_MED;
                 else                         gammaType=GAMMA_TRACK_THICK;
