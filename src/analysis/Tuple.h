@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.8 2003/11/22 15:34:55 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.9 2004/08/11 03:25:00 burnett Exp $
 
 #ifndef TUPLE_H
 #define TUPLE_H
@@ -110,6 +110,8 @@ private:
 
    virtual const TupleItem* tupleItem(const std::string& name)const;
    // return pointer to the tuple item by name. Error if not found
+
+   void Tuple::replaceOrAdd(TupleItem * item);
 
    virtual bool nextEvent(){return false;};  // for subclasses
  private:
