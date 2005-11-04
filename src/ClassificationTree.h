@@ -1,7 +1,7 @@
 /** @file ClassificationTree.h
 @brief  Declare class ClassificationTree
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.21 2005/10/31 17:29:23 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.22 2005/11/03 19:16:35 burnett Exp $
 */
 #ifndef CLASSIFICATIONTREE_H
 #define  CLASSIFICATIONTREE_H
@@ -12,7 +12,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/ClassificationTree.h,v 1.21 2005
 
 class TupleItem;
 class Tuple;
-namespace GlastClassify { class TreeFactory; }
+namespace GlastClassify { class ITreeFactory; }
 
 /** @class ClassificationTree
     @brief Manage Atwood-inspired classification trees, creating new tuple variables
@@ -40,8 +40,9 @@ public:
     bool useVertex()const;
 
 private:
- 
-    GlastClassify::TreeFactory* m_factory;
+
+    GlastClassify::ITreeFactory* m_factory;
+
     const TupleItem*  m_firstLayer; /// access to the first layer in the tuple
     const TupleItem*  m_calTotRLn; 
     const TupleItem*  m_calEnergyRaw;
