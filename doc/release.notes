@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.78 2005/08/25 19:04:31 golpa Exp $
+ * $Id: release.notes,v 1.79 2005/08/29 16:12:29 golpa Exp $
  *
+ *  v6r26   THB  05-oct-05 classification stuff; new FT1Alg to create FT1 format; back off lib name stuff for HEAD build
  *  v6r25p4 NG   29-aug-05 carry foward lib name changes
  *  v6r25p3 NG   24-aug-05 modify to work with new lib directory
  *  v6r25p2 THB  23-aug-05 rearrange req file a bit
