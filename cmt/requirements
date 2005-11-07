@@ -1,6 +1,6 @@
 package merit
 version v6r25p4
-# $Id: requirements,v 1.96 2005/08/25 19:04:30 golpa Exp $
+# $Id: requirements,v 1.97 2005/08/29 16:12:29 golpa Exp $
 author T.Burnett <tburnett@u.washington.edu>
 branches doc
 
@@ -38,10 +38,15 @@ macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 # pattern to build a local library that can be included in package applications
 # by setting the linkopts for linux, or explicit $(lib<package>) on windows.
 
+#pattern local_library\
+#  library lib<package> -no_share <src> ; \
+#  macro_append <package>_linkopts "-L $(<package>_cmtpath)/lib -llib<package>_${tag}_<version>" WIN32 "" ; \
+#  macro lib<package> "" WIN32 "$(<package>_cmtpath)/lib/lib<package>_${tag}_<version>.lib"
+
 pattern local_library\
   library lib<package> -no_share <src> ; \
-  macro_append <package>_linkopts "-L $(<package>_cmtpath)/lib -llib<package>_${tag}_<version>" WIN32 "" ; \
-  macro lib<package> "" WIN32 "$(<package>_cmtpath)/lib/lib<package>_${tag}_<version>.lib"
+  macro_append <package>_linkopts "-L $(<package>Dir -llib<package>" WIN32 "" ; \
+  macro lib<package> "" WIN32 "$(<package>Dir)/lib<package>.lib"
 
 #local, static library
 macro source "*.cxx" WIN32 "*.h *.cxx"
