@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Sun Nov  6 20:27:00 PST 2005
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+new FT1Alg (refactor Johann's code form meritAlg)
+changed classification code
+    *
+------------------------------------------------------------
 User: burnett  Sun Nov  6 20:22:40 PST 2005
 merit/src/meritAlg
 
