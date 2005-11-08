@@ -1,31 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Tue Nov  8 07:47:38 PST 2005
-merit/src/Dll
-
-Modified Files:
-	merit_load.cxx 
-Log Message:
-refactor classification calculation to new alg.
-    *
-------------------------------------------------------------
-User: burnett  Tue Nov  8 07:47:38 PST 2005
-merit/doc
-
-Modified Files:
-	release.notes 
-Log Message:
-refactor classification calculation to new alg.
-    *
-------------------------------------------------------------
-User: burnett  Tue Nov  8 07:47:38 PST 2005
-merit/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-refactor classification calculation to new alg.
-    *
-------------------------------------------------------------
 TAG
 Tag name: v6r26, operation: add
 Package: merit
