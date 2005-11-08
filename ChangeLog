@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Tue Nov  8 07:47:39 PST 2005
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Added Files:
+	ClassifyAlg.cxx 
+Log Message:
+refactor classification calculation to new alg.
+    *
+------------------------------------------------------------
 User: burnett  Tue Nov  8 07:47:38 PST 2005
 merit/src/Dll
 
