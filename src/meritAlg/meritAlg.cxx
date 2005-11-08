@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.94 2005/07/29 01:28:13 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.95 2005/08/11 21:56:00 burnett Exp $
 */
 // Include files
 
@@ -23,7 +23,6 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.94 200
 
 #include "FigureOfMerit.h"
 #include "analysis/Tuple.h"
-#include "ClassificationTree.h"
 
 #include "facilities/Util.h" // for expandEnvVar    
 
@@ -36,7 +35,6 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.94 200
 
 #include "OnboardFilter/FilterStatus.h"
 #include "OnboardFilter/FilterAlgTds.h"
-#include "astro/PointingTransform.h"
 
 #include <sstream>
 #include <algorithm>
@@ -139,18 +137,9 @@ private:
         std::vector<const char*> m_leafNames;
         std::vector< float> m_values;
     };
-    //-----------------------------------------------
-    /// TTree objects to manage the  FT1 tuple
-    void copyFT1Info();
-
-    ///Helper functions to get RA, DEC, ZENITH_THETA and EARTH_AZIMUTH 
-    ///for a given direction in GLAST referential
-    std::map<std::string, double> meritAlg::getCelestialCoords(const Hep3Vector glastDir);
-
     FigureOfMerit* m_fm;
     Tuple*   m_tuple;
     std::string m_cuts; 
-    StringProperty m_IM_filename;
     INTupleWriterSvc* m_rootTupleSvc;;
 
     IToolSvc* m_pToolSvc;
@@ -165,25 +154,10 @@ private:
 
     int m_generated;
     int m_warnNoFilterStatus;   // count WARNINGs: no FilterStatus found
-
-    //FT1 entries
-    float m_ft1eventid;
-    float m_ft1energy;
-    float m_ft1theta,m_ft1phi,m_ft1ra,m_ft1dec,m_ft1zen,m_ft1azim;
-    float m_ft1convpointx,m_ft1convpointy,m_ft1convpointz,m_ft1convlayer;
-
     /// Common interface to analysis tools
     std::vector<IValsTool*> m_toolvec;
-
-    /// classification
-    ClassificationTree* m_ctree;
-
     /// the various tree names
     StringProperty m_eventTreeName;
-    StringProperty m_primaryType;
-    long           m_nbOfEvtsInFile;
-    StringProperty m_classifyPath;
-
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -192,17 +166,21 @@ static const AlgFactory<meritAlg>  Factory;
 const IAlgFactory& meritAlgFactory = Factory;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 meritAlg::meritAlg(const std::string& name, ISvcLocator* pSvcLocator) :
-Algorithm(name, pSvcLocator), m_tuple(0), m_rootTupleSvc(0), m_ctree(0)
+Algorithm(name, pSvcLocator), m_tuple(0), m_rootTupleSvc(0)
+#if 0
+, m_ctree(0)
+#endif
 {
 
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
     declareProperty("EventTreeName",     m_eventTreeName="MeritTuple");
+#if 0 // factored off
     declareProperty("IM_filename", m_IM_filename=""); // deprecated, not used now
     declareProperty("ClassifyPath", m_classifyPath="$(GLASTCLASSIFYROOT)/data");
     declareProperty("PrimaryType", m_primaryType="RECO"); // or "MC" (why not a bool?)
     declareProperty("NbOfEvtsInFile", m_nbOfEvtsInFile=100000);
-
+#endif
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::setupTools() {
@@ -302,6 +280,7 @@ StatusCode meritAlg::initialize() {
     addItem( "FilterAlgStatus",  &m_filterAlgStatus );
     addItem( "FilterAngSep",     &m_separation );
 
+#if 0 // split off to FT1Alg
     /** @page MeritTuple MeritTuple definitions
     
     @section FT1  Event summary for generation of the FT1 record
@@ -330,10 +309,10 @@ StatusCode meritAlg::initialize() {
     addItem( "FT1ConvPointY",       &m_ft1convpointy);
     addItem( "FT1ConvPointZ",       &m_ft1convpointz);
 
-  
+#endif
     // add some of the AnalysisNTuple items
     if( setupTools().isFailure()) return StatusCode::FAILURE;
-
+#if 0
     // the tuple is made: create the classification object if requested
     try { 
         std::string path(  m_classifyPath.value()); 
@@ -351,7 +330,7 @@ StatusCode meritAlg::initialize() {
     }catch (...)  {
         log << MSG::ERROR << "Unexpected exception loading classification trees" << endreq;
     }
-
+#endif
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
 
@@ -398,83 +377,6 @@ StatusCode meritAlg::initialize() {
 }
 
 //------------------------------------------------------------------------------
-
-void meritAlg::copyFT1Info(){
-
-
-    MsgStream log(msgSvc(), name());
-
-     //eventId and Time are always defined
-    m_ft1eventid = m_run * m_nbOfEvtsInFile + m_event;
-
-    // Give default "guard" values in case there are no tracks in the event
-    m_ft1energy = -1.;
-    m_ft1theta = 666; m_ft1phi = 666; m_ft1ra   = 666;
-    m_ft1dec   = 666; m_ft1zen = 666; m_ft1azim = 666;
-    m_ft1convpointx = 999; m_ft1convpointy = 999; m_ft1convpointz = 999; 
-    m_ft1convlayer = -1;
-
-    Hep3Vector convPoint;
-    Hep3Vector glastDir;
-
-    if(m_primaryType.value() == "MC")
-    {
-        m_ft1energy    = m_tuple->tupleItem("McEnergy")->value(); 
-        glastDir = Hep3Vector(m_tuple->tupleItem("McXDir")->value(),
-            m_tuple->tupleItem("McYDir")->value(),
-            m_tuple->tupleItem("McZDir")->value());
-        m_ft1convpointx  = m_tuple->tupleItem("McX0")->value();
-        m_ft1convpointy  = m_tuple->tupleItem("McY0")->value();
-        m_ft1convpointz  = m_tuple->tupleItem("McZ0")->value();
-        m_ft1convlayer = -1;
-    }
-    else if(m_primaryType.value() == "RECO")
-    {
-        if(m_ctree==0 || m_ctree->useVertex())
-        {
-            // Retrieve Vertex to get summary info from reco
-            //	  m_ft1energy    = m_tuple->tupleItem("TkrSumConEne")->value();
-            m_ft1energy    = m_tuple->tupleItem("EvtEnergyCorr")->value();
-            glastDir = Hep3Vector(m_tuple->tupleItem("VtxXDir")->value(),
-                m_tuple->tupleItem("VtxYDir")->value(),
-                m_tuple->tupleItem("VtxZDir")->value());
-            m_ft1convpointx  = m_tuple->tupleItem("VtxX0")->value();
-            m_ft1convpointy  = m_tuple->tupleItem("VtxY0")->value();
-            m_ft1convpointz  = m_tuple->tupleItem("VtxZ0")->value();
-        }
-        else
-        {
-            //	  m_ft1energy    = m_tuple->tupleItem("Tkr1ConEne")->value();
-            m_ft1energy    = m_tuple->tupleItem("EvtEnergyCorr")->value();
-            glastDir = Hep3Vector(m_tuple->tupleItem("Tkr1XDir")->value(),
-                m_tuple->tupleItem("Tkr1YDir")->value(),
-                m_tuple->tupleItem("Tkr1ZDir")->value());
-            m_ft1convpointx  = m_tuple->tupleItem("Tkr1X0")->value();
-            m_ft1convpointy  = m_tuple->tupleItem("Tkr1Y0")->value();
-            m_ft1convpointz  = m_tuple->tupleItem("Tkr1Z0")->value();
-        }
-        m_ft1convlayer   = m_tuple->tupleItem("Tkr1FirstLayer")->value();
-    }
-
-    glastDir = - glastDir.unit();
-
-    // celestial coords in degree
-    std::map<std::string,double> cel_coords = getCelestialCoords(glastDir);
-    m_ft1ra   = cel_coords["RA"];
-    m_ft1dec  = cel_coords["DEC"];
-    m_ft1zen  = cel_coords["ZENITH_THETA"];
-    m_ft1azim = cel_coords["EARTH_AZIMUTH"];
-
-    // instrument coords in degree
-    m_ft1theta = glastDir.theta()*180/M_PI;
-    double phi_deg = glastDir.phi(); 
-    if( phi_deg<0 ) phi_deg += 2*M_PI;
-    m_ft1phi =  phi_deg*180/M_PI;
-
-
-
-}
-//------------------------------------------------------------------------------
 void meritAlg::calculate(){
 
     for( std::vector<IValsTool*>::iterator i =m_toolvec.begin(); i != m_toolvec.end(); ++i){
@@ -483,7 +385,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.94 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.95 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -542,13 +444,7 @@ StatusCode meritAlg::execute() {
     if(filterAlgStatus){
         m_filterAlgStatus=(double)filterAlgStatus->getVetoWord();
     }
- 
-    if( m_ctree!=0) m_ctree->execute();
     m_fm->execute();
-
-    // write out the FT1 stuff
-    copyFT1Info();
-
     
     // always write the event tuple
     m_rootTupleSvc->storeRowFlag(this->m_eventTreeName.value(), true);
@@ -573,55 +469,12 @@ StatusCode meritAlg::finalize() {
 
     delete m_tuple;
     delete m_fm;
+#if 0
     delete m_ctree;
+#endif
     setFinalized(); //  prevent being called again
 
     return StatusCode::SUCCESS;
 }
-
-//------------------------------------------------------------------------------
-std::map<std::string, double> 
-meritAlg::getCelestialCoords(const Hep3Vector glastDir)
-{
-    using namespace astro;
-
-    std::map<std::string, double> fields;
-
-    //First get the coordinates from the ExposureCol
-    Event::ExposureCol* elist = 0;
-    eventSvc()->retrieveObject("/Event/MC/ExposureCol",(DataObject *&)elist);
-    if( elist==0) return fields; // should not happen, but make sure ok.
-    const Event::Exposure& exp = **(*elist).begin();
-
-    // create a transformation object -- first get local directions
-    SkyDir zsky( exp.RAZ(), exp.DECZ() );
-    SkyDir xsky( exp.RAX(), exp.DECX() );
-    // orthogonalize, since interpolation and transformations destory orthogonality (limit is 10E-8)
-    Hep3Vector xhat = xsky() -  xsky().dot(zsky()) * zsky() ;
-    PointingTransform toSky( zsky, xhat );
-
-    // make zenith (except for oblateness correction) unit vector
-    Hep3Vector position( exp.posX(),  exp.posY(),  exp.posZ() );
-    SkyDir zenith(position.unit());
-
-    SkyDir sdir = toSky.gDir(glastDir);
-
-    //zenith_theta and earth_azimuth
-    double zenith_theta = sdir.difference(zenith); 
-    if( fabs(zenith_theta)<1e-8) zenith_theta=0;
-
-    SkyDir north_dir(90,0);
-    SkyDir east_dir( north_dir().cross(zenith()) );
-    double earth_azimuth=atan2( sdir().dot(east_dir()), sdir().dot(north_dir()) );
-    if( earth_azimuth <0) earth_azimuth += 2*M_PI; // to 0-360 deg.
-    if( fabs(earth_azimuth)<1e-8) earth_azimuth=0;
-
-    fields["RA"]            = sdir.ra();
-    fields["DEC"]           = sdir.dec();
-    fields["ZENITH_THETA"]  = zenith_theta*180/M_PI;
-    fields["EARTH_AZIMUTH"] = earth_azimuth*180/M_PI;
-    return fields;
-}
-
 
 

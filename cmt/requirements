@@ -1,6 +1,6 @@
 package merit
-version v6r25p4
-# $Id: requirements,v 1.97 2005/08/29 16:12:29 golpa Exp $
+version v6r27
+# $Id: requirements,v 1.98 2005/11/07 04:26:59 burnett Exp $
 author T.Burnett <tburnett@u.washington.edu>
 branches doc
 
@@ -35,56 +35,20 @@ apply_pattern package_Cshlibflags
 macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 
 
-# pattern to build a local library that can be included in package applications
-# by setting the linkopts for linux, or explicit $(lib<package>) on windows.
 
-#pattern local_library\
-#  library lib<package> -no_share <src> ; \
-#  macro_append <package>_linkopts "-L $(<package>_cmtpath)/lib -llib<package>_${tag}_<version>" WIN32 "" ; \
-#  macro lib<package> "" WIN32 "$(<package>_cmtpath)/lib/lib<package>_${tag}_<version>.lib"
+#component library with meritAlg, FT1Alg, and ClassifyAlg
 
-pattern local_library\
-  library lib<package> -no_share <src> ; \
-  macro_append <package>_linkopts "-L $(<package>Dir -llib<package>" WIN32 "" ; \
-  macro lib<package> "" WIN32 "$(<package>Dir)/lib<package>.lib"
+library merit -s=../src  $(source)\
+ -s=analysis $(source) \
+ -s=meritAlg $(source) \
+ -s=Dll $(source)
 
-#local, static library
-macro source "*.cxx" WIN32 "*.h *.cxx"
-apply_pattern local_library src="$(source) -s=analysis $(source)" 
-
-
-#component library with meritAlg
-
-library merit   meritAlg/*.cxx Dll/*.cxx $(libmerit) 
-
-
-macro merit_app_linkopts  $(merit_linkopts)
-macro test_merit_linkopts $(merit_linkopts)
-macro write_text_linkopts $(merit_linkopts)
-macro run_classification_linkopts $(merit_linkopts)
-#macro fastFilter_linkopts $(merit_linkopts)
-
-
-#set MERIT_OUTPUT_FILE "$(MERITROOT)/cmt/merit.txt"
-#set IM_FILE "$(MERITROOT)/xml/classification.imw"
 
 # where to find the 
-set CTREE_PATH "$(GLASTCLASSIFYROOT)/data"
+#set CTREE_PATH "$(GLASTCLASSIFYROOT)/data"
+set CTREE_PATH "D:\common\ctree\GlastClassify\v1r0\condor\v4\info\treeinfo"
 
-
-application merit_app app/meritapp.cxx app/RootTuple.cxx $(libmerit)
-
-# application to rewrite the IM variables
-macro run_classification $(merit_linkopts) 
-application run_classification app/run_classification_main.cxx app/RootTuple.cxx $(libmerit)
-
-
-# application to write out the tuple as a text file
-macro write_text $(merit_linkopts) 
-application write_text app/write_text_main.cxx app/RootTuple.cxx $(libmerit)
-
-# application to read merit and write selected events
 
 public
-set MERIT_INPUT_FILE "$(MERITROOT)/src/test/merit100.root"
-application test_merit app/meritapp.cxx  app/RootTuple.cxx $(libmerit)
+#set MERIT_INPUT_FILE "$(MERITROOT)/src/test/merit100.root"
+#application test_merit app/meritapp.cxx  
