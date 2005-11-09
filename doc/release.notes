@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.80 2005/11/07 04:27:00 burnett Exp $
+ * $Id: release.notes,v 1.81 2005/11/08 15:47:38 burnett Exp $
  *
+ *  v6r27p1 THB  09-oct-05 accound for loss of CT info
  *  v6r27   THB  08-oct-05 refactor classification to new alg; remove lib and all executables.
  *  v6r26   THB  05-oct-05 classification stuff; new FT1Alg to create FT1 format; back off lib name stuff for HEAD build
  *  v6r25p4 NG   29-aug-05 carry foward lib name changes
