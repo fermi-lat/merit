@@ -1,31 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Wed Nov  9 08:50:50 PST 2005
-merit/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-tagging
-    *
-------------------------------------------------------------
-User: burnett  Wed Nov  9 08:49:03 PST 2005
-merit/src/meritAlg
-
-Modified Files:
-	meritAlg.cxx 
-Log Message:
-accound for absense of CT variables; clean out some dead code
-    *
-------------------------------------------------------------
-User: burnett  Wed Nov  9 08:49:01 PST 2005
-merit/src
-
-Modified Files:
-	PSFtailCuts.cxx 
-Log Message:
-accound for absense of CT variables; clean out some dead code
-    *
-------------------------------------------------------------
 TAG
 Tag name: v6r27, operation: add
 Package: merit
