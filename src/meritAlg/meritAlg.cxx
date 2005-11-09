@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.95 2005/08/11 21:56:00 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.96 2005/11/08 15:47:39 burnett Exp $
 */
 // Include files
 
@@ -167,20 +167,12 @@ const IAlgFactory& meritAlgFactory = Factory;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 meritAlg::meritAlg(const std::string& name, ISvcLocator* pSvcLocator) :
 Algorithm(name, pSvcLocator), m_tuple(0), m_rootTupleSvc(0)
-#if 0
-, m_ctree(0)
-#endif
 {
 
     declareProperty("cuts" , m_cuts=default_cuts);
     declareProperty("generated" , m_generated=10000);
     declareProperty("EventTreeName",     m_eventTreeName="MeritTuple");
-#if 0 // factored off
-    declareProperty("IM_filename", m_IM_filename=""); // deprecated, not used now
-    declareProperty("ClassifyPath", m_classifyPath="$(GLASTCLASSIFYROOT)/data");
-    declareProperty("PrimaryType", m_primaryType="RECO"); // or "MC" (why not a bool?)
-    declareProperty("NbOfEvtsInFile", m_nbOfEvtsInFile=100000);
-#endif
+
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode meritAlg::setupTools() {
@@ -280,57 +272,8 @@ StatusCode meritAlg::initialize() {
     addItem( "FilterAlgStatus",  &m_filterAlgStatus );
     addItem( "FilterAngSep",     &m_separation );
 
-#if 0 // split off to FT1Alg
-    /** @page MeritTuple MeritTuple definitions
-    
-    @section FT1  Event summary for generation of the FT1 record
-
-
-    see <a href="http://glast.gsfc.nasa.gov/ssc/dev/fits_def/definitionFT1.html">FT1 definition</a>
-
-    @param FT1EventId  RunNo*(number of events in file) + EventNo  
-    @param FT1Energy   (MeV) estimate for energy  
-    @param FT1Theta,FT1Phi  (deg) reconstructed direction with respect to instrument coordinate system      
-    @param FT1Ra,FT1Dec  (deg) reconstructed direction in equatorial coordinates       
-    @param FT1ZenithTheta,FT1EarthAzimuth (deg) reconstucted direction with respect to local zenith system
-    @param FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ (m) conversion point of event, whether single track or vertex, 999 if no tracks
-
-        */
-    //FT1 INFO: 
-    addItem( "FT1EventId",          &m_ft1eventid);
-    addItem( "FT1Energy",           &m_ft1energy);
-    addItem( "FT1Theta",            &m_ft1theta);
-    addItem( "FT1Phi",              &m_ft1phi);
-    addItem( "FT1Ra",               &m_ft1ra);
-    addItem( "FT1Dec",              &m_ft1dec);
-    addItem( "FT1ZenithTheta",      &m_ft1zen);
-    addItem( "FT1EarthAzimuth",     &m_ft1azim);
-    addItem( "FT1ConvPointX",       &m_ft1convpointx);
-    addItem( "FT1ConvPointY",       &m_ft1convpointy);
-    addItem( "FT1ConvPointZ",       &m_ft1convpointz);
-
-#endif
     // add some of the AnalysisNTuple items
     if( setupTools().isFailure()) return StatusCode::FAILURE;
-#if 0
-    // the tuple is made: create the classification object if requested
-    try { 
-        std::string path(  m_classifyPath.value()); 
-        if(! path.empty() ){
-            facilities::Util::expandEnvVar(&path);
-            m_ctree = new  ClassificationTree(*m_tuple, log.stream(), path);
-            log << MSG::INFO << "Loading classification trees from " << path << endreq;
-        } else {
-            log << MSG::INFO << "No classification trees loaded" << endreq;
-        }
-        //TODO: finish setup.
-    }catch ( std::exception& e){
-        log << MSG::ERROR << "Exception caught, class  "<< typeid( e ).name( ) << ", message:"
-            << e.what() <<endreq;
-    }catch (...)  {
-        log << MSG::ERROR << "Unexpected exception loading classification trees" << endreq;
-    }
-#endif
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
 
@@ -385,7 +328,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.95 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.96 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -469,9 +412,6 @@ StatusCode meritAlg::finalize() {
 
     delete m_tuple;
     delete m_fm;
-#if 0
-    delete m_ctree;
-#endif
     setFinalized(); //  prevent being called again
 
     return StatusCode::SUCCESS;
