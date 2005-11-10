@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header$
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.1 2005/11/07 04:22:40 burnett Exp $
 */
 // Include files
 
@@ -181,14 +181,16 @@ FT1worker::FT1worker()
 
 
     see <a href="http://glast.gsfc.nasa.gov/ssc/dev/fits_def/definitionFT1.html">FT1 definition</a>
+<table>
+<tr><th> Variable      </th><th> Description</th></tr>
 
-    @param FT1EventId  RunNo*(number of events in file) + EventNo  
-    @param FT1Energy   (MeV) estimate for energy  
-    @param FT1Theta,FT1Phi  (deg) reconstructed direction with respect to instrument coordinate system      
-    @param FT1Ra,FT1Dec  (deg) reconstructed direction in equatorial coordinates       
-    @param FT1ZenithTheta,FT1EarthAzimuth (deg) reconstucted direction with respect to local zenith system
-    @param FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ (m) conversion point of event, whether single track or vertex, 999 if no tracks
-
+    <tr><td> FT1EventId  </td><td>RunNo*(number of events in file) + EventNo  
+    <tr><td> FT1Energy   </td><td>(MeV) estimate for energy  
+    <tr><td> FT1Theta,FT1Phi </td><td> (deg) reconstructed direction with respect to instrument coordinate system      
+    <tr><td> FT1Ra,FT1Dec </td><td> (deg) reconstructed direction in equatorial coordinates       
+    <tr><td> FT1ZenithTheta,FT1EarthAzimuth </td><td>(deg) reconstucted direction with respect to local zenith system
+    <tr><td> FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ</td><td> (m) conversion point of event, whether single track or vertex, 999 if no tracks
+</table>
     */
     addItem( "FT1EventId",       m_ft1eventid);
     addItem( "FT1Energy",        m_ft1energy);

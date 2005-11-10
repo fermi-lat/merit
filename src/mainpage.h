@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.11 2004/12/22 16:11:18 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.12 2005/08/11 21:56:00 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -16,9 +16,6 @@
     @param  meritAlg.cuts ["LntA"]  remove the "t" to disable tree-based tail cuts
     @param  meritAlg.generated [10000]  number of events that were generated, for Aeff estimate
     @param  meritAlg.EventTreeName  ["MeritTuple"]  Name to give the event tree [if null, turn off]
-    @param  meritAlg.ClassifyPath ["$(GLASTCLASSIFYROOT)/data"]  set this to null to not run the classification
-    @param  meritAlg.PrimaryType ["RECO"] or "MC" (why not a bool?)
-    @param  meritAlg.NbOfEvtsInFile [100000]  to define FT1 event ID. (see code)
 
   <h3> Keys Used in FigureOfMerit::setCuts </h3>
   
