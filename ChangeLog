@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Mon Nov 14 16:55:08 PST 2005
+merit/src
+
+Modified Files:
+	mainpage.h 
+Log Message:
+fix implied by interface change in GlastClassify
+    *
+------------------------------------------------------------
+User: burnett  Mon Nov 14 16:55:08 PST 2005
 merit/doc
 
 Modified Files:
