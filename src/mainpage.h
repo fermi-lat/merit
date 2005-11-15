@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.12 2005/08/11 21:56:00 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/mainpage.h,v 1.13 2005/11/10 02:04:07 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package merit
@@ -8,9 +8,8 @@
 
   Implements an algorithm, meritAlg, that:
   
+  - copies variables from AnaTup to the output n-tuple (called "MeritTuple")
   - does a PSF and Aeff analysis. 
-  - runs the classification trees and adds the variables to the tuple. (see the MeritTuple page)
-  - adds FT1 variables to the tuple (see the MeritTuple page)
 
   <h3> Properties for meritAlg </h3> 
     @param  meritAlg.cuts ["LntA"]  remove the "t" to disable tree-based tail cuts
