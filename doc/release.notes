@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.82 2005/11/09 16:50:51 burnett Exp $
+ * $Id: release.notes,v 1.83 2005/11/10 02:04:05 burnett Exp $
  *
+ *  v6r27p3 THB  14-oct-05 Needed to implement function in concrete clas
  *  v6r27p2 THB  10-oct-05 tuple documentation according to new standard
  *  v6r27p1 THB  09-oct-05 account for loss of CT info
  *  v6r27   THB  08-oct-05 refactor classification to new alg; remove lib and all executables.
