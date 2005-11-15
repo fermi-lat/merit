@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Nov 14 16:55:09 PST 2005
+merit/src/meritAlg
+
+Modified Files:
+	ClassifyAlg.cxx meritAlg.cxx 
+Log Message:
+fix implied by interface change in GlastClassify
+    *
+------------------------------------------------------------
 User: burnett  Mon Nov 14 16:55:08 PST 2005
 merit/src
 
