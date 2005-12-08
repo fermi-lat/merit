@@ -1,7 +1,7 @@
 /** @file ClassifyAlg.cxx
 @brief Declaration and implementation of Gaudi algorithm ClassifyAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/ClassifyAlg.cxx,v 1.2 2005/11/15 00:55:08 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/ClassifyAlg.cxx,v 1.3 2005/12/08 20:59:45 usher Exp $
 */
 
 #include "GaudiKernel/Algorithm.h"
@@ -52,11 +52,6 @@ public:
         m_tuple->addItem(m_treename, name, &value);
     }
     
-    void addItem(const std::string& name, double & value)
-    {
-        m_tuple->addItem(m_treename, name, &value);
-    }
-
     void addItem(const std::string& name, double & value)
     {
         m_tuple->addItem(m_treename, name, &value);
