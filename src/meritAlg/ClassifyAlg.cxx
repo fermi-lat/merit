@@ -1,7 +1,7 @@
 /** @file ClassifyAlg.cxx
 @brief Declaration and implementation of Gaudi algorithm ClassifyAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/ClassifyAlg.cxx,v 1.1 2005/11/08 15:47:39 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/ClassifyAlg.cxx,v 1.2 2005/11/15 00:55:08 burnett Exp $
 */
 
 #include "GaudiKernel/Algorithm.h"
@@ -51,6 +51,11 @@ public:
     {
         m_tuple->addItem(m_treename, name, &value);
     }
+    
+    void addItem(const std::string& name, double & value)
+    {
+        m_tuple->addItem(m_treename, name, &value);
+    }
 
     void addItem(const std::string& name, double & value)
     {
@@ -79,6 +84,7 @@ public:
 private:
     StringProperty m_treename;
     StringProperty m_infoPath;
+    StringProperty m_xmlFileName;
 
     /// this guy does the work!
     GlastClassify::AtwoodTrees * m_ctree;
@@ -99,8 +105,9 @@ ClassifyAlg::ClassifyAlg(const std::string& name, ISvcLocator* pSvcLocator)
 ,  m_events(0)
 
 {
-    declareProperty("TreeName", m_treename="MeritTuple");
-    declareProperty("InfoPath", m_infoPath="$(GLASTCLASSIFYROOT)/treeinfo");
+    declareProperty("TreeName",    m_treename="MeritTuple");
+    declareProperty("InfoPath",    m_infoPath="$(GLASTCLASSIFYROOT)/xml");
+    declareProperty("xmlFileName", m_xmlFileName="DC2_Analysis_v2r1.xml");
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode ClassifyAlg::initialize()
@@ -125,7 +132,7 @@ StatusCode ClassifyAlg::initialize()
 
     // create the classification object if requested
     try { 
-        std::string path(  m_infoPath.value()); 
+        std::string path(  m_infoPath.value() + "/" + m_xmlFileName.value()); 
         if(! path.empty() ){
             facilities::Util::expandEnvVar(&path);
             m_ctree = new  GlastClassify::AtwoodTrees(*m_tuple, log.stream(), path);
