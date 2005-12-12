@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jchiang  Mon Dec 12 13:43:25 PST 2005
+merit/src/meritAlg
+
+Modified Files:
+	FT1Alg.cxx 
+Log Message:
+add l, b, livetime columns to FT1 vars
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r28, operation: add
 Package: merit
