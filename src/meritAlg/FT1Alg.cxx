@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.1 2005/11/07 04:22:40 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.2 2005/11/10 02:04:08 burnett Exp $
 */
 // Include files
 
@@ -99,7 +99,7 @@ private:
     //FT1 entries to create
     float m_ft1eventid;
     float m_ft1energy;
-    float m_ft1theta,m_ft1phi,m_ft1ra,m_ft1dec,m_ft1zen,m_ft1azim;
+    float m_ft1theta,m_ft1phi,m_ft1ra,m_ft1dec,m_ft1l,m_ft1bm_ft1zen,m_ft1azim;
     float m_ft1convpointx,m_ft1convpointy,m_ft1convpointz,m_ft1convlayer;
 
 };
@@ -198,11 +198,15 @@ FT1worker::FT1worker()
     addItem( "FT1Phi",           m_ft1phi);
     addItem( "FT1Ra",            m_ft1ra);
     addItem( "FT1Dec",           m_ft1dec);
+    addItem( "FT1L",             m_ft1l);
+    addItem( "FT1B",             m_ft1b);
     addItem( "FT1ZenithTheta",   m_ft1zen);
     addItem( "FT1EarthAzimuth",  m_ft1azim);
     addItem( "FT1ConvPointX",    m_ft1convpointx);
     addItem( "FT1ConvPointY",    m_ft1convpointy);
     addItem( "FT1ConvPointZ",    m_ft1convpointz);
+    addItem( "FT1ConvLayer",     m_ft1convlayer);
+    addItem( "FT1Livetime",      m_ft1livetime);
 }
 
 
@@ -217,8 +221,10 @@ void FT1worker::evaluate(const Event::Exposure& exp)
     m_ft1energy    = EvtEnergyCorr;
     m_ft1theta = 666; m_ft1phi = 666; m_ft1ra   = 666;
     m_ft1dec   = 666; m_ft1zen = 666; m_ft1azim = 666;
+    m_ft1l = 666; m_ft1b = 666;
     m_ft1convpointx = 999; m_ft1convpointy = 999; m_ft1convpointz = 999; 
     m_ft1convlayer = -1;
+    m_ft1livetime = -1;
 
     Hep3Vector convPoint;
     Hep3Vector glastDir;
@@ -246,6 +252,9 @@ void FT1worker::evaluate(const Event::Exposure& exp)
     std::map<std::string,double> cel_coords = getCelestialCoords(exp, glastDir);
     m_ft1ra   = cel_coords["RA"];
     m_ft1dec  = cel_coords["DEC"];
+    astro::SkyDir my_dir(m_ft1ra, m_ft1dec);
+    m_ft1l = my_dir.l();
+    m_ft1b = my_dir.b();
     m_ft1zen  = cel_coords["ZENITH_THETA"];
     m_ft1azim = cel_coords["EARTH_AZIMUTH"];
 
