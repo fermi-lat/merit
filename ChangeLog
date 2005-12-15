@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jchiang  Wed Dec 14 16:15:33 PST 2005
+merit/src/meritAlg
+
+Modified Files:
+	FT1Alg.cxx 
+Log Message:
+Use CTB variables to set energy and direction
+    *
+------------------------------------------------------------
 User: jchiang  Tue Dec 13 13:20:24 PST 2005
 merit/src/meritAlg
 
