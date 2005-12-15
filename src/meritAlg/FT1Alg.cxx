@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.3 2005/12/12 21:43:25 jchiang Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.4 2005/12/13 21:20:23 jchiang Exp $
 */
 // Include files
 
@@ -95,6 +95,10 @@ private:
     Item Tkr1XDir, Tkr1YDir, Tkr1ZDir;
     Item Tkr1X0, Tkr1Y0, Tkr1Z0;
     Item Tkr1FirstLayer;
+    Item CTBBestEnergy;
+    Item CTBBestXDir;
+    Item CTBBestYDir;
+    Item CTBBestZDir;
 
     //FT1 entries to create
     float m_ft1eventid;
@@ -161,7 +165,6 @@ FT1worker::FT1worker()
 : EvtRun("EvtRun")
 , EvtEventId("EvtEventId")
 , EvtEnergyCorr("EvtEnergyCorr")
-, Tkr1FirstLayer("Tkr1FirstLayer")
 , VtxXDir("VtxXDir")
 , VtxYDir("VtxYDir")
 , VtxZDir("VtxZDir")
@@ -174,6 +177,11 @@ FT1worker::FT1worker()
 , Tkr1X0("Tkr1X0")
 , Tkr1Y0("Tkr1Y0")
 , Tkr1Z0("Tkr1Z0")
+, Tkr1FirstLayer("Tkr1FirstLayer")
+, CTBBestEnergy("CTBBestEnergy")
+, CTBBestXDir("CTBBestXDir")  
+, CTBBestYDir("CTBBestYDir")  
+, CTBBestZDir("CTBBestZDir")
 {
    //now create new items 
    /** @page MeritTuple MeritTuple definitions
@@ -219,7 +227,7 @@ void FT1worker::evaluate(const Event::Exposure& exp)
     m_ft1eventid = EvtRun * nbOfEvtsInFile + EvtEventId;
 
     // Give default "guard" values in case there are no tracks in the event
-    m_ft1energy    = EvtEnergyCorr;
+    m_ft1energy = CTBBestEnergy;
     m_ft1theta = 666; m_ft1phi = 666; m_ft1ra   = 666;
     m_ft1dec   = 666; m_ft1zen = 666; m_ft1azim = 666;
     m_ft1l = 666; m_ft1b = 666;
@@ -228,23 +236,8 @@ void FT1worker::evaluate(const Event::Exposure& exp)
     m_ft1livetime = -1;
 
     Hep3Vector convPoint;
-    Hep3Vector glastDir;
+    Hep3Vector glastDir(CTBBestXDir, CTBBestYDir, CTBBestZDir);
 
-
-    if( useVertex() ) {
-
-        glastDir = Hep3Vector(VtxXDir,VtxYDir,VtxZDir);
-        m_ft1convpointx  = VtxX0;
-        m_ft1convpointy  = VtxY0;
-        m_ft1convpointz  = VtxZ0;
-    
-    } else{
-
-        glastDir = Hep3Vector(Tkr1XDir, Tkr1YDir,Tkr1ZDir);
-        m_ft1convpointx  = Tkr1X0;
-        m_ft1convpointy  = Tkr1Y0;
-        m_ft1convpointz  = Tkr1Z0;
-    }
     m_ft1convlayer   = Tkr1FirstLayer;
 
     glastDir = - glastDir.unit();
