@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Jan  9 15:48:10 PST 2006
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix FT1Livetime, tag
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r28p1, operation: add
 Package: merit
