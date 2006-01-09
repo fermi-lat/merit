@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Mon Jan  9 15:48:10 PST 2006
+merit/src/meritAlg
+
+Modified Files:
+	FT1Alg.cxx 
+Log Message:
+fix FT1Livetime, tag
+    *
+------------------------------------------------------------
+User: burnett  Mon Jan  9 15:48:10 PST 2006
 merit/doc
 
 Modified Files:
