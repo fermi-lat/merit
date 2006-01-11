@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.5 2005/12/15 00:15:33 jchiang Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.6 2006/01/09 23:48:10 burnett Exp $
 */
 // Include files
 
@@ -165,7 +165,7 @@ FT1worker::FT1worker()
 // initialize pointers to current items
 : EvtRun("EvtRun")
 , EvtEventId("EvtEventId")
-, EvtLiveTime("EvtLivetime")
+, EvtLiveTime("EvtLiveTime")
 , EvtEnergyCorr("EvtEnergyCorr")
 , VtxXDir("VtxXDir")
 , VtxYDir("VtxYDir")
