@@ -2,9 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.85 2005/12/15 00:23:19 jchiang Exp $
+ * $Id: release.notes,v 1.86 2006/01/09 23:48:10 burnett Exp $
  *
- *  v6r28p2 THB  09-Jan-06 fix FT1Livetime
+ *  v6r28p2,p3 THB  09-Jan-06 fix FT1Livetime
  *  v6r28p1  JC  14-Dec-05 Use CTB variables in FT1Alg.
  *  v6r27p2 THB  10-oct-05 tuple documentation according to new standard
  *  v6r27p1 THB  09-oct-05 account for loss of CT info
