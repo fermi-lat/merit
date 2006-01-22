@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Jan 22 12:35:21 PST 2006
+merit/src/meritAlg
+
+Modified Files:
+	FT1Alg.cxx 
+Log Message:
+compute values for ra, dec etc. for potential background too.
+    *
+------------------------------------------------------------
 User: usher  Sun Jan 15 20:17:50 PST 2006
 merit/src/meritAlg
 
