@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.6 2006/01/09 23:48:10 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.7 2006/01/11 20:12:54 burnett Exp $
 */
 // Include files
 
@@ -93,6 +93,7 @@ private:
     Item EvtEnergyCorr;
     Item VtxXDir, VtxYDir, VtxZDir;
     Item VtxX0, VtxY0, VtxZ0;
+    Item TkrNumTracks;
     Item Tkr1XDir, Tkr1YDir, Tkr1ZDir;
     Item Tkr1X0, Tkr1Y0, Tkr1Z0;
     Item Tkr1FirstLayer;
@@ -167,6 +168,7 @@ FT1worker::FT1worker()
 , EvtEventId("EvtEventId")
 , EvtLiveTime("EvtLiveTime")
 , EvtEnergyCorr("EvtEnergyCorr")
+, TkrNumTracks("TkrNumTracks")
 , VtxXDir("VtxXDir")
 , VtxYDir("VtxYDir")
 , VtxZDir("VtxZDir")
@@ -230,18 +232,27 @@ void FT1worker::evaluate(const Event::Exposure& exp)
 
     // Give default "guard" values in case there are no tracks in the event
     m_ft1energy = CTBBestEnergy;
+    if( m_ft1energy=0) m_ft1energy = EvtEnergyCorr;
+
     m_ft1theta = 666; m_ft1phi = 666; m_ft1ra   = 666;
     m_ft1dec   = 666; m_ft1zen = 666; m_ft1azim = 666;
     m_ft1l = 666; m_ft1b = 666;
     m_ft1convpointx = 999; m_ft1convpointy = 999; m_ft1convpointz = 999; 
     m_ft1convlayer = -1;
     m_ft1livetime = -1;
+    m_ft1livetime = EvtLiveTime;
+
+    if( TkrNumTracks==0) return;
 
     Hep3Vector convPoint;
-    Hep3Vector glastDir(CTBBestXDir, CTBBestYDir, CTBBestZDir);
+    Hep3Vector glastDir;
+    if( CTBBestZDir!=0){ // check that this was set
+        glastDir= Hep3Vector(CTBBestXDir, CTBBestYDir, CTBBestZDir);
+    }else{
+        glastDir= Hep3Vector(Tkr1XDir, Tkr1YDir, Tkr1ZDir);
+    }
 
     m_ft1convlayer   = Tkr1FirstLayer;
-    m_ft1livetime = EvtLiveTime;
 
     glastDir = - glastDir.unit();
 
