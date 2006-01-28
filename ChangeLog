@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Jan 28 14:27:48 PST 2006
+merit/src/meritAlg
+
+Modified Files:
+	FT1Alg.cxx 
+Log Message:
+add line to the documentation; fix bug for setting FT1Energy
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r28p4, operation: add
 Package: merit
