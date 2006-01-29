@@ -1,6 +1,6 @@
 package merit
-version v6r28p4
-# $Id: requirements,v 1.105 2006/01/11 23:06:22 burnett Exp $
+version v6r28p5
+# $Id: requirements,v 1.106 2006/01/22 20:37:52 burnett Exp $
 author T.Burnett <tburnett@u.washington.edu>
 branches doc
 
@@ -33,6 +33,9 @@ apply_pattern package_Cshlibflags
 
 # this to allow includes of internal "package" 
 macro_prepend includes "-I ../src " WIN32 "/I ..\src "
+
+# fix for EDS_endianness.h
+macro_append cppflags "" WIN32 " /D__i386"
 
 
 
