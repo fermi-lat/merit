@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.87 2006/01/11 23:06:22 burnett Exp $
+ * $Id: release.notes,v 1.88 2006/01/22 20:37:53 burnett Exp $
  *
+ *  v6r28cl0 TU  31-Jan-06 Tag development branch for new externals
  *  v6r28p4 THB  21-Jan-06 FT1 mod to set pointing stuff for background
  *  v6r28p2,p3 THB  09-Jan-06 fix FT1Livetime
  *  v6r28p1  JC  14-Dec-05 Use CTB variables in FT1Alg.
