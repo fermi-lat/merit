@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Feb  7 14:13:46 PST 2006
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+tagging after ignoring int and uint in meritAlg
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r28cl0, operation: add
 Package: merit
