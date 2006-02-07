@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Feb  7 14:13:47 PST 2006
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+tagging after ignoring int and uint in meritAlg
+    *
+------------------------------------------------------------
+User: burnett  Tue Feb  7 14:13:47 PST 2006
 merit/doc
 
 Modified Files:
