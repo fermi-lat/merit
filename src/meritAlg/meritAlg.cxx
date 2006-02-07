@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.98 2005/11/10 02:04:08 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.99 2005/11/15 00:55:08 burnett Exp $
 */
 // Include files
 
@@ -214,21 +214,21 @@ StatusCode meritAlg::setupTools() {
             m_merit->addItem( varName, val);
             return IValsTool::Visitor::CONT;
         }
-      IValsTool::Visitor::eVisitorRet analysisValue(std::string varName, const float& value) const
+        IValsTool::Visitor::eVisitorRet analysisValue(std::string varName, const float& value) const
         {
             float * val = const_cast<float*>(&value);
             m_merit->addItem( varName, val);
             return IValsTool::Visitor::CONT;
         }
-      IValsTool::Visitor::eVisitorRet analysisValue(std::string , const int& ) const
+        IValsTool::Visitor::eVisitorRet analysisValue(std::string , const int& ) const
         {
-#if 1 // not yet implemented
-            return IValsTool::Visitor::ERROR;
-#else
-            int * val = const_cast<int*>(&value);
-            m_merit->addItem( varName, val);
+            // ignore, for now
             return IValsTool::Visitor::CONT;
-#endif
+        }
+        IValsTool::Visitor::eVisitorRet analysisValue(std::string , const unsigned int& ) const
+        {
+            // ignore, for now
+            return IValsTool::Visitor::CONT;
         }
 
     private:
@@ -387,7 +387,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.98 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.99 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
