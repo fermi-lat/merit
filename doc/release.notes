@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.89 2006/01/29 17:34:54 burnett Exp $
+ * $Id: release.notes,v 1.90 2006/02/07 22:13:47 burnett Exp $
  *
+ *  v6r29   THB  08-Feb-06 Remove code to create the tuple, expect it to be alreay done; new interface for tuple item type
  *  v6r28p6 THB  07-Feb-06 catch and ignore int and uint entries in the tuple when analyzing events
  *  v6r28p5 THB  29-Jan-06 fix FT1Energy; new define required by OnboardFilter on Win32
  *  v6r28p4 THB  21-Jan-06 FT1 mod to set pointing stuff for background
