@@ -1,7 +1,7 @@
 /** @file ClassifyAlg.cxx
 @brief Declaration and implementation of Gaudi algorithm ClassifyAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/ClassifyAlg.cxx,v 1.4 2005/12/08 22:53:59 usher Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/ClassifyAlg.cxx,v 1.5 2006/01/16 04:17:49 usher Exp $
 */
 
 #include "GaudiKernel/Algorithm.h"
@@ -22,7 +22,7 @@ class GleamItem : public GlastClassify::Item {
 public:
     GleamItem(const std::string& treename, const std::string& name, INTupleWriterSvc* tuplesvc)
     {
-        m_isFloat = tuplesvc->getItem(treename, name, m_pdata);
+        m_isFloat = tuplesvc->getItem(treename, name, m_pdata)=="Float_t";
     }
     operator double()const{
         return m_isFloat? *(float*) m_pdata : *(double*)m_pdata;

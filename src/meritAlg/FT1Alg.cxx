@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.8 2006/01/22 20:35:19 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.9 2006/01/28 22:27:47 burnett Exp $
 */
 // Include files
 
@@ -75,7 +75,7 @@ private:
     public:
         Item(std::string name)
         {
-            m_isFloat = rootTupleSvc->getItem(treename, name, m_pvalue);
+            m_isFloat = rootTupleSvc->getItem(treename, name, m_pvalue)=="Float_t";
         }
 
         operator double()
@@ -88,7 +88,9 @@ private:
     };
 
     // tuple items expect to find
+#if 0
     Item EvtRun, EvtEventId;
+#endif
     Item EvtLiveTime;
     Item EvtEnergyCorr;
     Item VtxXDir, VtxYDir, VtxZDir;
@@ -164,9 +166,13 @@ StatusCode FT1Alg::finalize()
 
 FT1worker::FT1worker()
 // initialize pointers to current items
-: EvtRun("EvtRun")
+: 
+#if 0
+  EvtRun("EvtRun")
 , EvtEventId("EvtEventId")
-, EvtLiveTime("EvtLiveTime")
+,
+#endif
+EvtLiveTime("EvtLiveTime")
 , EvtEnergyCorr("EvtEnergyCorr")
 , TkrNumTracks("TkrNumTracks")
 , VtxXDir("VtxXDir")
@@ -229,7 +235,9 @@ void FT1worker::evaluate(const Event::Exposure& exp)
 
  
     //eventId and Time are always defined
+#if 0
     m_ft1eventid = EvtRun * nbOfEvtsInFile + EvtEventId;
+#endif
 
     // Give default "guard" values in case there are no tracks in the event
     m_ft1energy = CTBBestEnergy;
