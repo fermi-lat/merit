@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Feb  7 17:04:10 PST 2006
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+mods assuming tuple already defined.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r28p6, operation: add
 Package: merit
