@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.99 2005/11/15 00:55:08 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.100 2006/02/07 22:13:47 burnett Exp $
 */
 // Include files
 
@@ -325,17 +325,25 @@ StatusCode meritAlg::initialize() {
 </table> 
 
 */
+#if 0 // old: put in local tuple first
     addItem( "FilterStatus_HI",   &m_statusHi );
     addItem( "FilterStatus_LO",   &m_statusLo );
 
     addItem( "FilterAlgStatus",  &m_filterAlgStatus );
     addItem( "FilterAngSep",     &m_separation );
+#else // add directly to the output tuple
+    m_rootTupleSvc->addItem(m_eventTreeName, "FilterStatus_HI",   &m_statusHi);
+    m_rootTupleSvc->addItem(m_eventTreeName, "FilterStatus_LO",  &m_statusLo );
+    m_rootTupleSvc->addItem(m_eventTreeName, "FilterAlgStatus",  &m_filterAlgStatus );
+    m_rootTupleSvc->addItem(m_eventTreeName, "FilterAngSep",     &m_separation );
+
+#endif
 
     // add some of the AnalysisNTuple items
     if( setupTools().isFailure()) return StatusCode::FAILURE;
 
     m_fm= new FigureOfMerit(*m_tuple, m_cuts);
-
+#if 0 // AnalysisNtupleAlg now does this
     if( m_rootTupleSvc !=0) {
         // now tell the root tuple service about our tuple
         for(Tuple::iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
@@ -347,7 +355,7 @@ StatusCode meritAlg::initialize() {
             }
         }
      }
-
+#endif
 
     // setup tuple output via the print service
     // get the Gui service
@@ -387,7 +395,7 @@ void meritAlg::calculate(){
 }
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.99 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.100 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -416,8 +424,9 @@ StatusCode meritAlg::execute() {
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
 
-
+#if 0
     calculate(); // setup Bill's tuple items
+#endif
     SmartDataPtr<Event::EventHeader>   header(eventSvc(),    EventModel::EventHeader);
     SmartDataPtr<Event::MCEvent>     mcheader(eventSvc(),    EventModel::MC::Event);
  
