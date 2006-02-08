@@ -1,13 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Wed Feb  8 10:44:32 PST 2006
-merit/src/meritAlg
-
-Modified Files:
-	ClassifyAlg.cxx FT1Alg.cxx meritAlg.cxx 
-Log Message:
-changes caused by AnaTup management of the "merit tuple"
-    *
-------------------------------------------------------------
 User: burnett  Tue Feb  7 17:04:10 PST 2006
 merit/src/meritAlg
 
