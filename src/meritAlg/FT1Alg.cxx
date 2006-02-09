@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.9 2006/01/28 22:27:47 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.10 2006/02/08 18:44:32 burnett Exp $
 */
 // Include files
 
@@ -23,7 +23,7 @@ class FT1worker;
 
 namespace { // anonymous namespace for file-global
     INTupleWriterSvc* rootTupleSvc;
-    long nbOfEvtsInFile(100000);
+    unsigned int nbOfEvtsInFile(100000);
     std::string treename("MeritTuple");
 }
 
@@ -71,26 +71,52 @@ private:
         rootTupleSvc->addItem(treename, name, &value);
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     class Item {
     public:
-        Item(std::string name)
+        Item(std::string name, char typecode=' ')
         {
-            m_isFloat = rootTupleSvc->getItem(treename, name, m_pvalue)=="Float_t";
+            std::string type = rootTupleSvc->getItem(treename, name, m_pvalue);
+            if( typecode==' ') {
+                m_isFloat = type==rootType('F');
+                if( !m_isFloat && type!=rootType('D')){
+                   throw std::invalid_argument("FT1Alg: type of "+name+ " is not "+ rootType('F')+" or "+rootType('D'));
+                }
+            }else if( type!= rootType(typecode) ){
+                throw std::invalid_argument("FT1Alg: type of "+name+ " is not "+ rootType(typecode));
+            }
         }
-
-        operator double()
+        // Item behaves like a double
+        operator double()const
         {
             return m_isFloat? *(float*)m_pvalue : *(double*)m_pvalue;
         }
 
+        static std::string rootType(char code){
+            if( code=='i') return "UInt_t";
+            if( code=='I') return "Int_t";
+            if( code=='F') return "Float_t";
+            if( code=='D') return "Double_t";
+            // todo: add more?
+            return "unknown";
+        }
         void* m_pvalue;
         bool m_isFloat;
     };
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    template<typename T, char  typecode>
+    class TypedItem : public Item {
+    public:
+        TypedItem(std::string name): Item(name, typecode){}
+        T value() const{ return *static_cast<T*>(m_pvalue); }
+        operator T()const{return value();}
+    };
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     // tuple items expect to find
-#if 0
-    Item EvtRun, EvtEventId;
-#endif
+    TypedItem<unsigned int, 'i'> EvtRun, EvtEventId;
+
+    // these all float or double
     Item EvtLiveTime;
     Item EvtEnergyCorr;
     Item VtxXDir, VtxYDir, VtxZDir;
@@ -105,7 +131,7 @@ private:
     Item CTBBestZDir;
 
     //FT1 entries to create
-    float m_ft1eventid;
+    unsigned int m_ft1eventid;
     float m_ft1energy;
     float m_ft1theta,m_ft1phi,m_ft1ra,m_ft1dec,m_ft1l,m_ft1b;
     float m_ft1zen,m_ft1azim,m_ft1livetime;
@@ -166,13 +192,9 @@ StatusCode FT1Alg::finalize()
 
 FT1worker::FT1worker()
 // initialize pointers to current items
-: 
-#if 0
-  EvtRun("EvtRun")
+: EvtRun("EvtRun")
 , EvtEventId("EvtEventId")
-,
-#endif
-EvtLiveTime("EvtLiveTime")
+, EvtLiveTime("EvtLiveTime")
 , EvtEnergyCorr("EvtEnergyCorr")
 , TkrNumTracks("TkrNumTracks")
 , VtxXDir("VtxXDir")
@@ -234,10 +256,8 @@ void FT1worker::evaluate(const Event::Exposure& exp)
 {
 
  
-    //eventId and Time are always defined
-#if 0
-    m_ft1eventid = EvtRun * nbOfEvtsInFile + EvtEventId;
-#endif
+    //eventId and Time are always defined 
+    m_ft1eventid =  nbOfEvtsInFile *EvtRun.value()  + EvtEventId.value();
 
     // Give default "guard" values in case there are no tracks in the event
     m_ft1energy = CTBBestEnergy;
