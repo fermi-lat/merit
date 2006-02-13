@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.8 2006/01/22 20:35:19 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.8.2.1 2006/01/31 22:28:24 usher Exp $
 */
 // Include files
 
@@ -17,6 +17,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.8 2006/0
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
 
 #include <cassert>
+#include <map>
 
 // forward declatation of the worker
 class FT1worker;
