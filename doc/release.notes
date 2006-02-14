@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.88 2006/01/22 20:37:53 burnett Exp $
+ * $Id: release.notes,v 1.88.2.1 2006/01/31 22:28:23 usher Exp $
  *
+ *  v6r28cl1 TU  15-Feb-06 Tag mods for Gaudi v18r1
  *  v6r28cl0 TU  31-Jan-06 Tag development branch for new externals
  *  v6r28p4 THB  21-Jan-06 FT1 mod to set pointing stuff for background
  *  v6r28p2,p3 THB  09-Jan-06 fix FT1Livetime
