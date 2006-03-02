@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.10 2006/02/08 18:44:32 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.11 2006/02/09 19:37:18 burnett Exp $
 */
 // Include files
 
@@ -169,17 +169,18 @@ StatusCode FT1Alg::initialize()
 
 StatusCode FT1Alg::execute()
 {
-
+    StatusCode sc = StatusCode::SUCCESS;
     //First get the coordinates from the ExposureCol
     Event::ExposureCol* elist = 0;
     eventSvc()->retrieveObject("/Event/MC/ExposureCol",(DataObject *&)elist);
-    assert( elist!=0); // should not happen, but make sure ok.
+    if ( elist!=0 ) return sc;
+    //assert( elist!=0); // should not happen, but make sure ok.
     const Event::Exposure& exp = **(*elist).begin();
 
     // now have the worker do it
     m_worker->evaluate(exp);
 
-    return StatusCode::SUCCESS;
+    return sc;
 }
 
 StatusCode FT1Alg::finalize()
