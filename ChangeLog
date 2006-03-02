@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Thu Mar  2 14:46:51 PST 2006
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Remove "assert" from Ft1Alg... just return quietly!
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r28cl1, operation: add
 Package: merit
