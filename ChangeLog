@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: lsrea  Thu Mar  2 14:46:52 PST 2006
+merit/src/meritAlg
+
+Modified Files:
+	FT1Alg.cxx 
+Log Message:
+Remove "assert" from Ft1Alg... just return quietly!
+
+    *
+------------------------------------------------------------
+User: lsrea  Thu Mar  2 14:46:52 PST 2006
 merit/doc
 
 Modified Files:
