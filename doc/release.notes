@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.92 2006/02/09 19:37:10 burnett Exp $
+ * $Id: release.notes,v 1.93 2006/03/02 22:46:52 lsrea Exp $
  *
+ *  v6r30p2 LSR  02-Mar-06 Update doc for FT1 and Filter ntuple variables
  *  v6r30p1 LSR  02-Mar-06 Remove "assert" from FT1Alg... just return quietly!
  *  v6r30   THB  09-Feb-06 FT1 mods to process EvtRun and EvtEventId as unsigned int
  *  v6r29   THB  08-Feb-06 Remove code to create the tuple, expect it to be alreay done; new interface for tuple item type
