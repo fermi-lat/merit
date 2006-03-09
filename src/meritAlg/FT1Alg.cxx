@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.11 2006/02/09 19:37:18 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.12 2006/03/02 22:46:52 lsrea Exp $
 */
 // Include files
 
@@ -223,18 +223,31 @@ FT1worker::FT1worker()
 
 
     see <a href="http://glast.gsfc.nasa.gov/ssc/dev/fits_def/definitionFT1.html">FT1 definition</a>
-<table>
-<tr><th> Variable      </th><th> Description</th></tr>
 
-    <tr><td> FT1EventId  </td><td>RunNo*(number of events in file) + EventNo  
-    <tr><td> FT1Energy   </td><td>(MeV) estimate for energy  
-    <tr><td> FT1Theta,FT1Phi </td><td> (deg) reconstructed direction with respect to instrument coordinate system      
-    <tr><td> FT1Ra,FT1Dec </td><td> (deg) reconstructed direction in equatorial coordinates       
-    <tr><td> FT1ZenithTheta,FT1EarthAzimuth </td><td>(deg) reconstucted direction with respect to local zenith system
-    <tr><td> FT1ConvPointX,FT1ConvPointY,FT1ConvPointZ</td><td> (m) conversion point of event, whether single track or vertex, 999 if no tracks
-    <tr><td> FT1Livetime</td><td> (s) Cumulative live time, from start of run, or mission
-</table>
-    */
+<table>
+    <tr><th> Variable <th> Type <th> Description
+    <tr><td> FT1EventId  
+    <td>UI<td>  RunNumber*100000 + EventNumber  
+    <tr><td> FT1Energy   
+    <td>F<td>  (MeV) estimate for energy  
+    <tr><td> FT1Theta, FT1Phi 
+    <td>F<td>  (deg) reconstructed direction with respect to instrument coordinate system      
+    <tr><td> FT1Ra, FT1Dec 
+    <td>F<td>  (deg) reconstructed direction in equatorial coordinates       
+    <tr><td> FT1ZenithTheta, FT1EarthAzimuth 
+    <td>F<td>  (deg) reconstucted direction with respect to local zenith system
+    <tr><td> FT1L, FT1B 
+    <td>F<td>  (deg) galactic longitude and latitude of reconstructed direction
+    <tr><td> FT1Livetime 
+    <td>F<td>  (s) Cumulative live time, from start of run, or mission
+    <tr><td> FT1ConvLayer 
+    <td>F<td>  Starting layer of the best track found in the tracker 
+               (Layer 0 is the one closest to the calorimeter.)
+    <tr><td> FT1ConvPoint[X/Y/Z] 
+    <td>F<td>  <b>Do not use; no longer filled!</b>
+</table> 
+*/
+
     addItem( "FT1EventId",       m_ft1eventid);
     addItem( "FT1Energy",        m_ft1energy);
     addItem( "FT1Theta",         m_ft1theta);
