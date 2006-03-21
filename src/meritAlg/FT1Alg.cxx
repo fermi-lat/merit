@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.12 2006/03/02 22:46:52 lsrea Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.13 2006/03/09 18:27:27 lsrea Exp $
 */
 // Include files
 
@@ -17,6 +17,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.12 2006/
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
 
 #include <cassert>
+#include <map>
 
 // forward declatation of the worker
 class FT1worker;
@@ -59,7 +60,7 @@ public:
 
 private:
     std::map<std::string, double> getCelestialCoords(const Event::Exposure& exp,
-        const Hep3Vector glastDir);
+        const CLHEP::Hep3Vector glastDir);
 
     bool useVertex(){ //TODO: implement
         return false;
@@ -287,12 +288,12 @@ void FT1worker::evaluate(const Event::Exposure& exp)
 
     if( TkrNumTracks==0) return;
 
-    Hep3Vector convPoint;
-    Hep3Vector glastDir;
+    CLHEP::Hep3Vector convPoint;
+    CLHEP::Hep3Vector glastDir;
     if( CTBBestZDir!=0){ // check that this was set
-        glastDir= Hep3Vector(CTBBestXDir, CTBBestYDir, CTBBestZDir);
+        glastDir= CLHEP::Hep3Vector(CTBBestXDir, CTBBestYDir, CTBBestZDir);
     }else{
-        glastDir= Hep3Vector(Tkr1XDir, Tkr1YDir, Tkr1ZDir);
+        glastDir= CLHEP::Hep3Vector(Tkr1XDir, Tkr1YDir, Tkr1ZDir);
     }
 
     m_ft1convlayer   = Tkr1FirstLayer;
@@ -318,7 +319,7 @@ void FT1worker::evaluate(const Event::Exposure& exp)
 }
 //------------------------------------------------------------------------------
 std::map<std::string, double> 
-FT1worker::getCelestialCoords(const Event::Exposure& exp, const Hep3Vector glastDir)
+FT1worker::getCelestialCoords(const Event::Exposure& exp, const CLHEP::Hep3Vector glastDir)
 {
     using namespace astro;
 
@@ -329,11 +330,11 @@ FT1worker::getCelestialCoords(const Event::Exposure& exp, const Hep3Vector glast
     SkyDir zsky( exp.RAZ(), exp.DECZ() );
     SkyDir xsky( exp.RAX(), exp.DECX() );
     // orthogonalize, since interpolation and transformations destory orthogonality (limit is 10E-8)
-    Hep3Vector xhat = xsky() -  xsky().dot(zsky()) * zsky() ;
+    CLHEP::Hep3Vector xhat = xsky() -  xsky().dot(zsky()) * zsky() ;
     PointingTransform toSky( zsky, xhat );
 
     // make zenith (except for oblateness correction) unit vector
-    Hep3Vector position( exp.posX(),  exp.posY(),  exp.posZ() );
+    CLHEP::Hep3Vector position( exp.posX(),  exp.posY(),  exp.posZ() );
     SkyDir zenith(position.unit());
 
     SkyDir sdir = toSky.gDir(glastDir);
