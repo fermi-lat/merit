@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.93 2006/03/02 22:46:52 lsrea Exp $
+ * $Id: release.notes,v 1.94 2006/03/09 18:27:27 lsrea Exp $
  *
+ *  v6r31   TU   24-Mar-06 Updates for CLHEP 1.9.2.2 and new Gaudi 
  *  v6r30p2 LSR  02-Mar-06 Update doc for FT1 and Filter ntuple variables
  *  v6r30p1 LSR  02-Mar-06 Remove "assert" from FT1Alg... just return quietly!
  *  v6r30   THB  09-Feb-06 FT1 mods to process EvtRun and EvtEventId as unsigned int
