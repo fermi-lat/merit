@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.13 2006/03/09 18:27:27 lsrea Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.14 2006/03/21 01:23:42 usher Exp $
 */
 // Include files
 
@@ -43,6 +43,8 @@ public:
 private:
     /// this guy does the work!
     FT1worker * m_worker;
+    //counter
+    int m_count;
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,7 +67,7 @@ private:
     bool useVertex(){ //TODO: implement
         return false;
     }
-
+    
     template <typename T>
         void addItem(std::string name, const T & value)
     {
@@ -137,7 +139,6 @@ private:
     float m_ft1theta,m_ft1phi,m_ft1ra,m_ft1dec,m_ft1l,m_ft1b;
     float m_ft1zen,m_ft1azim,m_ft1livetime;
     float m_ft1convpointx,m_ft1convpointy,m_ft1convpointz,m_ft1convlayer;
-
 };
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -164,6 +165,8 @@ StatusCode FT1Alg::initialize()
         return sc;
     }
     m_worker = new FT1worker();
+
+    m_count = 0;
     
     return sc;
 }
@@ -171,10 +174,23 @@ StatusCode FT1Alg::initialize()
 StatusCode FT1Alg::execute()
 {
     StatusCode sc = StatusCode::SUCCESS;
+
+    MsgStream log(msgSvc(), name());
+
+    m_count++;
     //First get the coordinates from the ExposureCol
     Event::ExposureCol* elist = 0;
     eventSvc()->retrieveObject("/Event/MC/ExposureCol",(DataObject *&)elist);
-    if ( elist!=0 ) return sc;
+    if ( elist==0 ) {
+        if(m_count<6) {
+            log << MSG::INFO << "No ExposureCol found, just return" << endreq;
+        }
+        else if (m_count==6) {
+            log << MSG::INFO << "Message suppressed after 5 events" << endreq;
+        }
+        return sc;
+    }
+    // the assert was removed... just a bit too drastic
     //assert( elist!=0); // should not happen, but make sure ok.
     const Event::Exposure& exp = **(*elist).begin();
 
