@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Tue May  2 18:15:02 PDT 2006
+merit/src/meritAlg
+
+Modified Files:
+	FT1Alg.cxx 
+Log Message:
+Fixed the bug in FT1Alg that I recently introduced... caused execute() to return without doing anything
+
+    *
+------------------------------------------------------------
 User: lsrea  Tue May  2 18:15:01 PDT 2006
 merit/doc
 
