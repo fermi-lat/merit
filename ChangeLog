@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri Jun 23 08:29:40 PDT 2006
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+moved FilterAlg tuple stuff out.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r31p1, operation: add
 Package: merit
