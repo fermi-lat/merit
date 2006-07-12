@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Jul 11 19:01:31 PDT 2006
+merit/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+remove default specification of XML file to load; default is left to Tracy
+    *
+------------------------------------------------------------
+User: burnett  Tue Jul 11 19:01:31 PDT 2006
 merit/cmt
 
 Modified Files:
