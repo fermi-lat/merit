@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.95 2006/03/25 01:17:52 heather Exp $
+ * $Id: release.notes,v 1.96 2006/05/03 01:15:00 lsrea Exp $
  *
+ *  v6r33   THB  11-Jul-06 Convert to new Trees in ClassifyAlg.
  *  v6r31p1 LSR  02-May-06 Fixed the bug I introduced in FT1Alg... caused it to return without doing anything
  *  v6r31   TU   24-Mar-06 Updates for CLHEP 1.9.2.2 and new Gaudi 
  *  v6r30p2 LSR  02-Mar-06 Update doc for FT1 and Filter ntuple variables
