@@ -1,7 +1,7 @@
 /** @file ClassifyAlg.cxx
 @brief Declaration and implementation of Gaudi algorithm ClassifyAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/ClassifyAlg.cxx,v 1.5 2006/01/16 04:17:49 usher Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/ClassifyAlg.cxx,v 1.6 2006/02/08 18:44:32 burnett Exp $
 */
 
 #include "GaudiKernel/Algorithm.h"
@@ -102,7 +102,7 @@ ClassifyAlg::ClassifyAlg(const std::string& name, ISvcLocator* pSvcLocator)
 {
     declareProperty("TreeName",    m_treename="MeritTuple");
     declareProperty("InfoPath",    m_infoPath="$(GLASTCLASSIFYROOT)/xml");
-    declareProperty("xmlFileName", m_xmlFileName="DC2_Analysis.xml");
+    declareProperty("xmlFileName", m_xmlFileName="Pass4_Analysis_Complete_v3.xml");
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode ClassifyAlg::initialize()
