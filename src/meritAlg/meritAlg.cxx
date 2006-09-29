@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.104 2006/03/09 18:27:27 lsrea Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.105 2006/06/23 15:29:40 burnett Exp $
 */
 // Include files
 
@@ -226,6 +226,11 @@ StatusCode meritAlg::setupTools() {
             // ignore, for now
             return IValsTool::Visitor::CONT;
         }
+       IValsTool::Visitor::eVisitorRet analysisValue(std::string , const char* ) const
+        {
+            // ignore, for now
+            return IValsTool::Visitor::CONT;
+        }
 
     private:
         meritAlg* m_merit;
@@ -298,7 +303,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.104 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.105 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
