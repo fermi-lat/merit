@@ -1,6 +1,6 @@
 package merit
-version v6r33p2
-# $Id: requirements,v 1.117 2006/07/12 02:01:31 burnett Exp $
+version v6r33p3
+# $Id: requirements,v 1.118 2006/09/29 03:31:37 burnett Exp $
 author T.Burnett <tburnett@u.washington.edu>
 branches doc
 
@@ -44,11 +44,6 @@ library merit -s=../src  $(source)\
  -s=analysis $(source) \
  -s=meritAlg $(source) \
  -s=Dll $(source)
-
-
-# where to find the 
-#set CTREE_PATH "$(GLASTCLASSIFYROOT)/data"
-set CTREE_PATH "D:\common\ctree\GlastClassify\v1r0\condor\v4\info\treeinfo"
 
 
 public
