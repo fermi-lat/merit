@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.17 2005/07/04 11:25:10 burnett Exp $
+// $Id: Tuple.cxx,v 1.18 2005/11/04 18:50:58 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -161,8 +161,10 @@ std::ostream& operator << (std::ostream& out, const Tuple& t)
         
     }else {
         out << std::setprecision(6);
-        for( Tuple::const_iterator it=t.begin(); it !=t.end(); ++it)
-            out << double(**it) << '\t';
+        for( Tuple::const_iterator it=t.begin(); it !=t.end(); ++it);
+#if 0
+            out << double(**it) << '\t'; //<<<<<<
+#endif
     }
     out << '\n';
     return out;
@@ -214,7 +216,7 @@ std::istream& operator >> (std::istream& in, Tuple& t)
 }
 
 TupleItem::TupleItem(const std::string& iname, double x)
-: m_name(iname), datum(x), m_pdatum(&datum), m_isFloat(false)
+: m_name(iname), datum(x), m_pdatum(&datum), m_type(DOUBLE)
 {
     
     if( Tuple::s_currentTuple==0 )
@@ -236,17 +238,33 @@ TupleItem::TupleItem(const std::string& iname, double x)
 }
 
 TupleItem::TupleItem(const std::string& name, float* x)
-: m_name(name), m_pdatum((double*)x),m_isFloat(true)
+: m_name(name), m_pdatum((double*)x),m_type(FLOAT) //m_isFloat(true)
 {
     Tuple::s_currentTuple->replaceOrAdd(this);
 //    Tuple::s_currentTuple->push_back(this);
 }
 
+TupleItem::TupleItem(const std::string& name, int* x)
+: m_name(name), m_pdatum((double*)x), m_type(INT) //m_isFloat(true)
+{
+    Tuple::s_currentTuple->replaceOrAdd(this); //<===== fixme
+}
+
+
+
 TupleItem::TupleItem(const std::string& iname, double* px)
-: m_name(iname), m_pdatum(px), m_isFloat(false)
+: m_name(iname), m_pdatum(px), m_type(DOUBLE) //m_isFloat(false)
 {
     Tuple::s_currentTuple->replaceOrAdd(this);
 //    Tuple::s_currentTuple->push_back(this);
+}
+double TupleItem::value() const
+{
+    switch( m_type) {
+        case FLOAT:  return *(const float*)(m_pdatum);
+        case INT:    return *(const int*)(m_pdatum);
+        case DOUBLE: return *m_pdatum;
+    }
 }
 
 

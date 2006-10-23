@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.9 2004/08/11 03:25:00 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/merit/src/analysis/Tuple.h,v 1.10 2005/11/04 18:50:58 burnett Exp $
 
 #ifndef TUPLE_H
 #define TUPLE_H
@@ -12,8 +12,9 @@ class TupleItem  {
 private:
    friend class Tuple;
 public:
+    typedef enum {DOUBLE, FLOAT, INT} TYPE;
 
-    TupleItem():m_isFloat(false){}
+    TupleItem(){}
     TupleItem(const std::string& name, double x=0);
 
     //! alternate constructor uses pointer to other buffer
@@ -22,13 +23,16 @@ public:
     //! alternate constructor uses pointer to float buffer
     TupleItem(const std::string& name, float* x);
 
-    double value() const{ return m_isFloat? *(const float*)(m_pdatum) : *m_pdatum;}
-    
+    //! alternate constructor uses pointer to int buffer
+    TupleItem(const std::string& name, int* x);
+
+    double value() const;
+#if 0  
     // for making a root output tuple: must be  double?
     double & value() { return * m_pdatum;}
     // root output
     const float * pvalue() const{ return reinterpret_cast<const float*> (m_pdatum);}
-
+#endif
     double operator()()const{      return value(); }
 
     operator double()const{     return value();    }
@@ -41,7 +45,7 @@ public:
     // print "name=value" for the tupleitem
     friend std::istream& operator >> (std::istream&,  Tuple& );
 
-    bool isFloat() const {return m_isFloat;}
+   // bool isFloat() const {return m_isFloat;}
 
 private:
 
@@ -49,8 +53,9 @@ private:
     std::string m_name;
     double datum;
     double* m_pdatum; // this might point to a float. Klugy
-    bool m_isFloat; // flag for pointer: if float, have to cast.
-};
+ //   bool m_isFloat; // flag for pointer: if float, have to cast.
+    TYPE m_type;
+    };
 
 
 class Tuple : public std::vector<TupleItem* >

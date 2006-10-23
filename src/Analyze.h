@@ -25,7 +25,7 @@ public:
 
     unsigned	         count ()  const { return m_count; }
     unsigned             seen ()   const { return m_seen; }
-    float	             item()    const { return * m_tupleItem;}
+    float	         item()    const { return m_tupleItem->value();}
     const std::string&   name()    const { return m_name; }
 
     const char*          getName()       { return m_name.data();}
