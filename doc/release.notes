@@ -2,8 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.99 2006/09/29 03:31:37 burnett Exp $
+ * $Id: release.notes,v 1.100 2006/10/09 20:13:04 burnett Exp $
  *
+ *  v6r34   THB  23-Oct-06 Strip out ClassifyAlg, moving to GlastClassify
  *  v6r33p3 THB  09-Oct-06 Remove obsolete set of CTREE_PATH
  *  v6r33p2 THB  28-Sep-06 Deal with Leon's surprise
  *  v6r33p1 THB  11-Jul-06 That was a mistake: let Tracy define the default IM file to use
