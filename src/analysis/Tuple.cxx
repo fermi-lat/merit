@@ -1,4 +1,4 @@
-// $Id: Tuple.cxx,v 1.18 2005/11/04 18:50:58 burnett Exp $
+// $Id: Tuple.cxx,v 1.19 2006/10/23 20:41:47 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
@@ -264,7 +264,9 @@ double TupleItem::value() const
         case FLOAT:  return *(const float*)(m_pdatum);
         case INT:    return *(const int*)(m_pdatum);
         case DOUBLE: return *m_pdatum;
+        default:    throw std::runtime_error("TupleItem::value: unexpected type");
     }
+    return 0;
 }
 
 
