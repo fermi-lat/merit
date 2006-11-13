@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.106 2006/09/29 03:30:10 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.107 2006/10/23 20:41:47 burnett Exp $
 */
 // Include files
 
@@ -187,9 +187,14 @@ StatusCode meritAlg::setupTools() {
     //    const char * toolnames[] = {"McValsTool", "GltValsTool", "TkrValsTool", 
     //        "VtxValsTool", "CalValsTool", "AcdValsTool", "EvtValsTool"};
 
-    const char * toolnames[] = {"McValsTool", "GltValsTool", "TkrValsTool", 
-        "VtxValsTool", "CalValsTool", "AcdValsTool", "EvtValsTool","CalMipValsTool"};
+    //const char * toolnames[] = {"McValsTool", "GltValsTool", "TkrValsTool", 
+    //    "VtxValsTool", "CalValsTool", "AcdValsTool", "EvtValsTool","CalMipValsTool"};
     //@@@FP 07/08/05
+    
+    //@@@CL 06/26/06: add GcrSelectTool
+    const char * toolnames[] = {"McValsTool", "GltValsTool", "TkrValsTool", 
+        "VtxValsTool", "CalValsTool", "AcdValsTool", "EvtValsTool","CalMipValsTool","GcrSelectValsTool"};
+    //@@@CL 06/26/06
 
     for( int i =0; i< (int)(sizeof(toolnames)/sizeof(void*)); ++i){
         m_toolvec.push_back(0);
@@ -305,7 +310,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.106 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.107 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
