@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: claval  Mon Nov 13 02:12:53 PST 2006
+merit/cmt
+
+Modified Files:
+	.cvsignore 
+Log Message:
+variables from GCRCalib codes added to merituple file
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r34, operation: add
 Package: merit
