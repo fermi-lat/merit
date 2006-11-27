@@ -1,7 +1,7 @@
 /** @file FT1Alg.cxx
 @brief Declaration and implementation of Gaudi algorithm FT1Alg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.14 2006/03/21 01:23:42 usher Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/FT1Alg.cxx,v 1.15 2006/05/03 01:15:01 lsrea Exp $
 */
 // Include files
 
@@ -338,6 +338,7 @@ std::map<std::string, double>
 FT1worker::getCelestialCoords(const Event::Exposure& exp, const CLHEP::Hep3Vector glastDir)
 {
     using namespace astro;
+    using CLHEP::Hep3Vector;
 
     std::map<std::string, double> fields;
 
@@ -346,11 +347,11 @@ FT1worker::getCelestialCoords(const Event::Exposure& exp, const CLHEP::Hep3Vecto
     SkyDir zsky( exp.RAZ(), exp.DECZ() );
     SkyDir xsky( exp.RAX(), exp.DECX() );
     // orthogonalize, since interpolation and transformations destory orthogonality (limit is 10E-8)
-    CLHEP::Hep3Vector xhat = xsky() -  xsky().dot(zsky()) * zsky() ;
+    Hep3Vector xhat = xsky() -  xsky().dot(zsky()) * zsky() ;
     PointingTransform toSky( zsky, xhat );
 
     // make zenith (except for oblateness correction) unit vector
-    CLHEP::Hep3Vector position( exp.posX(),  exp.posY(),  exp.posZ() );
+    Hep3Vector position( exp.posX(),  exp.posY(),  exp.posZ() );
     SkyDir zenith(position.unit());
 
     SkyDir sdir = toSky.gDir(glastDir);
@@ -359,9 +360,12 @@ FT1worker::getCelestialCoords(const Event::Exposure& exp, const CLHEP::Hep3Vecto
     double zenith_theta = sdir.difference(zenith); 
     if( fabs(zenith_theta)<1e-8) zenith_theta=0;
 
-    SkyDir north_dir(90,0);
-    SkyDir east_dir( north_dir().cross(zenith()) );
-    double earth_azimuth=atan2( sdir().dot(east_dir()), sdir().dot(north_dir()) );
+    // all this to do the azimuth angle :-(
+    Hep3Vector north_pole(0,0,1);
+    Hep3Vector east_dir( north_pole.cross(zenith()).unit() ); // east is perp to north_pole and zenith
+    Hep3Vector north_dir( zenith().cross(east_dir));
+
+    double earth_azimuth=atan2( sdir().dot(east_dir), sdir().dot(north_dir) );
     if( earth_azimuth <0) earth_azimuth += 2*M_PI; // to 0-360 deg.
     if( fabs(earth_azimuth)<1e-8) earth_azimuth=0;
 
