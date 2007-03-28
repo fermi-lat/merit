@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Wed Mar 28 09:52:46 PDT 2007
+merit/src/Dll
+
+Modified Files:
+	merit_load.cxx 
+Log Message:
+FT1Alg moved to AnalysisNtuple package
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r34p1, operation: add
 Package: merit
