@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: lsrea  Wed Mar 28 09:52:46 PDT 2007
+merit/src/meritAlg
+
+Removed Files:
+	FT1Alg.cxx 
+Log Message:
+FT1Alg moved to AnalysisNtuple package
+
+    *
+------------------------------------------------------------
+User: lsrea  Wed Mar 28 09:52:46 PDT 2007
 merit/src/Dll
 
 Modified Files:
