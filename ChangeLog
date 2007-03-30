@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: lsrea  Fri Mar 30 06:17:06 PDT 2007
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Prepare for v6r35
+FT1Alg moved to AnalysisNtuple
+
+    *
+------------------------------------------------------------
 User: lsrea  Wed Mar 28 09:52:46 PDT 2007
 merit/src/meritAlg
 
