@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Mon Jul 14 16:42:38 PDT 2008
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+MOds for unsigned long long (EvtEventId)
+
+    *
+------------------------------------------------------------
 User: lsrea  Mon Jul 14 16:42:37 PDT 2008
 merit/doc
 
