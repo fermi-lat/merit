@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Mon Jul 14 16:42:37 PDT 2008
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+MOds for unsigned long long (EvtEventId)
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: merit-06-35-00, operation: add
 Package: merit
