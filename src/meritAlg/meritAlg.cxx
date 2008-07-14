@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.108 2006/11/13 10:12:54 claval Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.109 2006/11/27 22:58:39 burnett Exp $
 */
 // Include files
 
@@ -202,6 +202,10 @@ StatusCode meritAlg::setupTools() {
     {
     public:
         VisitBill( meritAlg* me) : m_merit(me){}
+ 
+// LSR 14-Jul-08 code for ntuple types
+// LSR           note: "ignore, for now," below!
+
         IValsTool::Visitor::eVisitorRet analysisValue(std::string varName, const double& value) const
         {
             double * val = const_cast<double*>(&value);
@@ -221,6 +225,11 @@ StatusCode meritAlg::setupTools() {
             return IValsTool::Visitor::CONT;
         }
         IValsTool::Visitor::eVisitorRet analysisValue(std::string , const unsigned int& ) const
+        {
+            // ignore, for now
+            return IValsTool::Visitor::CONT;
+        }
+        IValsTool::Visitor::eVisitorRet analysisValue(std::string , const unsigned long long& ) const
         {
             // ignore, for now
             return IValsTool::Visitor::CONT;
@@ -302,7 +311,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.108 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.109 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
