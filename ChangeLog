@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: glastrm  Mon Jul 21 08:17:38 PDT 2008
+GlastRelease-scons/merit/src/app
+
+Modified Files:
+	fastFilter.cxx 
+Log Message:
+Removed dependency on CMT env variables
+    *
+------------------------------------------------------------
 TAG
 Tag name: merit-06-36-00, operation: add
 Package: merit
