@@ -1,5 +1,5 @@
 /** @file  fastFilter.cxx 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/app/fastFilter.cxx,v 1.5 2004/01/06 18:44:00 hansl Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/merit/src/app/fastFilter.cxx,v 1.6 2004/01/07 18:56:14 hansl Exp $
 */
 
 #include "app/RootTuple.h"
@@ -72,9 +72,10 @@ int main(int argc, char* argv[])
     // Get or generate the IM xml filename 
     std::string xml_file = ::getenv("IM_FILE_FILTER");
     if ( xml_file.empty() ) { 
-      std::string  default_file( "/xml/CTPruner_DC1.imw" );
-      const char *sPath = ::getenv("MERITROOT");
-      xml_file = std::string( sPath == 0 ?  "../" : sPath) + default_file;
+      //std::string  default_file( "/xml/CTPruner_DC1.imw" );
+      //const char *sPath = ::getenv("MERITROOT");
+      xml_file = facilities::commonUtilities::joinPath(facilities::commonUtilities::getXmlPath("merit"), "CTPruner_DC1.imw");
+      //std::string( sPath == 0 ?  "../" : sPath) + default_file;
     }
     std::cout << "fastFilter: IM xml file " 
               << "\n\t" << xml_file << std::endl;
