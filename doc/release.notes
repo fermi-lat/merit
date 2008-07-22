@@ -2,8 +2,10 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.104 2007/03/30 13:17:06 lsrea Exp $
+ * $Id: release.notes,v 1.105 2008/07/14 23:42:37 lsrea Exp $
  *
+ *  v6r36p2 LSR  21-Jul-08 Never made the change... I think this will fix it
+ *  v6r36p1 LSR  21-Jul-08 Change EvtEventId to EvtEventId64
  *  v6r36   LSR  14-Jul-08 EvtEventId to unsigned long long
  *  v6r35   LSR  30-Mar-07 FT1Alg to AnalysisNtuple
  *  v6r34p1 THB  27-Nov-06 Bug fix for FT1EarthAzimuth calculation

@@ -1,7 +1,10 @@
 package merit
 version v6r36p2
-# $Id: requirements,v 1.124 2008/07/22 18:38:03 lsrea Exp $
+
 author T.Burnett <tburnett@u.washington.edu>
+
+# $Id: requirements,v 1.123 2008/07/14 23:42:37 lsrea Exp $
+
 branches doc
 
 use GlastPolicy v*
