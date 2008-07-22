@@ -2,9 +2,9 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.105 2008/07/14 23:42:37 lsrea Exp $
+ * $Id: release.notes,v 1.106 2008/07/22 18:46:56 lsrea Exp $
  *
- *  v6r36p2 LSR  21-Jul-08 Never made the change... I think this will fix it
+ *  v6r36p3 LSR  21-Jul-08 Never made the change... I think this will fix it
  *  v6r36p1 LSR  21-Jul-08 Change EvtEventId to EvtEventId64
  *  v6r36   LSR  14-Jul-08 EvtEventId to unsigned long long
  *  v6r35   LSR  30-Mar-07 FT1Alg to AnalysisNtuple
