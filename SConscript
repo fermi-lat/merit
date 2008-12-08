@@ -1,5 +1,5 @@
 # -*- python -*-
-# $Header$ 
+# $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/merit/SConscript,v 1.1 2008/08/15 21:22:48 ecephas Exp $ 
 # Authors: T.Burnett <tburnett@u.washington.edu>
 # Version: merit-06-36-03
 import os
@@ -17,3 +17,6 @@ if baseEnv['PLATFORM'] == 'win32':
 
 progEnv.Tool('meritLib')
 progEnv.Tool('registerObjects', package = 'merit', libraries = [merit], includes = listFiles(['merit/*.h']))
+
+
+
