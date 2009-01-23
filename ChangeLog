@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+TAG
+Tag name: merit-06-36-03, operation: mov
+Package: merit
+User: glastrm  Thu Jan 22 16:31:56 2009
+Files:
+  merit/SConscript  1.3
+  merit/SConscript  1.3
+  merit/SConscript  1.3
+
+    *
+------------------------------------------------------------
 User: ecephas  Thu Jan 22 16:07:48 PST 2009
 GlastRelease-scons/merit
 
