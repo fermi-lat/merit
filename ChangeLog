@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Aug  5 16:04:19 PDT 2009
+GlastRelease-scons/merit
+
+Modified Files:
+	meritLib.py 
+Log Message:
+Value for 'library' arg of addLibrary must be a list
+
+    *
+------------------------------------------------------------
 User: heather  Wed Jul  1 10:00:03 PDT 2009
 merit/doc
 
