@@ -2,8 +2,10 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.107 2008/07/22 18:47:51 lsrea Exp $
+ * $Id: release.notes,v 1.108 2009/07/01 17:00:02 heather Exp $
  * EOH *
+
+ merit-06-36-04 13-Nov-2009    jrb Updates for SCons
  *
  *  v6r36p3 LSR  21-Jul-08 Never made the change... I think this will fix it
  *  v6r36p1 LSR  21-Jul-08 Change EvtEventId to EvtEventId64
