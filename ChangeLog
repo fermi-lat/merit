@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Fri Nov 13 15:23:53 PST 2009
+GlastRelease-scons/merit
+
+Modified Files:
+	.cvsignore SConscript meritLib.py 
+Log Message:
+
+    *
+------------------------------------------------------------
 User: jrb  Wed Aug  5 16:04:19 PDT 2009
 GlastRelease-scons/merit
 
