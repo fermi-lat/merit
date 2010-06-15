@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Tue Jun 15 15:58:11 PDT 2010
+GlastRelease-scons/merit
+
+Modified Files:
+	SConscript 
+Log Message:
+include ALL .cxx in the library
+    *
+------------------------------------------------------------
 TAG
 Tag name: merit-06-36-05, operation: add
 Package: merit
