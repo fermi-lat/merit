@@ -1,9 +1,9 @@
 package merit
-version v6r36p5
+version v6r36p6
 
 author T.Burnett <tburnett@u.washington.edu>
 
-# $Id: requirements,v 1.128 2009/11/13 23:38:12 jrb Exp $
+# $Id: requirements,v 1.129 2010/06/13 07:02:35 jrb Exp $
 
 branches doc
 
