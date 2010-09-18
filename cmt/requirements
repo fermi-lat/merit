@@ -3,7 +3,7 @@ version v6r36p4
 
 author T.Burnett <tburnett@u.washington.edu>
 
-# $Id: requirements,v 1.127 2008/07/22 18:48:11 lsrea Exp $
+# $Id: requirements,v 1.128 2009/11/13 23:38:12 jrb Exp $
 
 branches doc
 
@@ -25,6 +25,7 @@ use Event *
 use GuiSvc v*
 use facilities *
 use LdfEvent v*
+use RootmapPolicy * GlastPolicy
 
 # read/ write ROOT trees (any old ROOT will do)
 use ROOT * IExternal
@@ -39,14 +40,15 @@ macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 macro_append cppflags "" WIN32 " /D__i386"
 
 
-
 #component library with meritAlg, FT1Alg, and ClassifyAlg
 
 library merit -s=../src  $(source)\
  -s=analysis $(source) \
- -s=meritAlg $(source) \
- -s=Dll $(source)
+ -s=meritAlg $(source)
+# -s=Dll $(source)
 
+
+apply_pattern generate_rootmap library=merit
 
 public
 #set MERIT_INPUT_FILE "$(MERITROOT)/src/test/merit100.root"
