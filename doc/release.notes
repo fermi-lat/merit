@@ -2,9 +2,10 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.110 2010/06/13 07:02:35 jrb Exp $
+ * $Id: release.notes,v 1.111 2010/06/16 18:31:52 jrb Exp $
  * EOH *
 
+ merit-06-36-06-gr01 06-Oct-2010    hmk Upgrade Gaudi v21r7 algon branch
  merit-06-36-06 16-Jun-2010    jrb updates for SCons builds
  merit-06-36-05 13-Jun-2010    jrb upgrades for SCons builds
  merit-06-36-04 13-Nov-2009    jrb Updates for SCons
