@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kadrlica  Mon May 30 02:20:41 PDT 2011
+merit/src/meritAlg
+
+Modified Files:
+	meritAlg.cxx 
+Log Message:
+Add tage for production tuple in merit.  Default is false.
+    *
+------------------------------------------------------------
 TAG
 Tag name: merit-06-36-07, operation: add
 Package: merit
