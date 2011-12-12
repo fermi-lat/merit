@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Mon Dec 12 12:59:09 PST 2011
+GlastRelease-scons/merit/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+merge Gaudi v21r7
+    *
+------------------------------------------------------------
+User: heather  Mon Dec 12 12:59:09 PST 2011
 GlastRelease-scons/merit/cmt
 
 Modified Files:
