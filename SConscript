@@ -1,7 +1,7 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/merit/SConscript,v 1.9 2010/06/16 18:31:52 jrb Exp $ 
+# $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/merit/SConscript,v 1.10 2010/12/02 01:39:42 jrb Exp $ 
 # Authors: T.Burnett <tburnett@u.washington.edu>
-# Version: merit-06-36-07
+# Version: merit-06-37-00
 import os
 Import('baseEnv')
 Import('listFiles')
@@ -10,10 +10,9 @@ progEnv = baseEnv.Clone()
 libEnv = baseEnv.Clone()
 
 libEnv.Tool('addLinkDeps', package='merit', toBuild='component')
-merit = libEnv.SharedLibrary('merit', listFiles(['src/*.cxx',
-						 'src/analysis/*.cxx',
-						 'src/meritAlg/*.cxx',
-						 'src/Dll/*.cxx']))
+merit = libEnv.ComponentLibrary('merit', listFiles(['src/*.cxx',
+						    'src/analysis/*.cxx',
+						    'src/meritAlg/*.cxx']))
 
 if baseEnv['PLATFORM'] == 'win32':
 	libEnv.AppendUnique(CPPDEFINES = '__i386')
