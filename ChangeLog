@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Tue Jan  3 17:10:03 PST 2012
+GlastRelease-scons/merit/src/analysis
+
+Modified Files:
+	Tuple.h 
+Log Message:
+patches for gcc41
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr17, operation: add
 Package: merit
