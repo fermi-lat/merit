@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Tue Jan 17 08:52:06 PST 2012
+GlastRelease-scons/merit/src/analysis
+
+Modified Files:
+	Tuple.cxx 
+Log Message:
+fix C library includes for gcc4.4 compilation
+    *
+------------------------------------------------------------
 User: cohen  Tue Jan 17 08:52:05 PST 2012
 GlastRelease-scons/merit/src
 
