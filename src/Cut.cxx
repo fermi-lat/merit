@@ -1,12 +1,13 @@
 // Cut.cxx: implementation of the Cut class.
 //
 // Original author: T. Burnett tburnett@u.washington.edu
-// $Header: /nfs/slac/g/glast/ground/cvs/merit/src/Cut.cxx,v 1.4 2003/01/15 03:02:18 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/merit/src/Cut.cxx,v 1.5 2003/05/26 03:09:21 burnett Exp $
 //////////////////////////////////////////////////////////////////////
 
 #include "Cut.h"
 
 #include <cstdio>
+#include <cstdlib>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

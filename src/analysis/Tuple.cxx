@@ -1,10 +1,11 @@
-// $Id: Tuple.cxx,v 1.19 2006/10/23 20:41:47 burnett Exp $
+// $Id: Tuple.cxx,v 1.20 2006/10/24 08:01:57 burnett Exp $
 //
 #include "analysis/Tuple.h"
 
 #include <algorithm> // for count
 #include <cassert>
 #include <cmath>
+#include <cstring>
 #include <cfloat>
 #include <sstream>
 #include <iomanip>
