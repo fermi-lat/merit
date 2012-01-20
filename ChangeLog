@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri Jan 20 09:04:35 PST 2012
+merit
+
+Modified Files:
+	SConscript 
+Log Message:
+don't automatically load the GuiSvc
+    *
+------------------------------------------------------------
 User: cohen  Tue Jan 17 08:52:06 PST 2012
 GlastRelease-scons/merit/src/analysis
 
