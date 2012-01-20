@@ -2,9 +2,11 @@
  * @brief package merit
 @verbatim
  * package manager:T.Burnett
- * $Id: release.notes,v 1.113 2011/12/12 20:59:09 heather Exp $
+ * $Id: release.notes,v 1.114 2012/01/04 19:38:41 jrb Exp $
  * EOH *
 
+ merit-06-37-02 20-Jan-2012    hmk Avoid loading GuiSvc in meritAlg unless it
+     is meant to be available
  merit-06-37-01 04-Jan-2012    jrb patch for gcc41
  merit-06-37-00 12-Dec-2011    hmk merge in Gaudi v21r7 updates
  merit-06-36-07 01-Dec-2010    jrb Make new main branch tag for SCons RM

@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/merit/src/meritAlg/meritAlg.cxx,v 1.111 2011/05/30 09:20:41 kadrlica Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.112 2011/12/12 20:59:10 heather Exp $
 */
 // Include files
 
@@ -288,7 +288,7 @@ StatusCode meritAlg::initialize() {
     // setup tuple output via the print service
     // get the Gui service
     IGuiSvc* guiSvc=0;
-    sc = service("GuiSvc", guiSvc);
+    sc = service("GuiSvc", guiSvc, false);
 
     if (!sc.isSuccess ()){
         log << MSG::DEBUG << "No GuiSvc, so no interactive printout" << endreq;
@@ -316,7 +316,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.111 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.112 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
