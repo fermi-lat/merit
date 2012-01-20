@@ -1,7 +1,7 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/merit/SConscript,v 1.11 2011/12/12 20:59:09 heather Exp $ 
+# $Header: /nfs/slac/g/glast/ground/cvs/merit/SConscript,v 1.12 2012/01/04 19:38:41 jrb Exp $ 
 # Authors: T.Burnett <tburnett@u.washington.edu>
-# Version: merit-06-37-01
+# Version: merit-06-37-02
 import os
 Import('baseEnv')
 Import('listFiles')
