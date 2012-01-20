@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Fri Jan 20 09:04:35 PST 2012
+merit/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+don't automatically load the GuiSvc
+    *
+------------------------------------------------------------
+User: heather  Fri Jan 20 09:04:35 PST 2012
 merit
 
 Modified Files:
