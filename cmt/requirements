@@ -1,9 +1,9 @@
 package merit
-version v6r36p7
+version v6r36p7gr01
 
 author T.Burnett <tburnett@u.washington.edu>
 
-# $Id: requirements,v 1.130 2010/06/16 18:31:52 jrb Exp $
+# $Id: requirements,v 1.134 2012/01/20 17:04:35 heather Exp $
 
 branches doc
 
@@ -25,6 +25,7 @@ use Event *
 use GuiSvc v*
 use facilities *
 use LdfEvent v*
+use RootmapPolicy * GlastPolicy
 
 # read/ write ROOT trees (any old ROOT will do)
 use ROOT * IExternal
@@ -39,14 +40,15 @@ macro_prepend includes "-I ../src " WIN32 "/I ..\src "
 macro_append cppflags "" WIN32 " /D__i386"
 
 
-
 #component library with meritAlg, FT1Alg, and ClassifyAlg
 
 library merit -s=../src  $(source)\
  -s=analysis $(source) \
- -s=meritAlg $(source) \
- -s=Dll $(source)
+ -s=meritAlg $(source)
+# -s=Dll $(source)
 
+
+apply_pattern generate_rootmap library=merit
 
 public
 #set MERIT_INPUT_FILE "$(MERITROOT)/src/test/merit100.root"

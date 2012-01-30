@@ -1,6 +1,7 @@
 // PSFRootFit.cxx
 
 #include "PSFRootFit.h"
+#include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #ifdef WIN32
