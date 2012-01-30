@@ -1,7 +1,7 @@
 /** @file meritAlg.cxx
 @brief Declaration and implementation of meritAlg
 
-$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.109 2006/11/27 22:58:39 burnett Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/merit/src/meritAlg/meritAlg.cxx,v 1.110 2008/07/14 23:42:38 lsrea Exp $
 */
 // Include files
 
@@ -159,8 +159,9 @@ private:
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-static const AlgFactory<meritAlg>  Factory;
-const IAlgFactory& meritAlgFactory = Factory;
+//static const AlgFactory<meritAlg>  Factory;
+//const IAlgFactory& meritAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(meritAlg);
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 meritAlg::meritAlg(const std::string& name, ISvcLocator* pSvcLocator) :
 Algorithm(name, pSvcLocator), m_tuple(0), m_rootTupleSvc(0)
@@ -283,7 +284,7 @@ StatusCode meritAlg::initialize() {
     // setup tuple output via the print service
     // get the Gui service
     IGuiSvc* guiSvc=0;
-    sc = service("GuiSvc", guiSvc);
+    sc = service("GuiSvc", guiSvc, false);
 
     if (!sc.isSuccess ()){
         log << MSG::DEBUG << "No GuiSvc, so no interactive printout" << endreq;
@@ -311,7 +312,7 @@ StatusCode meritAlg::initialize() {
 
 //------------------------------------------------------------------------------
 void meritAlg::printOn(std::ostream& out)const{
-    out << "Merit tuple, " << "$Revision: 1.109 $" << std::endl;
+    out << "Merit tuple, " << "$Revision: 1.110 $" << std::endl;
 
     for(Tuple::const_iterator tit =m_tuple->begin(); tit != m_tuple->end(); ++tit){
         const TupleItem& item = **tit;
@@ -371,7 +372,7 @@ StatusCode meritAlg::finalize() {
 
     delete m_tuple;
     delete m_fm;
-    setFinalized(); //  prevent being called again
+    //setFinalized(); //  prevent being called again
 
     return StatusCode::SUCCESS;
 }
