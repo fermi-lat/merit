@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Tue Jan 31 17:23:59 PST 2012
+GlastRelease-scons/merit
+
+Modified Files:
+	SConscript 
+Log Message:
+turn SConscript into no-op for  LATEST builds since merit is deemed unnecessary
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr19, operation: add
 Package: merit
