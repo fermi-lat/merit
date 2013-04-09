@@ -1,5 +1,71 @@
 ------------------------------------------------------------
 TAG
+Tag name: GlastRelease-20-08-12, operation: add
+Package: merit
+User: heather  Tue Apr  9 04:41:56 2013
+Files:
+  merit/.cvsignore  1.14
+  merit/ChangeLog  1.792
+  merit/SConscript  1.15
+  merit/meritLib.py  1.3
+  merit/cmt/.cvsignore  1.2
+  merit/cmt/requirements  1.135
+  merit/cmt/Makefile  1.1
+  merit/doc/release.notes  1.116
+  merit/src/FigureOfMerit.h  1.6
+  merit/src/EnergyAnalysis.h  1.2
+  merit/src/Cut.cxx  1.6
+  merit/src/Level1.h  1.1.1.1
+  merit/src/Level1.cxx  1.2
+  merit/src/MultiPSF.h  1.3
+  merit/src/FigureOfMerit.cxx  1.29
+  merit/src/PSFRootFit.h  1.1
+  merit/src/mainpage.h  1.14
+  merit/src/AnalysisList.cxx  1.3
+  merit/src/BackgroundCuts.h  1.2
+  merit/src/PSFtailCuts.h  1.2
+  merit/src/PSFtailCuts.cxx  1.14
+  merit/src/PSFRootFit.cxx  1.4
+  merit/src/Statistic.h  1.1.1.1
+  merit/src/MultiPSF.cxx  1.4
+  merit/src/Analyze.cxx  1.4
+  merit/src/BackgroundCuts.cxx  1.4
+  merit/src/AnalysisList.h  1.2
+  merit/src/PSFanalysis.h  1.5
+  merit/src/.cvsignore  1.1
+  merit/src/LayerGroup.h  1.2
+  merit/src/Cut.h  1.2
+  merit/src/EnergyAnalysis.cxx  1.5
+  merit/src/Statistic.cxx  1.2
+  merit/src/Analyze.h  1.3
+  merit/src/LayerGroup.cxx  1.7
+  merit/src/PSFanalysis.cxx  1.10
+  merit/src/Dll/merit_dll.cxx  1.3
+  merit/src/Dll/merit_load.cxx  1.7
+  merit/src/analysis/smplstat.h  1.1
+  merit/src/analysis/TupleTitle.h  1.1
+  merit/src/analysis/TupleTitle.cxx  1.1
+  merit/src/analysis/RebinHist.cxx  1.1
+  merit/src/analysis/Histogram.h  1.1
+  merit/src/analysis/Tuple.h  1.12
+  merit/src/analysis/Histogram.cxx  1.1
+  merit/src/analysis/smplstat.cxx  1.1
+  merit/src/analysis/RebinHist.h  1.1
+  merit/src/analysis/Tuple.cxx  1.21
+  merit/src/app/RootTuple.h  1.7
+  merit/src/app/meritapp.cxx  1.24
+  merit/src/app/RootTuple.cxx  1.12
+  merit/src/app/write_text_main.cxx  1.1
+  merit/src/app/run_classification_main.cxx  1.7
+  merit/src/app/AsciiTuple.cxx  1.1
+  merit/src/app/AsciiTuple.h  1.2
+  merit/src/app/fastFilter.cxx  1.7
+  merit/src/meritAlg/meritAlg.cxx  1.113
+  merit/src/test/merit100.root  1.8
+
+    *
+------------------------------------------------------------
+TAG
 Tag name: GlastRelease-17-35-24-lp41, operation: add
 Package: merit
 User: heather  Mon Apr  8 14:00:53 2013
